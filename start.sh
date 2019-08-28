@@ -31,5 +31,7 @@ if [ ! -f "/firstrun" ]; then
   touch /firstrun
 fi
 
-echo "Tailing logs"
+echo "Tailing OpenVAS logs for your convenience"
 tail -F /usr/local/var/log/gvm/*
+
+echo "Your OpenVAS container is now ready to use!"
