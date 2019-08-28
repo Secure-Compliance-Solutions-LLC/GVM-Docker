@@ -13,6 +13,13 @@ You can use whatever --name you'd like at the end, but for the sake of this guid
 
 This will pull the image from our docker repo and start it using port 8080 instead of 9392. Depending on your hardware, it can take anyhwere from a few seconds to 10 minutes while the NVTs are scanned and the database is rebuilt. The default user account is created after this process has completed. If you are unable to login, it means it is still loading. (be patient)
 
+There is no way to estimate the remaining loading time, but you can check if the NVTs have finished loading by checking docker logs using `docker logs openvas`
+
+If you see "Your OpenVAS container is now ready to use!" then, you guessed it, your container is ready to use.
+
+
+**Accessing Web Interface**
+
 Access web interface using the IP address of the docker host system on port 8080 - `https://<IP address>:8080`
 
 ```
