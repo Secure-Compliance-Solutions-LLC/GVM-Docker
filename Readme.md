@@ -22,7 +22,7 @@ curl https://get.docker.com | sh
 
 This command will pull, create, and start the container:
 ```
-docker run -d -p 8080:9392 securecompliance/openvas --name openvas
+docker run -d -p 8080:9392 --name openvas securecompliance/openvas
 ```
 You can use whatever `--name` you'd like but for the sake of this guide we're using openvas.
 
