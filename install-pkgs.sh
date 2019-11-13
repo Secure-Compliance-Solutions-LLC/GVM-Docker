@@ -29,10 +29,12 @@ libmicrohttpd-dev
 libnet-snmp-perl
 libpcap-dev
 libpopt-dev
+libpq-dev
 libsnmp-dev
 libsqlite3-dev
 libssh-gcrypt-dev
 libxml2-dev
+netcat-openbsd
 net-tools
 nikto
 nmap
@@ -40,7 +42,11 @@ nsis
 patch
 perl-base heimdal-dev
 pkg-config
+postgresql
+postgresql-contrib
+postgresql-server-dev-all
 python3-defusedxml
+python3-dev
 python3-dialog
 python3-lxml
 python3-paramiko
@@ -53,6 +59,7 @@ redis-tools
 rsync
 smbclient
 sqlite3
+sudo
 texlive-fonts-recommended
 texlive-latex-extra
 uuid-dev
@@ -60,7 +67,6 @@ wget
 xsltproc
 EOF
 } | xargs apt-get install -yq --no-install-recommends
-
 
 # Install Node.js
 curl -sL https://deb.nodesource.com/setup_10.x | bash -

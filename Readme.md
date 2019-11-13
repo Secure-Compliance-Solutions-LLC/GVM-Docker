@@ -1,6 +1,9 @@
-# GreenBone Vulnerability Management 10 Docker Image
+# GreenBone Vulnerability Management 11 Docker Image
 
-This docker image is based on GVM 10 but with a few package modifications. After years of successfully using the OpenVAS 8/9 package, maintained by the Kali project, we started having performance issues. After months of trying to tweak OpenVAS, with varying and short lived success, we decided to maintain our own modified version of GVM 10. This was done to streamline the installation, cleanup, and improve reliability.
+This docker image is based on GVM 11 but with a few package modifications. 
+After years of successfully using the OpenVAS 8/9 package, maintained by the Kali project, we started having performance issues. After months of trying to tweak OpenVAS, with varying and short lived success, we decided to maintain our own modified version of GVM 11. This was done to streamline the installation, cleanup, and improve reliability.
+
+See: https://community.greenbone.net/t/gvm-11-stable-initial-release-2019-10-14/3674
 
 ## Deployment
 
@@ -17,16 +20,25 @@ You can also use the docker install script by running:
 ```
 curl https://get.docker.com | sh
 ```
+**Build image**
+
+You can build the docker image locally using this command:
+```
+ docker build --tag your-org/gvm:11.0.0 .
+```
 
 **Run our container**
 
 This command will pull, create, and start the container:
 ```
-docker run -d -p 8080:9392 --name gvm securecompliance/gvm
+docker run -d -p 8080:9392 -v /your_gvm_directory/pgdata:/pgdata:z -v /your_gvm_directory/pglog:/pglog:z --name gvm your-org/gvm:11.0.0
 ```
 You can use whatever `--name` you'd like but for the sake of this guide we're using gvm.
 
 The `-p 8080:9392` switch will port forward `8080` on the host to `9392` (the default web interface port) in the docker container. Port `8080` was chosen only to avoid conflicts with any existing installation. You can change `8080` to any available port that you'd like.
+
+The `/your_gvm_directory` is where the database files will be stored if persistence storage is needed.
+This directory need to be owned by user 102 and group 103
 
 Depending on your hardware, it can take anyhwere from a few seconds to 10 minutes while the NVTs are scanned and the database is rebuilt. **The default user account is created after this process has completed. If you are unable to login, it means it is still loading (be patient).**
 
