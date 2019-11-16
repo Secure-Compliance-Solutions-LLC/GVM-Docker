@@ -51,8 +51,6 @@ if [ ! -f "/firstrun" ]; then
 fi
 
 echo "Updating NVTs..."
-rm /tmp/gvm-sync-*
-
 su -c greenbone-nvt-sync openvas-sync
 su -c greenbone-certdata-sync openvas-sync
 su -c greenbone-scapdata-sync openvas-sync
