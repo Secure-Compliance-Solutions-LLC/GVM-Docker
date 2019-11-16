@@ -1,4 +1,4 @@
-FROM ubuntu:rolling
+FROM ubuntu:18.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV LANG=C.UTF-8
@@ -7,13 +7,15 @@ COPY install-pkgs.sh /install-pkgs.sh
 
 RUN bash /install-pkgs.sh
 
-ENV gvm_libs_version="v10.0.1" \
-    openvas_scanner_version="v6.0.1" \
-    gvmd_version="v8.0.1" \
-    gsa_version="v8.0.1" \
-    gvm_tools_version="v2.0.0.beta1" \
+ENV gvm_libs_version="v11.0.0" \
+    openvas_scanner_version="v7.0.0" \
+    gvmd_version="v9.0.0" \
+    gsa_version="v9.0.0" \
+    gvm_tools_version="v2.0.0" \
     openvas_smb="v1.0.5" \
-    python_gvm_version="v1.0.0.beta3"
+    open_scanner_protocol_daemon="v2.0.0" \
+    ospd_openvas="v1.0.0" \
+    python_gvm_version="v1.0.0"
 
 RUN echo "Starting Build..." && mkdir /build
 
@@ -104,6 +106,30 @@ RUN cd /build && \
 RUN cd /build && \
     wget https://github.com/greenbone/python-gvm/archive/$python_gvm_version.tar.gz && \
     tar -zxvf $python_gvm_version.tar.gz && \
+    cd /build/*/ && \
+    python3 setup.py install && \
+    cd /build && \
+    rm -rf *
+    
+    #
+    # Install Open Scanner Protocol daemon (OSPd)
+    #
+    
+RUN cd /build && \
+    wget https://github.com/greenbone/ospd/archive/$open_scanner_protocol_daemon.tar.gz && \
+    tar -zxvf $open_scanner_protocol_daemon.tar.gz && \
+    cd /build/*/ && \
+    python3 setup.py install && \
+    cd /build && \
+    rm -rf *
+    
+    #
+    # Install Open Scanner Protocol for OpenVAS
+    #
+    
+RUN cd /build && \
+    wget https://github.com/greenbone/ospd-openvas/archive/$ospd_openvas.tar.gz && \
+    tar -zxvf $ospd_openvas.tar.gz && \
     cd /build/*/ && \
     python3 setup.py install && \
     cd /build && \

@@ -1,6 +1,6 @@
-# GreenBone Vulnerability Management 10 Docker Image
+# GreenBone Vulnerability Management 11 Docker Image
 
-This docker image is based on GVM 10 but with a few package modifications. After years of successfully using the OpenVAS 8/9 package, maintained by the Kali project, we started having performance issues. After months of trying to tweak OpenVAS, with varying and short lived success, we decided to maintain our own modified version of GVM 10. This was done to streamline the installation, cleanup, and improve reliability.
+This docker image is based on GVM 11 but with a few package modifications. After years of successfully using the OpenVAS 8/9 package, maintained by the Kali project, we started having performance issues. After months of trying to tweak OpenVAS, with varying and short lived success, we decided to maintain our own modified version of GVM 11. This was done to streamline the installation, cleanup, and improve reliability.
 
 ## Deployment
 

@@ -16,6 +16,7 @@ gcc-mingw-w64
 geoip-database
 git
 graphviz
+heimdal-dev
 language-pack-en
 libgcrypt20-dev
 libglib2.0-dev
@@ -38,15 +39,20 @@ nikto
 nmap
 nsis
 patch
-perl-base heimdal-dev
+perl-base
 pkg-config
+postgresql
+postgresql-contrib
+postgresql-server-dev-all
 python3-defusedxml
+python3-dev
 python3-dialog
 python3-lxml
 python3-paramiko
 python3-setuptools
 python-impacket
 python-pip
+python-psutil
 python-setuptools
 redis-server
 redis-tools
@@ -71,7 +77,7 @@ apt-get install nodejs -yq --no-install-recommends
 curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
 echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
 apt-get update
-apt-get install yarn
+apt-get install yarn -yq --no-install-recommends
 
 
 rm -rf /var/lib/apt/lists/*
