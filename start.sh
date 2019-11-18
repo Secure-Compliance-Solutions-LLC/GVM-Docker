@@ -51,9 +51,13 @@ if [ ! -f "/firstrun" ]; then
 fi
 
 echo "Updating NVTs..."
-su -c greenbone-nvt-sync openvas-sync
-su -c greenbone-certdata-sync openvas-sync
-su -c greenbone-scapdata-sync openvas-sync
+su -c "greenbone-nvt-sync > /dev/null" openvas-sync
+
+echo "Updating CERT data..."
+su -c "greenbone-certdata-sync > /dev/null" openvas-sync
+
+echo "Updating SCAP data..."
+su -c "greenbone-scapdata-sync > /dev/null" openvas-sync
 
 rm /tmp/gvm-sync-*
 
@@ -80,11 +84,11 @@ fi
 echo "Starting Greenbone Security Assistant..."
 su -c "gsad --verbose --http-only --no-redirect --port=9392" gvm
 
-echo "+++++++++++++++++++++++++++++++++++++++++++++"
-echo "+Your OpenVAS container is now ready to use!+"
-echo "+++++++++++++++++++++++++++++++++++++++++++++"
+echo "++++++++++++++++++++++++++++++++++++++++++++++"
+echo "+ Your GVM 11 container is now ready to use! +"
+echo "++++++++++++++++++++++++++++++++++++++++++++++"
 echo ""
-echo "++++++++++++++"
-echo "+Tailing logs+"
-echo "++++++++++++++"
+echo "++++++++++++++++"
+echo "+ Tailing logs +"
+echo "++++++++++++++++"
 tail -F /usr/local/var/log/gvm/*
