@@ -24,8 +24,8 @@ RUN echo "Starting Build..." && mkdir /build
     #
     
 RUN cd /build && \
-    wget https://github.com/greenbone/gvm-libs/archive/$gvm_libs_version.tar.gz && \
-    tar -zxvf $gvm_libs_version.tar.gz && \
+    wget --no-verbose https://github.com/greenbone/gvm-libs/archive/$gvm_libs_version.tar.gz && \
+    tar -zxf $gvm_libs_version.tar.gz && \
     cd /build/*/ && \
     mkdir build && \
     cd build && \
@@ -40,8 +40,8 @@ RUN cd /build && \
     #
     
 RUN cd /build && \
-    wget https://github.com/greenbone/openvas-smb/archive/$openvas_smb.tar.gz && \
-    tar -zxvf $openvas_smb.tar.gz && \
+    wget --no-verbose https://github.com/greenbone/openvas-smb/archive/$openvas_smb.tar.gz && \
+    tar -zxf $openvas_smb.tar.gz && \
     cd /build/*/ && \
     mkdir build && \
     cd build && \
@@ -56,8 +56,8 @@ RUN cd /build && \
     #
     
 RUN cd /build && \
-    wget https://github.com/greenbone/gvmd/archive/$gvmd_version.tar.gz && \
-    tar -zxvf $gvmd_version.tar.gz && \
+    wget --no-verbose https://github.com/greenbone/gvmd/archive/$gvmd_version.tar.gz && \
+    tar -zxf $gvmd_version.tar.gz && \
     cd /build/*/ && \
     mkdir build && \
     cd build && \
@@ -72,8 +72,8 @@ RUN cd /build && \
     #
     
 RUN cd /build && \
-    wget https://github.com/greenbone/openvas-scanner/archive/$openvas_scanner_version.tar.gz && \
-    tar -zxvf $openvas_scanner_version.tar.gz && \
+    wget --no-verbose https://github.com/greenbone/openvas-scanner/archive/$openvas_scanner_version.tar.gz && \
+    tar -zxf $openvas_scanner_version.tar.gz && \
     cd /build/*/ && \
     mkdir build && \
     cd build && \
@@ -88,8 +88,8 @@ RUN cd /build && \
     #
     
 RUN cd /build && \
-    wget https://github.com/greenbone/gsa/archive/$gsa_version.tar.gz && \
-    tar -zxvf $gsa_version.tar.gz && \
+    wget --no-verbose https://github.com/greenbone/gsa/archive/$gsa_version.tar.gz && \
+    tar -zxf $gsa_version.tar.gz && \
     cd /build/*/ && \
     mkdir build && \
     cd build && \
@@ -104,8 +104,8 @@ RUN cd /build && \
     #
     
 RUN cd /build && \
-    wget https://github.com/greenbone/python-gvm/archive/$python_gvm_version.tar.gz && \
-    tar -zxvf $python_gvm_version.tar.gz && \
+    wget --no-verbose https://github.com/greenbone/python-gvm/archive/$python_gvm_version.tar.gz && \
+    tar -zxf $python_gvm_version.tar.gz && \
     cd /build/*/ && \
     python3 setup.py install && \
     cd /build && \
@@ -116,8 +116,8 @@ RUN cd /build && \
     #
     
 RUN cd /build && \
-    wget https://github.com/greenbone/ospd/archive/$open_scanner_protocol_daemon.tar.gz && \
-    tar -zxvf $open_scanner_protocol_daemon.tar.gz && \
+    wget --no-verbose https://github.com/greenbone/ospd/archive/$open_scanner_protocol_daemon.tar.gz && \
+    tar -zxf $open_scanner_protocol_daemon.tar.gz && \
     cd /build/*/ && \
     python3 setup.py install && \
     cd /build && \
@@ -128,8 +128,8 @@ RUN cd /build && \
     #
     
 RUN cd /build && \
-    wget https://github.com/greenbone/ospd-openvas/archive/$ospd_openvas.tar.gz && \
-    tar -zxvf $ospd_openvas.tar.gz && \
+    wget --no-verbose https://github.com/greenbone/ospd-openvas/archive/$ospd_openvas.tar.gz && \
+    tar -zxf $ospd_openvas.tar.gz && \
     cd /build/*/ && \
     python3 setup.py install && \
     cd /build && \
@@ -140,8 +140,8 @@ RUN cd /build && \
     #
     
 RUN cd /build && \
-    wget https://github.com/greenbone/gvm-tools/archive/$gvm_tools_version.tar.gz && \
-    tar -zxvf $gvm_tools_version.tar.gz && \
+    wget --no-verbose https://github.com/greenbone/gvm-tools/archive/$gvm_tools_version.tar.gz && \
+    tar -zxf $gvm_tools_version.tar.gz && \
     cd /build/*/ && \
     python3 setup.py install && \
     echo "/usr/local/lib" > /etc/ld.so.conf.d/openvas.conf && ldconfig && cd / && rm -rf /build
