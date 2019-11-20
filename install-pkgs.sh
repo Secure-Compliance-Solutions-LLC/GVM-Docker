@@ -6,12 +6,12 @@ apt-get update
 bison
 build-essential
 ca-certificates
-certtool
 cmake
 curl
 gcc
 gcc-mingw-w64
 geoip-database
+gnutls-bin
 graphviz
 heimdal-dev
 ike-scan
