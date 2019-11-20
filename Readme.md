@@ -1,6 +1,6 @@
-# GreenBone Vulnerability Management 11 Docker Image
+# A GreenBone Vulnerability Management 11 Docker Image
 
-This docker image is based on GVM 11 but with a few package modifications. After years of successfully using the OpenVAS 8/9 package, maintained by the Kali project, we started having performance issues. After months of trying to tweak OpenVAS, with varying and short lived success, we decided to maintain our own modified version of GVM 11. This was done to streamline the installation, cleanup, and improve reliability.
+This docker image is based on GVM 11 but with a few package modifications. After years of successfully using the OpenVAS 8/9 package, maintained by the Kali project, we started having performance issues. After months of trying to tweak OpenVAS, with varying and short lived success, we decided to maintain our own packaged version of GVM 11. This was done to streamline the installation, cleanup, and improve reliability.
 
 ## Deployment
 
@@ -22,13 +22,13 @@ curl https://get.docker.com | sh
 
 This command will pull, create, and start the container:
 ```
-docker run -d -p 8080:9392 --name gvm securecompliance/gvm
+docker run -d -p 8080:9392 -e PASSWORD="Your admin password here" --name gvm securecompliance/gvm
 ```
 You can use whatever `--name` you'd like but for the sake of this guide we're using gvm.
 
-The `-p 8080:9392` switch will port forward `8080` on the host to `9392` (the default web interface port) in the docker container. Port `8080` was chosen only to avoid conflicts with any existing installation. You can change `8080` to any available port that you'd like.
+The `-p 8080:9392` switch will port forward `8080` on the host to `9392` (the container web interface port) in the docker container. Port `8080` was chosen only to avoid conflicts with any existing OpenVAS/GVM installation. You can change `8080` to any available port that you'd like.
 
-Depending on your hardware, it can take anyhwere from a few seconds to 10 minutes while the NVTs are scanned and the database is rebuilt. **The default user account is created after this process has completed. If you are unable to login, it means it is still loading (be patient).**
+Depending on your hardware, it can take anyhwere from a few seconds to 10 minutes while the NVTs are scanned and the database is rebuilt. **The default admin user account is created after this process has completed. If you are unable to access the web interface, it means it is still loading (be patient).**
 
 **Checking Deployment Progress**
 
@@ -37,12 +37,13 @@ There is no easy way to estimate the remaining NVT loading time, but you can che
 docker logs gvm
 ```
 
-If you see "Your gvm container is now ready to use!" then, you guessed it, your container is ready to use.
+If you see "Your GVM 11 container is now ready to use!" then, you guessed it, your container is ready to use.
 
 ## Accessing Web Interface
 
 Access web interface using the IP address of the docker host on port 8080 - `https://<IP address>:8080`
 
+Default credentials:
 ```
 Username: admin
 Password: admin

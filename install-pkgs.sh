@@ -6,6 +6,7 @@ apt-get update
 bison
 build-essential
 ca-certificates
+certtool
 cmake
 curl
 gcc
