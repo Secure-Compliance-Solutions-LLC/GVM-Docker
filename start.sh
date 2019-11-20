@@ -73,9 +73,12 @@ chmod 777 /tmp/ospd.sock
 echo "Starting Greenbone Vulnerability Manager..."
 su -c "gvmd" gvm
 
+until su -c "gvmd --get-users" gvm; do
+	sleep 1
+done
+
 if [ ! -f "/created_gvm_user" ]; then
 	echo "Creating Greenbone Vulnerability Manager admin user"
-	sleep 10
 	su -c "gvmd --create-user=${USERNAME} --password=${PASSWORD}" gvm
 	
 	touch /created_gvm_user
