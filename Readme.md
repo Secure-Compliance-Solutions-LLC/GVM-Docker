@@ -41,7 +41,7 @@ If you see "Your GVM 11 container is now ready to use!" then, you guessed it, yo
 
 ## Accessing Web Interface
 
-Access web interface using the IP address of the docker host on port 8080 - `https://<IP address>:8080`
+Access web interface using the IP address of the docker host on port 8080 - `http://<IP address>:8080`
 
 Default credentials:
 ```
