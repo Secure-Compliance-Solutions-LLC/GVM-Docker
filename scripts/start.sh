@@ -51,18 +51,22 @@ if [ ! -f "/firstrun" ]; then
 fi
 
 echo "Updating NVTs..."
-su -c "greenbone-nvt-sync > /dev/null" openvas-sync
+su -c "rsync --compress-level=9 --links --times --omit-dir-times --recursive --partial --progress rsync://feed.openvas.org:/nvt-feed /usr/local/var/lib/openvas/plugins" openvas-sync
+sleep 5
 
 echo "Updating CERT data..."
-su -c "greenbone-certdata-sync > /dev/null" openvas-sync
+su -c "/cert-data-sync.sh" openvas-sync
+sleep 5
 
 echo "Updating SCAP data..."
-su -c "greenbone-scapdata-sync > /dev/null" openvas-sync
-
-rm /tmp/gvm-sync-*
+su -c "/scap-data-sync.sh" openvas-sync
 
 if [ -f /var/run/ospd.pid ]; then
   rm /var/run/ospd.pid
+fi
+
+if [ -S /tmp/ospd.sock ]; then
+  rm /tmp/ospd.sock
 fi
 
 echo "Starting Open Scanner Protocol daemon for OpenVAS..."
@@ -72,7 +76,7 @@ while  [ ! -S /tmp/ospd.sock ]; do
 	sleep 1
 done
 
-chmod 777 /tmp/ospd.sock
+chmod 666 /tmp/ospd.sock
 
 echo "Starting Greenbone Vulnerability Manager..."
 su -c "gvmd" gvm

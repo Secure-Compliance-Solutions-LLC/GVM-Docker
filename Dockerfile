@@ -146,6 +146,6 @@ RUN cd /build && \
     python3 setup.py install && \
     echo "/usr/local/lib" > /etc/ld.so.conf.d/openvas.conf && ldconfig && cd / && rm -rf /build
 
-COPY start.sh /start.sh
+COPY scripts/* /
 
 CMD '/start.sh'
