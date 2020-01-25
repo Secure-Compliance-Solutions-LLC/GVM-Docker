@@ -61,6 +61,10 @@ su -c "greenbone-scapdata-sync > /dev/null" openvas-sync
 
 rm /tmp/gvm-sync-*
 
+if [ -f /var/run/ospd.pid ]; then
+  rm /var/run/ospd.pid
+fi
+
 echo "Starting Open Scanner Protocol daemon for OpenVAS..."
 ospd-openvas --log-file /usr/local/var/log/gvm/ospd-openvas.log --unix-socket /tmp/ospd.sock --log-level INFO
 
