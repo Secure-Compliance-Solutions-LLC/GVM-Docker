@@ -33,6 +33,7 @@ libxml2-dev
 net-tools
 nmap
 nsis
+openssh-client
 perl-base
 pkg-config
 postgresql
