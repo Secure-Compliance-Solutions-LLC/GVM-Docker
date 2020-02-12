@@ -3,6 +3,7 @@ set -Eeuo pipefail
 
 USERNAME=${USERNAME:-admin}
 PASSWORD=${PASSWORD:-admin}
+MAX_ROWS_PER_PAGE=${MAX_ROWS_PER_PAGE:-100000}
 
 if [ ! -d "/run/redis" ]; then
 	mkdir /run/redis
@@ -94,8 +95,8 @@ until su -c "gvmd --get-users" gvm; do
 done
 
 if [ ! -f "/set_max_rows_per_page" ]; then
-	echo "Setting \"Max Rows Per Page\" to remove report size limit"
-	su -c "gvmd --modify-setting 76374a7a-0569-11e6-b6da-28d24461215b --value 0" gvm
+	echo "Setting \"Max Rows Per Page\" to raise the report size limit"
+	su -c "gvmd --modify-setting 76374a7a-0569-11e6-b6da-28d24461215b --value $MAX_ROWS_PER_PAGE" gvm
 	
 	touch /set_max_rows_per_page
 fi
