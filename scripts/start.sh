@@ -93,6 +93,13 @@ until su -c "gvmd --get-users" gvm; do
 	sleep 1
 done
 
+if [ ! -f "/set_max_rows_per_page" ]; then
+	echo "Setting \"Max Rows Per Page\" to remove report size limit"
+	su -c "gvmd --modify-setting 76374a7a-0569-11e6-b6da-28d24461215b --value 0" gvm
+	
+	touch /set_max_rows_per_page
+fi
+
 if [ ! -f "/created_gvm_user" ]; then
 	echo "Creating Greenbone Vulnerability Manager admin user"
 	su -c "gvmd --create-user=${USERNAME} --password=${PASSWORD}" gvm
