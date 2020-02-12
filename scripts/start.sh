@@ -35,7 +35,7 @@ fi
 
 if  [ ! -h /data/database ]; then
 	echo "Create Database folder"
-	ln -s /var/lib/postgresql/10/main /data/database
+	ln -s /data/database /var/lib/postgresql/10/main
 fi
 
 echo "Starting PostgreSQL..."
