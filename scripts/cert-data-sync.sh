@@ -8,8 +8,8 @@ TIMESTAMP="$CERT_DIR/timestamp"
 
 rsync --compress-level=9 --links --times --omit-dir-times --recursive --partial --quiet --delete --exclude feed.xml rsync://feed.openvas.org:/cert-data $CERT_DIR
 
-if [ -r $TIMESTAMP ]; then
-  FEED_VERSION=$(cat $TIMESTAMP)
+if [ -r "$TIMESTAMP" ]; then
+  FEED_VERSION=$(cat "$TIMESTAMP")
 else
   FEED_VERSION=0
 fi

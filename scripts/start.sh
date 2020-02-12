@@ -27,10 +27,21 @@ while  [ "${X}" != "PONG" ]; do
 done
 echo "Redis ready."
 
+
+if  [ ! -d /data ]; then
+	echo "Create Data folder"
+        mkdir /data
+fi
+
+if  [ ! -h /data/database ]; then
+	echo "Create Database folder"
+	ln -s /var/lib/postgresql/10/main /data/database
+fi
+
 echo "Starting PostgreSQL..."
 /usr/bin/pg_ctlcluster --skip-systemctl-redirect 10 main start
 
-if [ ! -f "/firstrun" ]; then
+if [ ! -f "/data/firstrun" ]; then
   echo "Running first start configuration..."
   
   echo "Creating Openvas NVT sync user"
@@ -56,7 +67,7 @@ if [ ! -f "/firstrun" ]; then
   
   adduser openvas-sync gvm
   adduser gvm openvas-sync
-  touch /firstrun
+  touch /data/firstrun
 fi
 
 echo "Updating NVTs..."
@@ -94,18 +105,18 @@ until su -c "gvmd --get-users" gvm; do
 	sleep 1
 done
 
-if [ ! -f "/set_max_rows_per_page" ]; then
+if [ ! -f "/data/set_max_rows_per_page" ]; then
 	echo "Setting \"Max Rows Per Page\" to raise the report size limit"
 	su -c "gvmd --modify-setting 76374a7a-0569-11e6-b6da-28d24461215b --value $MAX_ROWS_PER_PAGE" gvm
 	
-	touch /set_max_rows_per_page
+	touch /data/set_max_rows_per_page
 fi
 
-if [ ! -f "/created_gvm_user" ]; then
+if [ ! -f "/data/created_gvm_user" ]; then
 	echo "Creating Greenbone Vulnerability Manager admin user"
 	su -c "gvmd --create-user=${USERNAME} --password=${PASSWORD}" gvm
 	
-	touch /created_gvm_user
+	touch /data/created_gvm_user
 fi
 
 echo "Starting Greenbone Security Assistant..."
