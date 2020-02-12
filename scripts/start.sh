@@ -35,9 +35,15 @@ fi
 
 if  [ ! -d /data/database ]; then
 	echo "Creating Database folder..."
-	if  [ -d /var/lib/postgresql/10/main ]; then
-		mv /var/lib/postgresql/10/main /data/database
-	fi
+	mv /var/lib/postgresql/10/main /data/database
+	ln -s /data/database /var/lib/postgresql/10/main
+	chown postgres:postgres -R /var/lib/postgresql/10/main
+	chown postgres:postgres -R /data/database
+fi
+
+if [ -d /var/lib/postgresql/10/main ]; then
+	echo "Fixing Database folder..."
+	rm -rf /var/lib/postgresql/10/main
 	ln -s /data/database /var/lib/postgresql/10/main
 	chown postgres:postgres -R /var/lib/postgresql/10/main
 	chown postgres:postgres -R /data/database
@@ -46,33 +52,36 @@ fi
 echo "Starting PostgreSQL..."
 /usr/bin/pg_ctlcluster --skip-systemctl-redirect 10 main start
 
+if [ ! -f "/firstrun" ]; then
+	echo "Running first start configuration..."
+
+	echo "Creating Openvas NVT sync user..."
+	useradd --home-dir /usr/local/share/openvas openvas-sync
+	chown openvas-sync:openvas-sync -R /usr/local/share/openvas
+	chown openvas-sync:openvas-sync -R /usr/local/var/lib/openvas
+
+	echo "Creating Greenbone Vulnerability system user..."
+	useradd --home-dir /usr/local/share/gvm gvm
+	chown gvm:gvm -R /usr/local/share/gvm
+	mkdir /usr/local/var/lib/gvm/cert-data
+	chown gvm:gvm -R /usr/local/var/lib/gvm
+	chmod 770 -R /usr/local/var/lib/gvm
+	chown gvm:gvm -R /usr/local/var/log/gvm
+	chown gvm:gvm -R /usr/local/var/run
+
+	adduser openvas-sync gvm
+	adduser gvm openvas-sync
+	touch /firstrun
+fi
+
 if [ ! -f "/data/firstrun" ]; then
-  echo "Running first start configuration..."
-  
-  echo "Creating Openvas NVT sync user"
-  useradd --home-dir /usr/local/share/openvas openvas-sync
-  chown openvas-sync:openvas-sync -R /usr/local/share/openvas
-  chown openvas-sync:openvas-sync -R /usr/local/var/lib/openvas
-  
-  echo "Creating Greenbone Vulnerability system user"
-  useradd --home-dir /usr/local/share/gvm gvm
-  chown gvm:gvm -R /usr/local/share/gvm
-  mkdir /usr/local/var/lib/gvm/cert-data
-  chown gvm:gvm -R /usr/local/var/lib/gvm
-  chmod 770 -R /usr/local/var/lib/gvm
-  chown gvm:gvm -R /usr/local/var/log/gvm
-  chown gvm:gvm -R /usr/local/var/run
-  
-  echo "Creating Greenbone Vulnerability Manager database"
-  su -c "createuser -DRS gvm" postgres
-  su -c "createdb -O gvm gvmd" postgres
-  su -c "psql --dbname=gvmd --command='create role dba with superuser noinherit;'" postgres
-  su -c "psql --dbname=gvmd --command='grant dba to gvm;'" postgres
-  su -c "psql --dbname=gvmd --command='create extension \"uuid-ossp\";'" postgres
-  
-  adduser openvas-sync gvm
-  adduser gvm openvas-sync
-  touch /data/firstrun
+	echo "Creating Greenbone Vulnerability Manager database"
+	su -c "createuser -DRS gvm" postgres
+	su -c "createdb -O gvm gvmd" postgres
+	su -c "psql --dbname=gvmd --command='create role dba with superuser noinherit;'" postgres
+	su -c "psql --dbname=gvmd --command='grant dba to gvm;'" postgres
+	su -c "psql --dbname=gvmd --command='create extension \"uuid-ossp\";'" postgres
+	touch /data/firstrun
 fi
 
 echo "Updating NVTs..."
