@@ -29,15 +29,18 @@ echo "Redis ready."
 
 
 if  [ ! -d /data ]; then
-	echo "Create Data folder"
+	echo "Creating Data folder..."
         mkdir /data
 fi
 
 if  [ ! -d /data/database ]; then
-	echo "Create Database folder"
-	mkdir /data/database
-	mkdir -p /var/lib/postgresql/10
+	echo "Creating Database folder..."
+	if  [ -d /var/lib/postgresql/10/main ]; then
+		mv /var/lib/postgresql/10/main /data/database
+	fi
 	ln -s /data/database /var/lib/postgresql/10/main
+	chown postgres:postgres -R /var/lib/postgresql/10/main
+	chown postgres:postgres -R /data/database
 fi
 
 echo "Starting PostgreSQL..."

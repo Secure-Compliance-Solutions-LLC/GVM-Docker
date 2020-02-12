@@ -24,7 +24,7 @@ This command will pull, create, and start the container:
 
 Without persistent volume:
 
-```bash
+```shell
 docker run --detach --publish 8080:9392 -e PASSWORD="Your admin password here" --name gvm securecompliance/gvm
 ```
 With persistent volume:
