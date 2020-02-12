@@ -7,7 +7,7 @@ PASSWORD=${PASSWORD:-admin}
 if [ ! -d "/run/redis" ]; then
 	mkdir /run/redis
 fi
-if  [ -S /run/redis/redis.sock ]; do
+if  [ -S /run/redis/redis.sock ]; then
         rm /run/redis/redis.sock
 fi
 redis-server --unixsocket /run/redis/redis.sock --unixsocketperm 700 --timeout 0 --databases 128 --maxclients 512 --daemonize yes --port 6379 --bind 0.0.0.0
