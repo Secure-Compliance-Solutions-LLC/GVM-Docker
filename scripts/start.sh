@@ -33,8 +33,10 @@ if  [ ! -d /data ]; then
         mkdir /data
 fi
 
-if  [ ! -h /data/database ]; then
+if  [ ! -d /data/database ]; then
 	echo "Create Database folder"
+	mkdir /data/database
+	mkdir -p /var/lib/postgresql/10
 	ln -s /data/database /var/lib/postgresql/10/main
 fi
 
