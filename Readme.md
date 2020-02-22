@@ -2,6 +2,18 @@
 
 This docker image is based on GVM 11 but with a few package modifications. After years of successfully using the OpenVAS 8/9 package, maintained by the Kali project, we started having performance issues. After months of trying to tweak OpenVAS, with varying and short lived success, we decided to maintain our own packaged version of GVM 11. This was done to streamline the installation, cleanup, and improve reliability.
 
+## Important Note
+
+Currently the GVM reporting does not allow you to export reports containing more than 1000 lines. This is true for all report types. We have found a way around this limitation; however, it creates a problem with the webUI and the vulnerability data wont load in the browser. The solution we have, right now, is a script you will need to download and run. It will let you choose which container you'd like to patch and which patch you'd like to implement. If you "fix" the 1000 lines report exporting issue, it breaks the UI. Once you "fix" the UI reporting, you can no longer export more than 1000 lines in your reports. We will continue to work on a better solution, but for now, this does work.
+
+To implement this fix, run the following command and choose from the patching options AFTER you finished the rest of the setup.
+```bash
+docker exec -it gvm bash -exec "/reportFix.sh"
+```
+Note: we have used the container name gvm to be consistent with the rest of the documentation. Modify the command accordingly.
+
+
+
 ## Deployment
 
 **Install docker**

@@ -56,6 +56,7 @@ texlive-latex-extra
 uuid-dev
 wapiti
 wget
+whiptail
 xsltproc
 EOF
 } | xargs apt-get install -yq --no-install-recommends
