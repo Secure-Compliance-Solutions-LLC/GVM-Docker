@@ -3,7 +3,7 @@ set -Eeuo pipefail
 
 USERNAME=${USERNAME:-admin}
 PASSWORD=${PASSWORD:-admin}
-MAX_ROWS_PER_PAGE=${MAX_ROWS_PER_PAGE:-100000}
+#MAX_ROWS_PER_PAGE=${MAX_ROWS_PER_PAGE:-100000}
 
 if [ ! -d "/run/redis" ]; then
 	mkdir /run/redis
@@ -119,12 +119,12 @@ until su -c "gvmd --get-users" gvm; do
 	sleep 1
 done
 
-if [ ! -f "/data/set_max_rows_per_page" ]; then
-	echo "Setting \"Max Rows Per Page\" to raise the report size limit"
-	su -c "gvmd --modify-setting 76374a7a-0569-11e6-b6da-28d24461215b --value $MAX_ROWS_PER_PAGE" gvm
-	
-	touch /data/set_max_rows_per_page
-fi
+#if [ ! -f "/data/set_max_rows_per_page" ]; then
+#	echo "Setting \"Max Rows Per Page\" to raise the report size limit"
+#	su -c "gvmd --modify-setting 76374a7a-0569-11e6-b6da-28d24461215b --value $MAX_ROWS_PER_PAGE" gvm
+#	
+#	touch /data/set_max_rows_per_page
+#fi
 
 if [ ! -f "/data/created_gvm_user" ]; then
 	echo "Creating Greenbone Vulnerability Manager admin user"
