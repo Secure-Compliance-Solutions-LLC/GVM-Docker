@@ -4,10 +4,10 @@ whiptail --title "GVM Reporting Fix" --msgbox "This tool was created as a short 
 
 # patching functions
 exportingPatch(){
-gvmd --modify-setting 76374a7a-0569-11e6-b6da-28d24461215b             --value 100000
+su -c "gvmd --modify-setting 76374a7a-0569-11e6-b6da-28d24461215b --value 100000" gvm
 }
 webUIPatch(){
-gvmd --modify-setting 76374a7a-0569-11e6-b6da-28d24461215b             --value 100
+su -c "gvmd --modify-setting 76374a7a-0569-11e6-b6da-28d24461215b --value 100" gvm
 }
 
 fixMenu=$(
