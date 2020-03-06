@@ -4,9 +4,9 @@ This docker image is based on GVM 11 but with a few package modifications. After
 
 ## Important Note
 
-Currently the GVM reporting does not allow you to export reports containing more than 1000 lines. This is true for all report types. We have found a way around this limitation; however, it creates a problem with the webUI and the vulnerability data wont load in the browser. The solution we have, right now, is a script you will need to download and run. It will let you choose which container you'd like to patch and which patch you'd like to implement. If you "fix" the 1000 lines report exporting issue, it breaks the UI. Once you "fix" the UI reporting, you can no longer export more than 1000 lines in your reports. We will continue to work on a better solution, but for now, this does work.
+Currently the GVM reporting does not allow you to export reports containing more than 1000 lines. This is true for all report types. We have found a way around this limitation; however, it creates a problem with the webUI and the vulnerability data will take longer to load in the browser the higher you set the max rows. We have created a script that will allow you to set a custom rows per page value based on the size of your scan results. We have found that it isn't worth the hassle to try exporting reports with more than 15000 lines. 15000 seems to be the sweet spot that will usually work, provided you have enough RAM in the device used to access the web UI. 
 
-To implement this fix, run the following command and choose from the patching options AFTER you finished the rest of the setup.
+To implement this fix, run the following command AFTER you finished the rest of the setup.
 ```bash
 docker exec -it gvm bash -exec "/reportFix.sh"
 ```
