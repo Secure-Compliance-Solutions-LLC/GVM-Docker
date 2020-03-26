@@ -15,7 +15,7 @@ ENV gvm_libs_version="v11.0.0" \
     openvas_smb="v1.0.5" \
     open_scanner_protocol_daemon="v2.0.0" \
     ospd_openvas="v1.0.0" \
-    python_gvm_version="v1.0.0"
+    python_gvm_version="v1.3.0"
 
 RUN echo "Starting Build..." && mkdir /build
 
