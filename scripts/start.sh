@@ -40,6 +40,12 @@ if  [ ! -d /data/database ]; then
 	chown postgres:postgres -R /data/database
 fi
 
+if  [ ! -d /data/gnupg ]; then
+	echo "Creating gnupg folder..."
+	mv /usr/local/var/lib/gvm/gvmd/gnupg /data/gnupg
+	ln -s /data/gnupg /usr/local/var/lib/gvm/gvmd/gnupg
+fi
+
 if [ -d /var/lib/postgresql/10/main ]; then
 	echo "Fixing Database folder..."
 	rm -rf /var/lib/postgresql/10/main
