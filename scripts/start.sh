@@ -40,9 +40,12 @@ if  [ ! -d /data/database ]; then
 	chown postgres:postgres -R /data/database
 fi
 
-if  [ ! -d /data/gnupg ]; then
-	echo "Creating gnupg folder..."
-	ln -s /data/gnupg /usr/local/var/lib/gvm/gvmd/gnupg
+if  [ ! -d /data/gvmd ]; then
+	echo "Creating gvmd folder..."
+	mkdir /data/gvmd
+	chown gvm:gvm -R /data/gvmd
+	rm -rf /usr/local/var/lib/gvm/gvmd
+	ln -s /data/gvmd /usr/local/var/lib/gvm/gvmd
 fi
 
 if [ -d /var/lib/postgresql/10/main ]; then
