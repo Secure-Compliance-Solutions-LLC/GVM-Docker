@@ -42,7 +42,6 @@ fi
 
 if  [ ! -d /data/gnupg ]; then
 	echo "Creating gnupg folder..."
-	mv /usr/local/var/lib/gvm/gvmd/gnupg /data/gnupg
 	ln -s /data/gnupg /usr/local/var/lib/gvm/gvmd/gnupg
 fi
 
