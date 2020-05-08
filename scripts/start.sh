@@ -40,14 +40,6 @@ if  [ ! -d /data/database ]; then
 	chown postgres:postgres -R /data/database
 fi
 
-if  [ ! -d /data/gvmd ]; then
-	echo "Creating gvmd folder..."
-	mkdir /data/gvmd
-	chown gvm:gvm -R /data/gvmd
-	rm -rf /usr/local/var/lib/gvm/gvmd
-	ln -s /data/gvmd /usr/local/var/lib/gvm/gvmd
-fi
-
 if [ -d /var/lib/postgresql/10/main ]; then
 	echo "Fixing Database folder..."
 	rm -rf /var/lib/postgresql/10/main
@@ -89,6 +81,14 @@ if [ ! -f "/data/firstrun" ]; then
 	su -c "psql --dbname=gvmd --command='grant dba to gvm;'" postgres
 	su -c "psql --dbname=gvmd --command='create extension \"uuid-ossp\";'" postgres
 	touch /data/firstrun
+fi
+
+if  [ ! -d /data/gvmd ]; then
+	echo "Creating gvmd folder..."
+	mkdir /data/gvmd
+	chown gvm:gvm -R /data/gvmd
+	rm -rf /usr/local/var/lib/gvm/gvmd
+	ln -s /data/gvmd /usr/local/var/lib/gvm/gvmd
 fi
 
 echo "Updating NVTs..."
