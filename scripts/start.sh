@@ -110,6 +110,10 @@ if [ -S /tmp/ospd.sock ]; then
   rm /tmp/ospd.sock
 fi
 
+if [ ! -d /var/run/ospd ]; then
+  mkdir /var/run/ospd
+fi
+
 echo "Starting Open Scanner Protocol daemon for OpenVAS..."
 ospd-openvas --log-file /usr/local/var/log/gvm/ospd-openvas.log --unix-socket /tmp/ospd.sock --log-level INFO
 
