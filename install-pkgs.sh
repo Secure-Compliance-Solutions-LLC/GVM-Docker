@@ -50,6 +50,7 @@ python3-setuptools
 redis-server
 redis-tools
 rsync
+sendmail
 smbclient
 texlive-fonts-recommended
 texlive-latex-extra
