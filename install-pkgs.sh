@@ -23,6 +23,7 @@ libgpgme-dev
 libhiredis-dev
 libical2-dev
 libksba-dev
+libldap2-dev
 libmicrohttpd-dev
 libnet-snmp-perl
 libpcap-dev
