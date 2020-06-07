@@ -10,7 +10,7 @@ fi
 if  [ -S /run/redis/redis.sock ]; then
         rm /run/redis/redis.sock
 fi
-redis-server --unixsocket /run/redis/redis.sock --unixsocketperm 700 --timeout 0 --databases 128 --maxclients 512 --daemonize yes --port 6379 --bind 0.0.0.0
+redis-server --unixsocket /run/redis/redis.sock --unixsocketperm 700 --timeout 0 --databases 128 --maxclients 4096 --daemonize yes --port 6379 --bind 0.0.0.0
 
 echo "Wait for redis socket to be created..."
 while  [ ! -S /run/redis/redis.sock ]; do
