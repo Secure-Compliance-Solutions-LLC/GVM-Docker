@@ -4,7 +4,7 @@ set -Eeuo pipefail
 USERNAME=${USERNAME:-admin}
 PASSWORD=${PASSWORD:-admin}
 
-HTTPS=${HTTPS:-false}
+HTTPS=${HTTPS:-true}
 
 if [ ! -d "/run/redis" ]; then
 	mkdir /run/redis
