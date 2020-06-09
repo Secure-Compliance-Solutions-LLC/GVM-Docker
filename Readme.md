@@ -37,12 +37,12 @@ This command will pull, create, and start the container:
 Without persistent volume:
 
 ```shell
-docker run --detach --publish 8080:9392 -e PASSWORD="Your admin password here" --name gvm securecompliance/gvm
+docker run --detach --publish 8080:9392 -e PASSWORD="Your admin password here" -e HTTPS="true" --name gvm securecompliance/gvm
 ```
 With persistent volume:
 
 ```shell
-docker run --detach --publish 8080:9392 -e PASSWORD="Your admin password here" --volume gvm-data:/data --name gvm securecompliance/gvm
+docker run --detach --publish 8080:9392 -e PASSWORD="Your admin password here" -e HTTPS="true" --volume gvm-data:/data --name gvm securecompliance/gvm
 ```
 
 You can use whatever `--name` you'd like but for the sake of this guide we're using gvm.
@@ -62,7 +62,7 @@ If you see "Your GVM 11 container is now ready to use!" then, you guessed it, yo
 
 ## Accessing Web Interface
 
-Access web interface using the IP address of the docker host on port 8080 - `http://<IP address>:8080`
+Access web interface using the IP address of the docker host on port 8080 - `https://<IP address>:8080`
 
 Default credentials:
 ```

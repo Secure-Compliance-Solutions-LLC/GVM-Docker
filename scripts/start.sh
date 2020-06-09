@@ -4,6 +4,8 @@ set -Eeuo pipefail
 USERNAME=${USERNAME:-admin}
 PASSWORD=${PASSWORD:-admin}
 
+HTTPS=${HTTPS:-false}
+
 if [ ! -d "/run/redis" ]; then
 	mkdir /run/redis
 fi
@@ -87,8 +89,82 @@ if  [ ! -d /data/gvmd ]; then
 	echo "Creating gvmd folder..."
 	mkdir /data/gvmd
 	chown gvm:gvm -R /data/gvmd
+fi
+
+if  [ ! -h /usr/local/var/lib/gvm/gvmd ]; then
+	echo "Fixing gvmd folder..."
 	rm -rf /usr/local/var/lib/gvm/gvmd
 	ln -s /data/gvmd /usr/local/var/lib/gvm/gvmd
+fi
+
+if  [ ! -d /data/certs ] && [ $HTTPS == "true" ]; then
+	echo "Creating certs folder..."
+	mkdir -p /data/certs/CA
+	mkdir -p /data/certs/private
+	
+	echo "Generating certs..."
+	gvm-manage-certs -a
+	
+	cp /usr/local/var/lib/gvm/CA/* /data/certs/CA/
+	
+	cp -r /usr/local/var/lib/gvm/private/* /data/certs/private/
+	
+	chown gvm:gvm -R /data/certs
+fi
+
+if [ ! -h /usr/local/var/lib/gvm/CA ] && [ $HTTPS == "true" ]; then
+	echo "Fixing certs CA folder..."
+	rm -rf /usr/local/var/lib/gvm/CA
+	ln -s /data/certs/CA /usr/local/var/lib/gvm/CA
+	chown gvm:gvm -R /data/certs
+	chown gvm:gvm -R /usr/local/var/lib/gvm/CA
+fi
+
+if [ ! -h /usr/local/var/lib/gvm/private ] && [ $HTTPS == "true" ]; then
+	echo "Fixing certs private folder..."
+	rm -rf /usr/local/var/lib/gvm/private
+	ln -s /data/certs/private /usr/local/var/lib/gvm/private
+	chown gvm:gvm -R /data/certs
+	chown gvm:gvm -R /usr/local/var/lib/gvm/private
+fi
+
+if  [ ! -d /data/plugins ]; then
+	echo "Creating gvmd folder..."
+	mkdir /data/plugins
+fi
+
+if [ ! -h /usr/local/var/lib/openvas/plugins ]; then
+	echo "Fixing NVT Plugins folder..."
+	rm -rf /usr/local/var/lib/openvas/plugins
+	ln -s /data/plugins /usr/local/var/lib/openvas/plugins
+	chown openvas-sync:openvas-sync -R /data/plugins
+	chown openvas-sync:openvas-sync -R /usr/local/var/lib/openvas/plugins
+fi
+
+if  [ ! -d /data/cert-data ]; then
+	echo "Creating CERT Feed folder..."
+	mkdir /data/cert-data
+fi
+
+if [ ! -h /usr/local/var/lib/gvm/cert-data ]; then
+	echo "Fixing CERT Feed folder..."
+	rm -rf /usr/local/var/lib/gvm/cert-data
+	ln -s /data/cert-data /usr/local/var/lib/gvm/cert-data
+	chown openvas-sync:openvas-sync -R /data/cert-data
+	chown openvas-sync:openvas-sync -R /usr/local/var/lib/gvm/cert-data
+fi
+
+if  [ ! -d /data/scap-data ]; then
+	echo "Creating SCAP Feed folder..."
+	mkdir /data/scap-data
+fi
+
+if [ ! -h /usr/local/var/lib/gvm/scap-data ]; then
+	echo "Fixing SCAP Feed folder..."
+	rm -rf /usr/local/var/lib/gvm/scap-data
+	ln -s /data/scap-data /usr/local/var/lib/gvm/scap-data
+	chown openvas-sync:openvas-sync -R /data/scap-data
+	chown openvas-sync:openvas-sync -R /usr/local/var/lib/gvm/scap-data
 fi
 
 echo "Updating NVTs..."
@@ -124,7 +200,7 @@ done
 chmod 666 /tmp/ospd.sock
 
 echo "Starting Greenbone Vulnerability Manager..."
-su -c "gvmd" gvm
+su -c "gvmd --listen=0.0.0.0 --port=9390" gvm
 
 until su -c "gvmd --get-users" gvm; do
 	sleep 1
@@ -138,8 +214,11 @@ if [ ! -f "/data/created_gvm_user" ]; then
 fi
 
 echo "Starting Greenbone Security Assistant..."
-su -c "gsad --verbose --http-only --no-redirect --port=9392" gvm
-
+if [ $HTTPS == "true" ]; then
+	su -c "gsad --verbose --gnutls-priorities=SECURE128:-AES-128-CBC:-CAMELLIA-128-CBC:-VERS-SSL3.0:-VERS-TLS1.0 --no-redirect --mlisten=127.0.0.1 --mport=9390 --port=9392" gvm
+else
+	su -c "gsad --verbose --http-only --no-redirect --mlisten=127.0.0.1 --mport=9390 --port=9392" gvm
+fi
 echo "++++++++++++++++++++++++++++++++++++++++++++++"
 echo "+ Your GVM 11 container is now ready to use! +"
 echo "++++++++++++++++++++++++++++++++++++++++++++++"
