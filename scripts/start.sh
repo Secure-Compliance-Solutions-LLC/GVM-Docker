@@ -97,7 +97,7 @@ if  [ ! -h /usr/local/var/lib/gvm/gvmd ]; then
 	ln -s /data/gvmd /usr/local/var/lib/gvm/gvmd
 fi
 
-if  [ ! -d /data/certs ] && [ $HTTPS == "true" ]; then
+if  [ ! -d /data/certs ]; then
 	echo "Creating certs folder..."
 	mkdir -p /data/certs/CA
 	mkdir -p /data/certs/private
@@ -112,7 +112,7 @@ if  [ ! -d /data/certs ] && [ $HTTPS == "true" ]; then
 	chown gvm:gvm -R /data/certs
 fi
 
-if [ ! -h /usr/local/var/lib/gvm/CA ] && [ $HTTPS == "true" ]; then
+if [ ! -h /usr/local/var/lib/gvm/CA ]; then
 	echo "Fixing certs CA folder..."
 	rm -rf /usr/local/var/lib/gvm/CA
 	ln -s /data/certs/CA /usr/local/var/lib/gvm/CA
@@ -120,7 +120,7 @@ if [ ! -h /usr/local/var/lib/gvm/CA ] && [ $HTTPS == "true" ]; then
 	chown gvm:gvm -R /usr/local/var/lib/gvm/CA
 fi
 
-if [ ! -h /usr/local/var/lib/gvm/private ] && [ $HTTPS == "true" ]; then
+if [ ! -h /usr/local/var/lib/gvm/private ]; then
 	echo "Fixing certs private folder..."
 	rm -rf /usr/local/var/lib/gvm/private
 	ln -s /data/certs/private /usr/local/var/lib/gvm/private
