@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV LANG=C.UTF-8
@@ -15,7 +15,7 @@ ENV gvm_libs_version="v11.0.1" \
     openvas_smb="v1.0.5" \
     open_scanner_protocol_daemon="v2.0.1" \
     ospd_openvas="v1.0.1" \
-    python_gvm_version="v1.3.0"
+    python_gvm_version="1.6.0"
 
 RUN echo "Starting Build..." && mkdir /build
 
@@ -103,13 +103,7 @@ RUN cd /build && \
     # Install Greenbone Vulnerability Management Python Library
     #
     
-RUN cd /build && \
-    wget --no-verbose https://github.com/greenbone/python-gvm/archive/$python_gvm_version.tar.gz && \
-    tar -zxf $python_gvm_version.tar.gz && \
-    cd /build/*/ && \
-    python3 setup.py install && \
-    cd /build && \
-    rm -rf *
+RUN pip3 install python-gvm==$python_gvm_version
     
     #
     # Install Open Scanner Protocol daemon (OSPd)

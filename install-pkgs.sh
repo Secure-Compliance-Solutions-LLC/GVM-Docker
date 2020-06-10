@@ -21,7 +21,7 @@ libgnutls28-dev
 libgpgme11-dev
 libgpgme-dev
 libhiredis-dev
-libical2-dev
+libical-dev
 libksba-dev
 libldap2-dev
 libmicrohttpd-dev
