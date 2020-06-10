@@ -36,22 +36,22 @@ fi
 
 if  [ ! -d /data/database ]; then
 	echo "Creating Database folder..."
-	mv /var/lib/postgresql/10/main /data/database
-	ln -s /data/database /var/lib/postgresql/10/main
-	chown postgres:postgres -R /var/lib/postgresql/10/main
+	mv /var/lib/postgresql/12/main /data/database
+	ln -s /data/database /var/lib/postgresql/12/main
+	chown postgres:postgres -R /var/lib/postgresql/12/main
 	chown postgres:postgres -R /data/database
 fi
 
-if [ -d /var/lib/postgresql/10/main ]; then
+if [ -d /var/lib/postgresql/12/main ]; then
 	echo "Fixing Database folder..."
-	rm -rf /var/lib/postgresql/10/main
-	ln -s /data/database /var/lib/postgresql/10/main
-	chown postgres:postgres -R /var/lib/postgresql/10/main
+	rm -rf /var/lib/postgresql/12/main
+	ln -s /data/database /var/lib/postgresql/12/main
+	chown postgres:postgres -R /var/lib/postgresql/12/main
 	chown postgres:postgres -R /data/database
 fi
 
 echo "Starting PostgreSQL..."
-/usr/bin/pg_ctlcluster --skip-systemctl-redirect 10 main start
+/usr/bin/pg_ctlcluster --skip-systemctl-redirect 12 main start
 
 if [ ! -f "/firstrun" ]; then
 	echo "Running first start configuration..."
@@ -84,6 +84,8 @@ if [ ! -f "/data/firstrun" ]; then
 	su -c "psql --dbname=gvmd --command='create extension \"uuid-ossp\";'" postgres
 	touch /data/firstrun
 fi
+
+su -c "gvmd --migrate" gvm
 
 if  [ ! -d /data/gvmd ]; then
 	echo "Creating gvmd folder..."
@@ -129,7 +131,7 @@ if [ ! -h /usr/local/var/lib/gvm/private ] && [ $HTTPS == "true" ]; then
 fi
 
 if  [ ! -d /data/plugins ]; then
-	echo "Creating gvmd folder..."
+	echo "Creating NVT Plugins folder..."
 	mkdir /data/plugins
 fi
 
