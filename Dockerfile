@@ -119,7 +119,7 @@ RUN mkdir /build && \
     cd /build/*/ && \
     python3 setup.py install && \
     cd / && \
-    rm -rf *
+    rm -rf /build
     
     #
     # Install Open Scanner Protocol for OpenVAS
