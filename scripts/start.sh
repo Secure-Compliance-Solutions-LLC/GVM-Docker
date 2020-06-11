@@ -42,16 +42,8 @@ if  [ ! -d /data/database ]; then
 	chown postgres:postgres -R /data/database
 fi
 
-if [ -d /var/lib/postgresql/12/main ]; then
-	echo "Fixing Database folder..."
-	rm -rf /var/lib/postgresql/12/main
-	ln -s /data/database /var/lib/postgresql/12/main
-	chown postgres:postgres -R /var/lib/postgresql/12/main
-	chown postgres:postgres -R /data/database
-fi
-
 echo "Starting PostgreSQL..."
-/usr/bin/pg_ctlcluster --skip-systemctl-redirect 12 main start
+su -c "/usr/lib/postgresql/12/bin/pg_ctl -D /data/database start" postgres
 
 if [ ! -f "/firstrun" ]; then
 	echo "Running first start configuration..."
