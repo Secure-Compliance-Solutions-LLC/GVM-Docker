@@ -2,6 +2,13 @@
 
 apt-get update
 
+apt-get install -y gnupg curl
+
+echo "deb http://apt.postgresql.org/pub/repos/apt focal-pgdg main" > /etc/apt/sources.list.d/pgdg.list
+curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
+
+apt-get update
+
 { cat <<EOF
 bison
 build-essential
@@ -37,9 +44,8 @@ nsis
 openssh-client
 perl-base
 pkg-config
-postgresql
-postgresql-contrib
-postgresql-server-dev-all
+postgresql-12
+postgresql-server-dev-12
 python3-defusedxml
 python3-dialog
 python3-lxml
