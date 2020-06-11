@@ -37,10 +37,9 @@ fi
 if  [ ! -d /data/database ]; then
 	echo "Creating Database folder..."
 	mv /var/lib/postgresql/12/main /data/database
-	ln -s /data/database /var/lib/postgresql/12/main
-	chown postgres:postgres -R /var/lib/postgresql/12/main
-	chown postgres:postgres -R /data/database
 fi
+
+chown postgres:postgres -R /data/database
 
 echo "Starting PostgreSQL..."
 su -c "/usr/lib/postgresql/12/bin/pg_ctl -D /data/database start" postgres
