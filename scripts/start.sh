@@ -37,6 +37,9 @@ fi
 if  [ ! -d /data/database ]; then
 	echo "Creating Database folder..."
 	mv /var/lib/postgresql/12/main /data/database
+	ln -s /data/database/postgresql.auto.conf /data/database/postgresql.conf
+	cp /etc/postgresql/12/main/pg_hba.conf /data/database/
+	cp /etc/postgresql/12/main/pg_ident.conf /data/database/
 fi
 
 chown postgres:postgres -R /data/database
