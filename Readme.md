@@ -21,7 +21,7 @@ This docker image is based on GVM 11 but with a few tweaks. After years of succe
 
 ### Current versions
 
-* 11.0.1-r1 (Postgres 12)
+* 11.0.1-r2 (Postgres 12)
 
 ## Quick start
 
