@@ -36,6 +36,8 @@ fi
 
 if  [ ! -d /data/database ]; then
 	echo "Creating Database folder..."
+	mkdir /data/database
+	chown postgres:postgres -R /data/database
 	su -c "/usr/lib/postgresql/12/bin/initdb /data/database" postgres
 fi
 
