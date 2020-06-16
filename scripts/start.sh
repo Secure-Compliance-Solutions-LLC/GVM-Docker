@@ -5,6 +5,7 @@ USERNAME=${USERNAME:-admin}
 PASSWORD=${PASSWORD:-admin}
 
 HTTPS=${HTTPS:-true}
+TZ=${TZ:-UTC}
 
 if [ ! -d "/run/redis" ]; then
 	mkdir /run/redis
@@ -48,6 +49,8 @@ su -c "/usr/lib/postgresql/12/bin/pg_ctl -D /data/database start" postgres
 
 if [ ! -f "/firstrun" ]; then
 	echo "Running first start configuration..."
+	
+	ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 	echo "Creating Openvas NVT sync user..."
 	useradd --home-dir /usr/local/share/openvas openvas-sync

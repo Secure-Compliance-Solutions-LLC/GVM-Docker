@@ -66,11 +66,12 @@ If you see "Your GVM 11 container is now ready to use!" then, you guessed it, yo
 
 ## All Environment Variables
 
-| Name     | Description                            | Default Value |
-| -------- | -------------------------------------- | ------------- |
-| USERNAME | Default admin username                 | admin         |
-| PASSWORD | Default admin password                 | admin         |
-| HTTPS    | If the web ui should use https vs http | true          |
+| Name     | Description                                                  | Default Value |
+| -------- | ------------------------------------------------------------ | ------------- |
+| USERNAME | Default admin username                                       | admin         |
+| PASSWORD | Default admin password                                       | admin         |
+| HTTPS    | If the web ui should use https vs http                       | true          |
+| TZ       | Timezone name for a list look here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones | UTC           |
 
 
 
