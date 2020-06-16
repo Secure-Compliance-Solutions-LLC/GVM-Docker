@@ -42,6 +42,7 @@ net-tools
 nmap
 nsis
 openssh-client
+openssh-server
 perl-base
 pkg-config
 postgresql-12

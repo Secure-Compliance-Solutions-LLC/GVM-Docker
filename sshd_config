@@ -1,0 +1,17 @@
+X11Forwarding no
+PrintMotd no
+AllowUsers gvm
+AuthenticationMethods publickey
+Ciphers chacha20-poly1305@openssh.com
+KexAlgorithms curve25519-sha256@libssh.org
+MACs hmac-sha2-512-etm@openssh.com
+PasswordAuthentication no
+ChallengeResponseAuthentication no
+HostKey /etc/ssh/ssh_host_ed25519_key
+PrintMotd no
+PrintLastLog no
+PermitRootLogin no
+AllowAgentForwarding no
+AllowTcpForwarding no
+MaxAuthTries 2
+MaxSessions 0

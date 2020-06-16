@@ -6,6 +6,7 @@ PASSWORD=${PASSWORD:-admin}
 
 HTTPS=${HTTPS:-true}
 TZ=${TZ:-UTC}
+SSHD=${SSHD:-false}
 
 if [ ! -d "/run/redis" ]; then
 	mkdir /run/redis
@@ -47,6 +48,22 @@ chown postgres:postgres -R /data/database
 echo "Starting PostgreSQL..."
 su -c "/usr/lib/postgresql/12/bin/pg_ctl -D /data/database start" postgres
 
+if  [ ! -d /data/ssh ]; then
+	echo "Creating SSH folder..."
+	mkdir /data/ssh
+	
+	rm -rf /etc/ssh/ssh_host_*
+	
+	dpkg-reconfigure openssh-server
+	
+	mv /etc/ssh/ssh_host_* /data/ssh/
+fi
+
+if  [ ! -h /etc/ssh ]; then
+	rm -rf /etc/ssh
+	ln -s /data/ssh /etc/ssh
+fi
+
 if [ ! -f "/firstrun" ]; then
 	echo "Running first start configuration..."
 	
@@ -68,6 +85,7 @@ if [ ! -f "/firstrun" ]; then
 
 	adduser openvas-sync gvm
 	adduser gvm openvas-sync
+	
 	touch /firstrun
 fi
 
@@ -217,9 +235,43 @@ if [ $HTTPS == "true" ]; then
 else
 	su -c "gsad --verbose --http-only --no-redirect --mlisten=127.0.0.1 --mport=9390 --port=9392" gvm
 fi
+
+if [ $SSHD == "true" ]; then
+	echo "Starting OpenSSH Server..."
+	
+	if  [ ! -d /data/scanner-ssh-keys ]; then
+		echo "Creating scanner SSH keys folder..."
+		mkdir /data/scanner-ssh-keys
+		chown gvm:gvm -R /data/scanner-ssh-keys
+	fi
+	if [ ! -h /usr/local/share/gvm/.ssh ]; then
+		echo "Fixing scanner SSH keys folder..."
+		rm -rf /usr/local/share/gvm/.ssh
+		ln -s /data/scanner-ssh-keys /usr/local/share/gvm/.ssh
+		chown gvm:gvm -R /data/scanner-ssh-keys
+		chown gvm:gvm -R /usr/local/share/gvm/.ssh
+	fi
+	
+	if [ ! -d /sockets ]; then
+		mkdir /sockets
+		chown gvm:gvm -R /sockets
+	fi
+	
+	echo "gvm:gvm" | chpasswd
+	
+	rm -rf /var/run/sshd
+	mkdir -p /var/run/sshd
+	
+	/usr/sbin/sshd -f /sshd_config
+fi
+
 echo "++++++++++++++++++++++++++++++++++++++++++++++"
 echo "+ Your GVM 11 container is now ready to use! +"
 echo "++++++++++++++++++++++++++++++++++++++++++++++"
+echo ""
+echo "-----------------------------------------------------------"
+echo "Server Public key: $(cat /etc/ssh/ssh_host_ed25519_key.pub)"
+echo "-----------------------------------------------------------"
 echo ""
 echo "++++++++++++++++"
 echo "+ Tailing logs +"
