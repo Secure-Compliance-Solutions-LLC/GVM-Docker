@@ -5,9 +5,16 @@ This docker image is based on GVM 11 but with a few tweaks. After years of succe
 ## Table of contents
 
 * [Quick Start](#quick-start)
+* [GVM Environment Variables](gvm-image-environment-variables)
+* [Scanner image Environment Variables](#scanner-image-environment-variables)
+* [GVM image Ports](#gvm-image-ports)
 * [How to use](#how-to-use)
   * [Accessing Web Interface](#accessing-web-interface)
-* [All Environment Variables](all-environment-variables)
+  * [Monitoring scan progress](#monitoring-scan-progress)
+  * [Checking the GVM logs](#checking-the-gvm-logs)
+  * [Updating the NVTs](#updating-the-nvts)
+  * [Change GVM report result limit](#change-gvm-report-result-limit)
+  * [Setup Remote scanner](#setup-remote-scanner)
 
 # Image tags
 
@@ -15,13 +22,17 @@ This docker image is based on GVM 11 but with a few tweaks. After years of succe
 | ----------------- | --------------------------------------- |
 | latest, master    | Latest dev version                      |
 | {version}         | A specific version of the image         |
-| scanner           | Scanner only image for remote scanning  |
+| scanner           | Latest dev scanner image                |
 | {version}-scanner | A specific version of the scanner image |
 | upgrade-database  | For upgrading the postgres database     |
 
-### Current versions
+### Current GVM Versions
 
-* 11.0.1-r2 (Postgres 12)
+* 11.0.1-r3 (Postgres 12)
+
+### Current Scanner Versions
+
+* 7.0.1-r1
 
 ## Quick start
 
@@ -41,10 +52,10 @@ curl https://get.docker.com | sh
 
 **Runing the container**
 
-This command will pull, create, and start the container:
+This command will pull, create, and start the container: (replace {version} with the version you want)
 
 ```shell
-docker run --detach --publish 8080:9392 --env PASSWORD="Your admin password here" --volume gvm-data:/data --name gvm securecompliance/gvm:11.0.1-r1
+docker run --detach --publish 8080:9392 --env PASSWORD="Your admin password here" --volume gvm-data:/data --name gvm securecompliance/gvm:{version}
 ```
 
 You can use whatever `--name` you'd like but for the sake of this guide we're using gvm.
@@ -64,14 +75,35 @@ If you see "Your GVM 11 container is now ready to use!" then, you guessed it, yo
 
 
 
-## All Environment Variables
+## GVM image Environment Variables
 
 | Name     | Description                                                  | Default Value |
 | -------- | ------------------------------------------------------------ | ------------- |
 | USERNAME | Default admin username                                       | admin         |
 | PASSWORD | Default admin password                                       | admin         |
 | HTTPS    | If the web ui should use https vs http                       | true          |
+| SSHD     | If the ssh server for remote scanners should be started      | false         |
 | TZ       | Timezone name for a list look here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones | UTC           |
+
+
+
+## Scanner image Environment Variables
+
+| Name           | Description                            | Default Value      |
+| -------------- | -------------------------------------- | ------------------ |
+| MASTER_ADDRESS | IP or Hostname of the GVM container    | (No default value) |
+| MASTER_PORT    | SSH server port from the GVM container | 22                 |
+
+
+
+## GVM image Ports
+
+| Port Number | Description                                                  |
+| ----------- | ------------------------------------------------------------ |
+| 9392        | HTTPS GSA web interface                                      |
+| 9390        | Greenbone Vulnerability Manager XML API                      |
+| 5432        | Port for Postgres Database                                   |
+| 22          | SSH Server for remote scanners (if enabled with the SSHD variable) |
 
 
 
@@ -152,4 +184,28 @@ Note: we have used the container name gvm to be consistent with the rest of the 
 
 ### Setup Remote scanner
 
-TODO
+1. Create the main GVM container with the ssh server enabled and the ssh port published: (replace {version} with the version you want)
+
+   ```shell
+   docker run --detach --publish 8080:9392 --publish 2222:22 --env SSHD="true" --env PASSWORD="Your admin password here" --volume gvm-data:/data --name gvm securecompliance/gvm:{version}
+   ```
+
+2. Wait for the GVM container to fully start before continuing
+
+3. Create a scanner scanner container on the system you want to scan from:
+
+   ```shell
+   docker run --detach --volume scanner:/data --env MASTER_ADDRESS={IP or Hostname of GVM container} --env MASTER_PORT=2222 --name scanner securecompliance/gvm:scanner-{version}
+   ```
+
+1. If the remote scanner and the GVM container are on different networks then make sure the the scanner container can reach the ssh port on the GVM container
+
+2. After the scanner container fully starts check the logs for the "Scanner id" and "Public key"
+
+3. Now back on the host with the GVM container run the following command and enter a name for the scanner, the "Scanner id", and "Public key" from the scanner
+
+   ```shell
+   docker exec -it gvm /add-scanner.sh
+   ```
+
+4. now if you login to the GVM container web interface and go to "Configuration -> Scanners" you should see the scanner you just added listed
