@@ -224,7 +224,7 @@ done
 
 if [ ! -f "/data/created_gvm_user" ]; then
 	echo "Creating Greenbone Vulnerability Manager admin user"
-	su -c 'gvmd --role="Super Admin" --create-user="${USERNAME}" --password="${PASSWORD}"' gvm
+	su -c "gvmd --role=\"Super Admin\" --create-user=\"$USERNAME\" --password=\"$PASSWORD\"" gvm
 	
 	touch /data/created_gvm_user
 fi
