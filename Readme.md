@@ -21,18 +21,21 @@ This docker image is based on Greenbone Vulnerability Management 11. This Docker
 |Open Scanner Protocol daemon                     |v2.0.1   |
 
 
+**GVM Architecture**
+
 ![GVM Stack Diagram](https://www.greenbone.net/wp-content/uploads/gse-gvm-10-architecture.png)
 
 
 ## Table of contents
 
+* [Image tags](#image-tags)
 * [Quick Start](#quick-start)
 * [GVM Environment Variables](gvm-image-environment-variables)
 * [Scanner image Environment Variables](#scanner-image-environment-variables)
 * [GVM image Ports](#gvm-image-ports)
 * [How to use](#how-to-use)
 
-# Image tags
+## Image tags
 
 | Tag Name          | Description                             |
 | ----------------- | --------------------------------------- |
