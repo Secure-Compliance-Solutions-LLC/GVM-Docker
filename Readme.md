@@ -1,4 +1,10 @@
-# A Greenbone Vulnerability Management 11 Docker Image
+# A Greenbone Vulnerability ManagementDocker Image
+
+(https://img.shields.io/docker/pulls/securecompliance/gvm.svg)](https://hub.docker.com/r/securecompliance/gvm/) [![Docker Stars](https://img.shields.io/docker/stars/securecompliance/gvm.svg)](https://hub.docker.com/r/securecompliance/gvm/) [![]
+
+| Openvas Version | Greenbone Vulnerability Management Version|
+|-----------------|-------------------------------------------|
+| 9               | 11                                        |
 
 This docker image is based on GVM 11 but with a few tweaks. After years of successfully using the OpenVAS 8/9 package, maintained by the Kali project, we started having issues. After months of trying to tweak OpenVAS, with varying and short lived success, we decided to maintain our own packaged version of GVM 11. This was done to streamline the installation, cleanup, and improve reliability.
 
