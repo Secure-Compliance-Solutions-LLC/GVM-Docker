@@ -1,4 +1,4 @@
-# Greenbone Vulnerability Management (GVM) Docker Image
+# Greenbone Vulnerability Management (GVM) and OpenVAS Docker Image
 
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/securecompliance/gvm.svg)](https://hub.docker.com/r/securecompliance/gvm/) 
