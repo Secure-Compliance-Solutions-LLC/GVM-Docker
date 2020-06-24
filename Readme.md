@@ -3,6 +3,11 @@
 [![Docker Pulls](https://img.shields.io/docker/pulls/securecompliance/gvm.svg)](https://hub.docker.com/r/securecompliance/gvm/) 
 [![Docker Stars](https://img.shields.io/docker/stars/securecompliance/gvm.svg)](https://hub.docker.com/r/securecompliance/gvm/) 
 
+This docker image is based on Greenbone Vulnerability Management 11. This Docker image was developed to help steamline, cleanup, and improve reliability of the components of the stack from 
+- (1) Greenbone Security Assistant which it connects to the Greenbone Vulnerability Manager (GVM), which provides a full-featured user interface for vulnerability management and; 
+- (2) Open Vulnerability Assessment Scanner (OpenVAS), which it is used for the Greenbone Security Manager appliances and is a full-featured scan engine that executes a continuously updated and extended feed of Network Vulnerability Tests (NVTs) and; 
+- (3) the Greenbone Vulnerability Manager, which is the central management service between security scanners and the user clients, it manages the storage of any vulnerability management configurations and of the scan results. Access to data, control commands and workflows is offered via the XML-based Greenbone Management Protocol (GMP). Controlling scanners like OpenVAS is done via the Open Scanner Protocol (OSP).
+
 |       Stack Component                           | Version |
 |-------------------------------------------------|---------|
 |Greenbone Vulnerability Manager                  |v9.0.1   |
@@ -15,7 +20,6 @@
 |Greenbone Vulnerability Management Python Library|v1.6.0   |
 |Open Scanner Protocol daemon                     |v2.0.1   |
 
-This docker image is based on Greenbone Vulnerability Management 11. This Docker image was developed to help steamline, cleanup, and improve reliability of the components of the stack from (1) Greenbone Security Assistant which it connects to the Greenbone Vulnerability Manager (GVM), which provides a full-featured user interface for vulnerability management. And (2) Open Vulnerability Assessment Scanner (OpenVAS), which it is used for the Greenbone Security Manager appliances and is a full-featured scan engine that executes a continuously updated and extended feed of Network Vulnerability Tests (NVTs). And (3) the Greenbone Vulnerability Manager, which is the central management service between security scanners and the user clients, it manages the storage of any vulnerability management configurations and of the scan results. Access to data, control commands and workflows is offered via the XML-based Greenbone Management Protocol (GMP). Controlling scanners like OpenVAS is done via the Open Scanner Protocol (OSP).
 
 ![GVM Stack Diagram](https://www.greenbone.net/wp-content/uploads/gse-gvm-10-architecture.png)
 
