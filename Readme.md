@@ -5,9 +5,9 @@
 [![Docker Stars](https://img.shields.io/docker/stars/securecompliance/gvm.svg)](https://hub.docker.com/r/securecompliance/gvm/) 
 
 
-| OpenVAS Scanner | GVM Libraries        |GVMD        |GAS        |ospd-openvas          |Python-GVM |OpenVAS-smb|Open Scanner Protocol daemon|
-|-----------------|----------------------|------------|-----------|----------------------|-----------|-----------|----------------------------|
-| v7.0.1          | v11.0.1              |v9.0.1      |v9.0.1     |v1.0.1                |v1.6.0     |v1.0.5     |v2.0.1                      |
+| OpenVAS Scanner | GVM Libraries        |GVMD        |GAS        |ospd-openvas          |Python-GVM |OpenVAS-smb|OSPd   |
+|-----------------|----------------------|------------|-----------|----------------------|-----------|-----------|-------|
+| v7.0.1          | v11.0.1              |v9.0.1      |v9.0.1     |v1.0.1                |v1.6.0     |v1.0.5     |v2.0.1 |
 
 This docker image is based on GVM 11 but with a few tweaks. After years of successfully using the OpenVAS 8/9 package, maintained by the Kali project, we started having issues. After months of trying to tweak OpenVAS, with varying and short lived success, we decided to maintain our own packaged version of GVM 11. This was done to streamline the installation, cleanup, and improve reliability.
 
@@ -142,79 +142,11 @@ Create a new container with this command replacing {version} with the version yo
 docker run --detach --publish 8080:9392 --env PASSWORD="Your admin password here" --volume gvm-data:/data --name gvm securecompliance/gvm:{version}
 ```
 
+## How To Use
+- [Accessing Web Interface](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/Accessing-Web-Interface)
+- [Change GVM report result limit](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/Change-GVM-report-result-limit)
+- [Checking the GVM logs](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/Checking-the-GVM-logs)
+- [Monitoring scan progress](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/Monitoring-scan-progress)
+- [Updating the NVTs](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/Updating-the-NVTs)
+- [Setup Remote scanner](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/Setup-Remote-scanner)
 
-
-## How to use
-
-General information on using the image
-
-### Accessing the web interface
-
-Access web interface using the IP address of the docker host on port 8080 - `https://<IP address>:8080`
-
-Default credentials:
-```shell
-Username: admin
-Password: admin
-```
-
-### Monitoring scan progress
-
-This command will show you the GVM processes running inside the container:
-```shell
-docker top gvm
-```
-
-### Checking the GVM logs
-
-All the logs from /usr/local/var/log/gvm/* can be viewed by running:
-```shell
-docker logs gvm
-```
-
-### Updating the NVTs
-
-The NVTs will update every time the container starts. Even if you leave your container running 24/7, the easiest way to update your NVTs is to restart the container.
-```shell
-docker restart gvm
-```
-
-### Change GVM report result limit
-
-Currently the GVM reporting does not allow you to export reports containing more than 1000 lines. This is true for all report types. We have found a way around this limitation; however, it creates a problem with the webUI and the vulnerability data will take longer to load in the browser the higher you set the max rows. We have created a script that will allow you to set a custom rows per page value based on the size of your scan results. We have found that it isn't worth the hassle to try exporting reports with more than 15000 lines. 15000 seems to be the sweet spot that will usually work, provided you have enough RAM in the device used to access the web UI.
-
-To implement this fix, run the following command AFTER you finished the rest of the setup.
-
-```shell
-docker exec -it gvm bash -exec "/reportFix.sh"
-```
-
-Note: we have used the container name gvm to be consistent with the rest of the documentation. Modify the command accordingly.
-
-### Setup Remote scanner
-
-1. Create the main GVM container with the ssh server enabled and the ssh port published: (replace {version} with the version you want)
-
-   ```shell
-   docker run --detach --publish 8080:9392 --publish 2222:22 --env SSHD="true" --env PASSWORD="Your admin password here" --volume gvm-data:/data --name gvm securecompliance/gvm:{version}
-   ```
-
-2. Wait for the GVM container to fully start before continuing
-
-3. Create a scanner scanner container on the system you want to scan from:
-
-   ```shell
-   docker run --detach --volume scanner:/data --env MASTER_ADDRESS={IP or Hostname of GVM container} --env MASTER_PORT=2222 --name scanner securecompliance/gvm:scanner-{version}
-   ```
-
-1. If the remote scanner and the GVM container are on different networks then make sure the the scanner container can reach the ssh port on the GVM container
-
-2. After the scanner container fully starts check the logs for the "Scanner id" and "Public key"
-
-3. Now back on the host with the GVM container run the following command and enter a name for the scanner, the "Scanner id", and "Public key" from the scanner
-
-   ```shell
-   docker exec -it gvm /add-scanner.sh
-   ```
-
-4. now if you login to the GVM container web interface and go to "Configuration -> Scanners" you should see the scanner you just added listed
