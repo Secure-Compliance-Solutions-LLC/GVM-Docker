@@ -1,13 +1,20 @@
-# Greenbone Vulnerability Management (GVM) and OpenVAS Docker Image
-
+# Greenbone Vulnerability Stack Docker Image
 
 [![Docker Pulls](https://img.shields.io/docker/pulls/securecompliance/gvm.svg)](https://hub.docker.com/r/securecompliance/gvm/) 
 [![Docker Stars](https://img.shields.io/docker/stars/securecompliance/gvm.svg)](https://hub.docker.com/r/securecompliance/gvm/) 
 
+|       Stack Component                           | Version |
+|-------------------------------------------------|---------|
+|Greenbone Vulnerability Manager                  |v9.0.1   |
+|Greenbone Security Assistant                     |v9.0.1   |
+|Open Vulnerability Assessment Scanner            |v7.0.1   |
+|Greenbone Vulnerability Management Libraries     |v11.0.1  |
+|ospd-openvas                                     |v1.0.1   |
+|GVM Tools (Remote control your(GVM))             |v2.1.0   |
+|SMB module for OpenVAS Scanner                   |v1.0.5   |
+|Greenbone Vulnerability Management Python Library|v1.6.0   |
+|Open Scanner Protocol daemon                     |v2.0.1   |
 
-| OpenVAS Scanner | GVM Libraries        |GVMD        |GAS        |ospd-openvas          |Python-GVM |OpenVAS-smb|OSPd   |
-|-----------------|----------------------|------------|-----------|----------------------|-----------|-----------|-------|
-| v7.0.1          | v11.0.1              |v9.0.1      |v9.0.1     |v1.0.1                |v1.6.0     |v1.0.5     |v2.0.1 |
 
 This docker image is based on GVM 11 but with a few tweaks. After years of successfully using the OpenVAS 8/9 package, maintained by the Kali project, we started having issues. After months of trying to tweak OpenVAS, with varying and short lived success, we decided to maintain our own packaged version of GVM 11. This was done to streamline the installation, cleanup, and improve reliability.
 
