@@ -18,12 +18,6 @@ This docker image is based on GVM 11 but with a few tweaks. After years of succe
 * [Scanner image Environment Variables](#scanner-image-environment-variables)
 * [GVM image Ports](#gvm-image-ports)
 * [How to use](#how-to-use)
-  * [Accessing Web Interface](#accessing-web-interface)
-  * [Monitoring scan progress](#monitoring-scan-progress)
-  * [Checking the GVM logs](#checking-the-gvm-logs)
-  * [Updating the NVTs](#updating-the-nvts)
-  * [Change GVM report result limit](#change-gvm-report-result-limit)
-  * [Setup Remote scanner](#setup-remote-scanner)
 
 # Image tags
 
