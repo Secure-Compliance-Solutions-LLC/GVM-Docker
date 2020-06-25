@@ -32,6 +32,7 @@ apt install docker.io
 ```
 or
 
+You can use this script in the repo
 ```console
 wget https://raw.githubusercontent.com/Secure-Compliance-Solutions-LLC/GVM-Docker/master/install-docker.sh
 sudo bash ./install-docker.sh
