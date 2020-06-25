@@ -25,26 +25,6 @@ This docker image is based on Greenbone Vulnerability Management 11. This Docker
 
 ![GVM Stack Diagram](https://www.greenbone.net/wp-content/uploads/gse-gvm-10-architecture.png)
 
-
-## Table of contents
-
-* [Image tags](#image-tags)
-* [Quick Start](#quick-start)
-* [GVM Environment Variables](gvm-image-environment-variables)
-* [Scanner image Environment Variables](#scanner-image-environment-variables)
-* [GVM image Ports](#gvm-image-ports)
-* [How to use](#how-to-use)
-
-## Image tags
-
-| Tag Name          | Description                             |
-| ----------------- | --------------------------------------- |
-| latest, master    | Latest dev version                      |
-| {version}         | A specific version of the image         |
-| scanner           | Latest dev scanner image                |
-| {version}-scanner | A specific version of the scanner image |
-| upgrade-database  | For upgrading the postgres database     |
-
 ### Current GVM Versions
 
 * 11.0.1-r3 (Postgres 12)
@@ -93,70 +73,17 @@ docker logs gvm
 If you see "Your GVM 11 container is now ready to use!" then, you guessed it, your container is ready to use.
 
 
-
-## GVM image Environment Variables
-
-| Name     | Description                                                  | Default Value |
-| -------- | ------------------------------------------------------------ | ------------- |
-| USERNAME | Default admin username                                       | admin         |
-| PASSWORD | Default admin password                                       | admin         |
-| HTTPS    | If the web ui should use https vs http                       | true          |
-| SSHD     | If the ssh server for remote scanners should be started      | false         |
-| TZ       | Timezone name for a list look here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones | UTC           |
-
-
-
-## Scanner image Environment Variables
-
-| Name           | Description                            | Default Value      |
-| -------------- | -------------------------------------- | ------------------ |
-| MASTER_ADDRESS | IP or Hostname of the GVM container    | (No default value) |
-| MASTER_PORT    | SSH server port from the GVM container | 22                 |
-
-
-
-## GVM image Ports
-
-| Port Number | Description                                                  |
-| ----------- | ------------------------------------------------------------ |
-| 9392        | HTTPS GSA web interface                                      |
-| 9390        | Greenbone Vulnerability Manager XML API                      |
-| 5432        | Port for Postgres Database                                   |
-| 22          | SSH Server for remote scanners (if enabled with the SSHD variable) |
-
-
-
-## Upgrading
-
-If you are upgrading from an older version of postgresql than the one you want to upgrade to. You will need to first upgrade the postgres database.
-
-Before upgrading the database make sure the gvm container is stopped.
-
-You can upgrade the database with this command:
-
-```shell
-docker run --tty --rm --volume gvm-data:/data --name temp securecompliance/gvm:upgrade-database
-```
-
-After upgrading the database or if you did not need to upgrade continue below.
-
-Remove the old container with:
-
-```shell
-docker rm -f gvm
-```
-
-Create a new container with this command replacing {version} with the version you want:
-
-```shell
-docker run --detach --publish 8080:9392 --env PASSWORD="Your admin password here" --volume gvm-data:/data --name gvm securecompliance/gvm:{version}
-```
-
-## How To Use
-- [Accessing Web Interface](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/Accessing-Web-Interface)
-- [Change GVM report result limit](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/Change-GVM-report-result-limit)
-- [Checking the GVM logs](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/Checking-the-GVM-logs)
-- [Monitoring scan progress](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/Monitoring-scan-progress)
-- [Updating the NVTs](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/Updating-the-NVTs)
-- [Setup Remote scanner](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/Setup-Remote-scanner)
+## Table of contents
+* [GVM Environment Variables](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/GVM-image-Environment-Variables)
+* [Scanner image Environment Variables](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/Scanner-image-Environment-Variables)
+* [GVM image Ports](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/GVM-image-Ports)
+* [Image tags](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/Image-tags)
+* [Upgrading](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/Upgrading)
+* [How to use](#how-to-use)
+* [Accessing Web Interface](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/Accessing-Web-Interface)
+* [Change GVM report result limit](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/Change-GVM-report-result-limit)
+* [Checking the GVM logs](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/Checking-the-GVM-logs)
+* [Monitoring scan progress](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/Monitoring-scan-progress)
+* [Updating the NVTs](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/Updating-the-NVTs)
+* [Setup Remote scanner](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/Setup-Remote-scanner)
 
