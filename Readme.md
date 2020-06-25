@@ -3,10 +3,7 @@
 [![Docker Pulls](https://img.shields.io/docker/pulls/securecompliance/gvm.svg)](https://hub.docker.com/r/securecompliance/gvm/) 
 [![Docker Stars](https://img.shields.io/docker/stars/securecompliance/gvm.svg)](https://hub.docker.com/r/securecompliance/gvm/) 
 
-This docker image is based on Greenbone Vulnerability Management 11. This Docker image was developed to help steamline, cleanup, and improve reliability of the components of the stack from 
-- (1) Greenbone Security Assistant which it connects to the Greenbone Vulnerability Manager (GVM), which provides a full-featured user interface for vulnerability management and; 
-- (2) Open Vulnerability Assessment Scanner (OpenVAS), which it is used for the Greenbone Security Manager appliances and is a full-featured scan engine that executes a continuously updated and extended feed of Network Vulnerability Tests (NVTs) and; 
-- (3) the Greenbone Vulnerability Manager, which is the central management service between security scanners and the user clients, it manages the storage of any vulnerability management configurations and of the scan results. Access to data, control commands and workflows is offered via the XML-based Greenbone Management Protocol (GMP). Controlling scanners like OpenVAS is done via the Open Scanner Protocol (OSP).
+This docker image is based on Greenbone Vulnerability Management 11. This Docker image was developed to help steamline, cleanup, and improve reliability of the components of the Greenbone Vulnerability stack.
 
 |       Stack Component                           | Version |
 |-------------------------------------------------|---------|
@@ -50,12 +47,13 @@ curl https://get.docker.com | sh
 
 This command will pull, create, and start the container: (replace {version} with the version you want)
 
-```shell
+```console
 docker run --detach --publish 8080:9392 --env PASSWORD="Your admin password here" --volume gvm-data:/data --name gvm securecompliance/gvm:{version}
 ```
 
 
 ## Wiki Table of contents
+* [Components of the Greenbone Vulnerability Stack](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/Components-of-the-Greenbone-Vulnerability-Stack)
 * [GVM Environment Variables](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/GVM-image-Environment-Variables)
 * [Scanner image Environment Variables](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/Scanner-image-Environment-Variables)
 * [GVM image Ports](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/GVM-image-Ports)
