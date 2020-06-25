@@ -25,31 +25,28 @@ This docker image is based on Greenbone Vulnerability Management 11. This Docker
 
 ![GVM Stack Diagram](https://www.greenbone.net/wp-content/uploads/gse-gvm-10-architecture.png)
 
-### Current GVM Versions
-
-* 11.0.1-r3 (Postgres 12)
-
-### Current Scanner Versions
-
-* 7.0.1-r1
-
 ## Quick start
 
-**Install docker**
+### Install docker
 
 If you have Kali or Ubuntu you can use the docker.io package.
 ```bash
 apt install docker.io
 ```
+or
 
-If you are using a docker supported OS that does not have the docker.io package, you should take a look at [this page](https://docs.docker.com/engine/install/).
+```console
+wget https://raw.githubusercontent.com/Secure-Compliance-Solutions-LLC/GVM-Docker/master/install-docker.sh
+sudo bash ./install-docker.sh
+```
+> If you are using a docker supported OS that does not have the docker.io package, you should take a look at [this page](https://docs.docker.com/engine/install/).
 
 You can also use the docker install script by running:
 ```bash
 curl https://get.docker.com | sh
 ```
 
-**Runing the container**
+### Runing the container
 
 This command will pull, create, and start the container: (replace {version} with the version you want)
 
@@ -57,29 +54,15 @@ This command will pull, create, and start the container: (replace {version} with
 docker run --detach --publish 8080:9392 --env PASSWORD="Your admin password here" --volume gvm-data:/data --name gvm securecompliance/gvm:{version}
 ```
 
-You can use whatever `--name` you'd like but for the sake of this guide we're using gvm.
 
-The `-p 8080:9392` switch will port forward `8080` on the host to `9392` (the container web interface port) in the docker container. Port `8080` was chosen only to avoid conflicts with any existing OpenVAS/GVM installation. You can change `8080` to any available port that you'd like.
-
-Depending on your hardware, it can take anywhere from a few seconds to 10+ minutes while the NVTs are scanned and the database is rebuilt. **The default admin user account is created after this process has completed. If you are unable to access the web interface, it means it is still loading (be patient).**
-
-**Checking Deployment Progress**
-
-There is no easy way to estimate the remaining NVT loading time, but you can check if the NVTs have finished loading by running:
-```shell
-docker logs gvm
-```
-
-If you see "Your GVM 11 container is now ready to use!" then, you guessed it, your container is ready to use.
-
-
-## Table of contents
+## Wiki Table of contents
 * [GVM Environment Variables](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/GVM-image-Environment-Variables)
 * [Scanner image Environment Variables](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/Scanner-image-Environment-Variables)
 * [GVM image Ports](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/GVM-image-Ports)
 * [Image tags](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/Image-tags)
 * [Upgrading](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/Upgrading)
-* [How to use](#how-to-use)
+* [Runing the container (Additional)](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/Runing-the-container-(Additional))
+* [Checking Deployment Progress](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/Checking-Deployment-Progress)
 * [Accessing Web Interface](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/Accessing-Web-Interface)
 * [Change GVM report result limit](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/Change-GVM-report-result-limit)
 * [Checking the GVM logs](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/Checking-the-GVM-logs)
