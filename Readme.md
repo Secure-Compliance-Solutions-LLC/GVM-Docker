@@ -3,7 +3,7 @@
 [![Docker Pulls](https://img.shields.io/docker/pulls/securecompliance/gvm.svg)](https://hub.docker.com/r/securecompliance/gvm/) 
 [![Docker Stars](https://img.shields.io/docker/stars/securecompliance/gvm.svg)](https://hub.docker.com/r/securecompliance/gvm/) 
 
-This docker image is based on Greenbone Vulnerability Management 11. This Docker image was developed to help steamline, cleanup, and improve reliability of the components of the Greenbone Vulnerability stack.
+This docker image is based on Greenbone Vulnerability Management 11. This Docker image was developed to help steamline, cleanup, and improve reliability of the components of the Greenbone Vulnerability stack (Which includes OpenVAS).
 
 |       Stack Component                           | Version |
 |-------------------------------------------------|---------|
