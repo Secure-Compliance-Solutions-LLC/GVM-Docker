@@ -26,7 +26,7 @@ This docker image is based on Greenbone Vulnerability Management 11. This Docker
 
 ### Install docker
 
-If you have Kali or Ubuntu you can use the docker.io package.
+If you have a Debian-Based Operating System you can use the docker.io package.
 ```console
 apt install docker.io
 ```
