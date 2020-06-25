@@ -30,7 +30,7 @@ This docker image is based on Greenbone Vulnerability Management 11. This Docker
 ### Install docker
 
 If you have Kali or Ubuntu you can use the docker.io package.
-```bash
+```console
 apt install docker.io
 ```
 or
@@ -42,7 +42,7 @@ sudo bash ./install-docker.sh
 > If you are using a docker supported OS that does not have the docker.io package, you should take a look at [this page](https://docs.docker.com/engine/install/).
 
 You can also use the docker install script by running:
-```bash
+```console
 curl https://get.docker.com | sh
 ```
 
