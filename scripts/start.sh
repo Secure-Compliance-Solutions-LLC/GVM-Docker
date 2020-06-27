@@ -3,6 +3,8 @@ set -Eeuo pipefail
 
 USERNAME=${USERNAME:-admin}
 PASSWORD=${PASSWORD:-admin}
+RELAYHOST=${RELAYHOST:-smtp}
+SMTPPORT=${SMTPPORT:-25}
 
 HTTPS=${HTTPS:-true}
 TZ=${TZ:-UTC}
@@ -205,6 +207,10 @@ fi
 if [ ! -d /var/run/ospd ]; then
   mkdir /var/run/ospd
 fi
+
+echo "Starting Postfix for report delivery by email"
+sed -i "s/^relayhost.*$/relayhost = ${RELAYHOST}:${SMTPPORT}/" /etc/postfix/main.cf
+service postfix start
 
 echo "Starting Open Scanner Protocol daemon for OpenVAS..."
 ospd-openvas --log-file /usr/local/var/log/gvm/ospd-openvas.log --unix-socket /tmp/ospd.sock --log-level INFO
