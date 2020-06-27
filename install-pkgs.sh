@@ -45,6 +45,7 @@ openssh-client
 openssh-server
 perl-base
 pkg-config
+postfix
 postgresql-12
 postgresql-server-dev-12
 python3-defusedxml
