@@ -60,6 +60,7 @@ redis-server
 redis-tools
 rsync
 smbclient
+sshpass
 texlive-fonts-recommended
 texlive-latex-extra
 uuid-dev
