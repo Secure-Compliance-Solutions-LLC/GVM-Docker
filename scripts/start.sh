@@ -106,6 +106,8 @@ if [ ! -f "/data/firstrun" ]; then
 	echo "host    all             all              0.0.0.0/0                       md5" >> /data/database/pg_hba.conf
 	echo "host    all             all              ::/0                            md5" >> /data/database/pg_hba.conf
 	
+	chown postgres:postgres -R /data/database
+	
 	su -c "/usr/lib/postgresql/12/bin/pg_ctl -D /data/database restart" postgres
 	
 	touch /data/firstrun
