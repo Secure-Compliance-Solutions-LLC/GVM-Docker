@@ -115,7 +115,7 @@ fi
 
 su -c "gvmd --migrate" gvm
 
-su -c "psql --dbname=gvmd --command='alter user gvm password \'$DB_PASSWORD\';'" postgres
+su -c "psql --dbname=gvmd --command=\"alter user gvm password '$DB_PASSWORD';\"" postgres
 
 if  [ ! -d /data/gvmd ]; then
 	echo "Creating gvmd folder..."
