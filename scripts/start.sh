@@ -9,6 +9,7 @@ SMTPPORT=${SMTPPORT:-25}
 HTTPS=${HTTPS:-true}
 TZ=${TZ:-UTC}
 SSHD=${SSHD:-false}
+DB_PASSWORD=${DB_PASSWORD:-$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 32 | head -n 1)}
 
 if [ ! -d "/run/redis" ]; then
 	mkdir /run/redis
@@ -98,10 +99,21 @@ if [ ! -f "/data/firstrun" ]; then
 	su -c "psql --dbname=gvmd --command='create role dba with superuser noinherit;'" postgres
 	su -c "psql --dbname=gvmd --command='grant dba to gvm;'" postgres
 	su -c "psql --dbname=gvmd --command='create extension \"uuid-ossp\";'" postgres
+	
+	echo "listen_addresses = '*'" >> /data/database/postgres.conf
+	echo "port = 5432" >> /data/database/postgres.conf
+	
+	echo "host    all             all              0.0.0.0/0                       md5" >> /data/database/pg_hba.conf
+	echo "host    all             all              ::/0                            md5" >> /data/database/pg_hba.conf
+	
+	su -c "/usr/lib/postgresql/12/bin/pg_ctl -D /data/database restart" postgres
+	
 	touch /data/firstrun
 fi
 
 su -c "gvmd --migrate" gvm
+
+su -c "psql --dbname=gvmd --command='alter user gvm password \'$DB_PASSWORD\';'" postgres
 
 if  [ ! -d /data/gvmd ]; then
 	echo "Creating gvmd folder..."
