@@ -100,11 +100,11 @@ if [ ! -f "/data/firstrun" ]; then
 	su -c "psql --dbname=gvmd --command='grant dba to gvm;'" postgres
 	su -c "psql --dbname=gvmd --command='create extension \"uuid-ossp\";'" postgres
 	
-	echo "listen_addresses = '*'" >> /data/database/postgres.conf
-	echo "port = 5432" >> /data/database/postgres.conf
+	echo "listen_addresses = '*'" >> /data/database/postgresql.conf
+	echo "port = 5432" >> /data/database/postgresql.conf
 	
-	echo "host    all             all              0.0.0.0/0                       md5" >> /data/database/pg_hba.conf
-	echo "host    all             all              ::/0                            md5" >> /data/database/pg_hba.conf
+	echo "host    all             all              0.0.0.0/0                 md5" >> /data/database/pg_hba.conf
+	echo "host    all             all              ::/0                      md5" >> /data/database/pg_hba.conf
 	
 	chown postgres:postgres -R /data/database
 	
