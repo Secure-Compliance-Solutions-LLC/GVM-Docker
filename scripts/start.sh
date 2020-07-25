@@ -9,7 +9,6 @@ SMTPPORT=${SMTPPORT:-25}
 HTTPS=${HTTPS:-true}
 TZ=${TZ:-UTC}
 SSHD=${SSHD:-false}
-DB_PASSWORD=${DB_PASSWORD:-$(cat /dev/urandom | tr -dc 'a-z0-9' | fold -w 32 | head -n 1)}
 
 if [ ! -d "/run/redis" ]; then
 	mkdir /run/redis
@@ -115,7 +114,9 @@ fi
 
 su -c "gvmd --migrate" gvm
 
-su -c "psql --dbname=gvmd --command=\"alter user gvm password '$DB_PASSWORD';\"" postgres
+if [ -n $DB_PASSWORD ]; then
+	su -c "psql --dbname=gvmd --command=\"alter user gvm password '$DB_PASSWORD';\"" postgres
+fi
 
 if  [ ! -d /data/gvmd ]; then
 	echo "Creating gvmd folder..."
