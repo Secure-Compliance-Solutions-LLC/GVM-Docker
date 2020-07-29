@@ -9,6 +9,7 @@ SMTPPORT=${SMTPPORT:-25}
 HTTPS=${HTTPS:-true}
 TZ=${TZ:-UTC}
 SSHD=${SSHD:-false}
+DB_PASSWORD=${DB_PASSWORD:-none}
 
 if [ ! -d "/run/redis" ]; then
 	mkdir /run/redis
@@ -114,7 +115,7 @@ fi
 
 su -c "gvmd --migrate" gvm
 
-if [ -n $DB_PASSWORD ]; then
+if [ $DB_PASSWORD == "none" ]; then
 	su -c "psql --dbname=gvmd --command=\"alter user gvm password '$DB_PASSWORD';\"" postgres
 fi
 
