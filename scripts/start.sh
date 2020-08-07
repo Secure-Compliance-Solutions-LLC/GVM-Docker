@@ -3,6 +3,7 @@ set -Eeuo pipefail
 
 USERNAME=${USERNAME:-admin}
 PASSWORD=${PASSWORD:-admin}
+TIMEOUT=${TIMEOUT:-15}
 RELAYHOST=${RELAYHOST:-smtp}
 SMTPPORT=${SMTPPORT:-25}
 
@@ -245,9 +246,9 @@ fi
 
 echo "Starting Greenbone Security Assistant..."
 if [ $HTTPS == "true" ]; then
-	su -c "gsad --verbose --gnutls-priorities=SECURE128:-AES-128-CBC:-CAMELLIA-128-CBC:-VERS-SSL3.0:-VERS-TLS1.0 --no-redirect --mlisten=127.0.0.1 --mport=9390 --port=9392" gvm
+	su -c "gsad --verbose --gnutls-priorities=SECURE128:-AES-128-CBC:-CAMELLIA-128-CBC:-VERS-SSL3.0:-VERS-TLS1.0 --timeout=$TIMEOUT --no-redirect --mlisten=127.0.0.1 --mport=9390 --port=9392" gvm
 else
-	su -c "gsad --verbose --http-only --no-redirect --mlisten=127.0.0.1 --mport=9390 --port=9392" gvm
+	su -c "gsad --verbose --http-only --timeout=$TIMEOUT --no-redirect --mlisten=127.0.0.1 --mport=9390 --port=9392" gvm
 fi
 
 if [ $SSHD == "true" ]; then
