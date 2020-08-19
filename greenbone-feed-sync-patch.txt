@@ -1,0 +1,10 @@
+--- ./greenbone-feed-sync.in.old	2020-08-19 15:24:33.401492198 -0500
++++ ./greenbone-feed-sync.in.new	2020-08-19 15:25:37.124175529 -0500
+@@ -590,6 +590,7 @@
+ fi
+ 
+ is_feed_current
++sleep 5
+ if [ $FEED_CURRENT -eq 1 ]
+ then
+   log_notice "Feed is already current, skipping synchronization."

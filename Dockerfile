@@ -7,14 +7,14 @@ COPY install-pkgs.sh /install-pkgs.sh
 
 RUN bash /install-pkgs.sh
 
-ENV gvm_libs_version="v11.0.1" \
-    openvas_scanner_version="v7.0.1" \
-    gvmd_version="v9.0.1" \
-    gsa_version="v9.0.1" \
+ENV gvm_libs_version="v20.8.0" \
+    openvas_scanner_version="v20.8.0" \
+    gvmd_version="v20.8.0" \
+    gsa_version="v20.8.0" \
     gvm_tools_version="2.1.0" \
     openvas_smb="v1.0.5" \
-    open_scanner_protocol_daemon="v2.0.1" \
-    ospd_openvas="v1.0.1" \
+    open_scanner_protocol_daemon="v20.8.1" \
+    ospd_openvas="v20.8.0" \
     python_gvm_version="1.6.0"
 
     #
@@ -140,6 +140,10 @@ RUN mkdir /build && \
     
 RUN pip3 install gvm-tools==$gvm_tools_version && \
     echo "/usr/local/lib" > /etc/ld.so.conf.d/openvas.conf && ldconfig && cd / && rm -rf /build
+
+COPY greenbone-feed-sync-patch.txt /greenbone-feed-sync-patch.txt
+
+RUN patch /usr/local/sbin/greenbone-feed-sync /greenbone-feed-sync-patch.txt
 
 COPY sshd_config /sshd_config
 
