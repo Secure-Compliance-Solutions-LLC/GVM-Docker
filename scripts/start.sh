@@ -73,22 +73,22 @@ if [ ! -f "/firstrun" ]; then
 	
 	ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-	echo "Creating Openvas NVT sync user..."
-	useradd --home-dir /usr/local/share/openvas openvas-sync
-	chown openvas-sync:openvas-sync -R /usr/local/share/openvas
-	chown openvas-sync:openvas-sync -R /usr/local/var/lib/openvas
-
 	echo "Creating Greenbone Vulnerability system user..."
 	useradd --home-dir /usr/local/share/gvm gvm
+	
+	chown gvm:gvm -R /usr/local/share/openvas
+	chown gvm:gvm -R /usr/local/var/lib/openvas
+	
 	chown gvm:gvm -R /usr/local/share/gvm
+	
 	mkdir /usr/local/var/lib/gvm/cert-data
+	
 	chown gvm:gvm -R /usr/local/var/lib/gvm
 	chmod 770 -R /usr/local/var/lib/gvm
+	
 	chown gvm:gvm -R /usr/local/var/log/gvm
+	
 	chown gvm:gvm -R /usr/local/var/run
-
-	adduser openvas-sync gvm
-	adduser gvm openvas-sync
 	
 	touch /firstrun
 fi
@@ -100,6 +100,7 @@ if [ ! -f "/data/firstrun" ]; then
 	su -c "psql --dbname=gvmd --command='create role dba with superuser noinherit;'" postgres
 	su -c "psql --dbname=gvmd --command='grant dba to gvm;'" postgres
 	su -c "psql --dbname=gvmd --command='create extension \"uuid-ossp\";'" postgres
+	su -c "psql --dbname=gvmd --command='create extension \"pgcrypto\";'" postgres
 	
 	echo "listen_addresses = '*'" >> /data/database/postgresql.conf
 	echo "port = 5432" >> /data/database/postgresql.conf
@@ -123,13 +124,15 @@ fi
 if  [ ! -d /data/gvmd ]; then
 	echo "Creating gvmd folder..."
 	mkdir /data/gvmd
-	chown gvm:gvm -R /data/gvmd
 fi
 
 if  [ ! -h /usr/local/var/lib/gvm/gvmd ]; then
 	echo "Fixing gvmd folder..."
 	rm -rf /usr/local/var/lib/gvm/gvmd
 	ln -s /data/gvmd /usr/local/var/lib/gvm/gvmd
+	
+	chown gvm:gvm -R /data/gvmd
+	chown gvm:gvm -R /usr/local/var/lib/gvm/gvmd
 fi
 
 if  [ ! -d /data/certs ]; then
@@ -151,6 +154,7 @@ if [ ! -h /usr/local/var/lib/gvm/CA ]; then
 	echo "Fixing certs CA folder..."
 	rm -rf /usr/local/var/lib/gvm/CA
 	ln -s /data/certs/CA /usr/local/var/lib/gvm/CA
+	
 	chown gvm:gvm -R /data/certs
 	chown gvm:gvm -R /usr/local/var/lib/gvm/CA
 fi
@@ -172,8 +176,8 @@ if [ ! -h /usr/local/var/lib/openvas/plugins ]; then
 	echo "Fixing NVT Plugins folder..."
 	rm -rf /usr/local/var/lib/openvas/plugins
 	ln -s /data/plugins /usr/local/var/lib/openvas/plugins
-	chown openvas-sync:openvas-sync -R /data/plugins
-	chown openvas-sync:openvas-sync -R /usr/local/var/lib/openvas/plugins
+	chown gvm:gvm -R /data/plugins
+	chown gvm:gvm -R /usr/local/var/lib/openvas/plugins
 fi
 
 if  [ ! -d /data/cert-data ]; then
@@ -185,25 +189,52 @@ if [ ! -h /usr/local/var/lib/gvm/cert-data ]; then
 	echo "Fixing CERT Feed folder..."
 	rm -rf /usr/local/var/lib/gvm/cert-data
 	ln -s /data/cert-data /usr/local/var/lib/gvm/cert-data
-	chown openvas-sync:openvas-sync -R /data/cert-data
-	chown openvas-sync:openvas-sync -R /usr/local/var/lib/gvm/cert-data
+	chown gvm:gvm -R /data/cert-data
+	chown gvm:gvm -R /usr/local/var/lib/gvm/cert-data
 fi
 
 if  [ ! -d /data/scap-data ]; then
 	echo "Creating SCAP Feed folder..."
+	
 	mkdir /data/scap-data
 fi
 
 if [ ! -h /usr/local/var/lib/gvm/scap-data ]; then
 	echo "Fixing SCAP Feed folder..."
+	
 	rm -rf /usr/local/var/lib/gvm/scap-data
+	
 	ln -s /data/scap-data /usr/local/var/lib/gvm/scap-data
-	chown openvas-sync:openvas-sync -R /data/scap-data
-	chown openvas-sync:openvas-sync -R /usr/local/var/lib/gvm/scap-data
+	
+	chown gvm:gvm -R /data/scap-data
+	chown gvm:gvm -R /usr/local/var/lib/gvm/scap-data
+fi
+
+if  [ ! -d /data/data-objects ]; then
+	echo "Creating GVMd Data Objects folder..."
+	
+	mkdir -p /data/data-objects/gvmd
+fi
+
+if [ ! -h /usr/local/var/lib/gvm/data-objects ]; then
+	echo "Fixing GVMd Data Objects folder..."
+	
+	rm -rf /usr/local/var/lib/gvm/data-objects
+	
+	mkdir -p /usr/local/var/lib/gvm/data-objects
+	
+	ln -s /data/data-objects /usr/local/var/lib/gvm/data-objects
+	
+	chown gvm:gvm -R /data/data-objects
+	chown gvm:gvm -R /usr/local/var/lib/gvm/data-objects
 fi
 
 # Sync NVTs, CERT data, and SCAP data on container start
 /sync-all.sh
+
+###########################
+#Remove leftover pid files#
+###########################
 
 if [ -f /var/run/ospd.pid ]; then
   rm /var/run/ospd.pid
@@ -231,8 +262,9 @@ done
 chmod 666 /tmp/ospd.sock
 
 echo "Starting Greenbone Vulnerability Manager..."
-su -c "gvmd --listen=0.0.0.0 --port=9390" gvm
+su -c "gvmd --listen=127.0.0.1 --port=9390" gvm
 
+echo "Waiting for Greenbone Vulnerability Manager to finish startup..."
 until su -c "gvmd --get-users" gvm; do
 	sleep 1
 done
@@ -240,6 +272,12 @@ done
 if [ ! -f "/data/created_gvm_user" ]; then
 	echo "Creating Greenbone Vulnerability Manager admin user"
 	su -c "gvmd --role=\"Super Admin\" --create-user=\"$USERNAME\" --password=\"$PASSWORD\"" gvm
+	
+	USERSLIST=$(su -c "gvmd --get-users --verbose" gvm)
+	IFS=' '
+	read -ra ADDR <<<"$USERSLIST"
+	
+	su -c "gvmd --modify-setting 78eceaec-3385-11ea-b237-28d24461215b --value ${ADDR[1]}" gvm
 	
 	touch /data/created_gvm_user
 fi
