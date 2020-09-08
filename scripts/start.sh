@@ -18,7 +18,7 @@ fi
 if  [ -S /run/redis/redis.sock ]; then
         rm /run/redis/redis.sock
 fi
-redis-server --unixsocket /run/redis/redis.sock --unixsocketperm 700 --timeout 0 --databases 128 --maxclients 4096 --daemonize yes --port 6379 --bind 0.0.0.0
+redis-server --unixsocket /run/redis/redis.sock --unixsocketperm 700 --timeout 0 --databases 512 --maxclients 4096 --daemonize yes --port 6379 --bind 0.0.0.0
 
 echo "Wait for redis socket to be created..."
 while  [ ! -S /run/redis/redis.sock ]; do
@@ -117,7 +117,7 @@ fi
 
 su -c "gvmd --migrate" gvm
 
-if [ $DB_PASSWORD == "none" ]; then
+if [ $DB_PASSWORD != "none" ]; then
 	su -c "psql --dbname=gvmd --command=\"alter user gvm password '$DB_PASSWORD';\"" postgres
 fi
 
@@ -253,13 +253,13 @@ sed -i "s/^relayhost.*$/relayhost = ${RELAYHOST}:${SMTPPORT}/" /etc/postfix/main
 service postfix start
 
 echo "Starting Open Scanner Protocol daemon for OpenVAS..."
-ospd-openvas --log-file /usr/local/var/log/gvm/ospd-openvas.log --unix-socket /tmp/ospd.sock --log-level INFO
+ospd-openvas --log-file /usr/local/var/log/gvm/ospd-openvas.log --unix-socket /var/run/ospd/ospd.sock --log-level INFO
 
-while  [ ! -S /tmp/ospd.sock ]; do
+while  [ ! -S /var/run/ospd/ospd.sock ]; do
 	sleep 1
 done
 
-chmod 666 /tmp/ospd.sock
+chmod 666 /var/run/ospd/ospd.sock
 
 echo "Starting Greenbone Vulnerability Manager..."
 su -c "gvmd --listen=127.0.0.1 --port=9390" gvm
@@ -276,6 +276,8 @@ if [ ! -f "/data/created_gvm_user" ]; then
 	USERSLIST=$(su -c "gvmd --get-users --verbose" gvm)
 	IFS=' '
 	read -ra ADDR <<<"$USERSLIST"
+	
+	echo "${ADDR[1]}"
 	
 	su -c "gvmd --modify-setting 78eceaec-3385-11ea-b237-28d24461215b --value ${ADDR[1]}" gvm
 	
@@ -319,7 +321,7 @@ if [ $SSHD == "true" ]; then
 fi
 
 echo "++++++++++++++++++++++++++++++++++++++++++++++"
-echo "+ Your GVM 11 container is now ready to use! +"
+echo "+ Your GVM 20.04 container is now ready to use! +"
 echo "++++++++++++++++++++++++++++++++++++++++++++++"
 echo ""
 echo "-----------------------------------------------------------"
