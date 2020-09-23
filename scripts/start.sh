@@ -210,7 +210,7 @@ if [ ! -h /usr/local/var/lib/gvm/scap-data ]; then
 	chown gvm:gvm -R /usr/local/var/lib/gvm/scap-data
 fi
 
-if  [ ! -d /data/data-objects ]; then
+if  [ ! -d /data/data-objects/gvmd ]; then
 	echo "Creating GVMd Data Objects folder..."
 	
 	mkdir -p /data/data-objects/gvmd
@@ -260,6 +260,10 @@ while  [ ! -S /var/run/ospd/ospd.sock ]; do
 done
 
 chmod 666 /var/run/ospd/ospd.sock
+
+echo "Creating OSPd socket link from old location..."
+rm -rf /tmp/ospd.sock
+ln -s /var/run/ospd/ospd.sock /tmp/ospd.sock
 
 echo "Starting Greenbone Vulnerability Manager..."
 su -c "gvmd --listen=127.0.0.1 --port=9390" gvm
