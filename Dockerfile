@@ -141,7 +141,7 @@ RUN mkdir /build && \
 RUN pip3 install gvm-tools==$gvm_tools_version && \
     echo "/usr/local/lib" > /etc/ld.so.conf.d/openvas.conf && ldconfig && cd / && rm -rf /build
 
-COPY report_formats/* /usr/local/share/gvm/gvmd/report_formats/
+COPY report_formats/* /report_formats/
 
 COPY greenbone-feed-sync-patch.txt /greenbone-feed-sync-patch.txt
 
