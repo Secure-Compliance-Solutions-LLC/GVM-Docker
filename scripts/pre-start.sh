@@ -7,6 +7,8 @@ TIMEOUT=${TIMEOUT:-15}
 RELAYHOST=${RELAYHOST:-smtp}
 SMTPPORT=${SMTPPORT:-25}
 
+AUTO_SYNC=${AUTO_SYNC:-true}
+
 HTTPS=${HTTPS:-true}
 TZ=${TZ:-UTC}
 SSHD=${SSHD:-false}
@@ -237,8 +239,11 @@ if [ ! -h /usr/local/var/lib/gvm/data-objects ]; then
 	chown gvm:gvm -R /usr/local/var/lib/gvm/data-objects
 fi
 
-# Sync NVTs, CERT data, and SCAP data on container start
-/sync-all.sh
+if [ AUTO_SYNC ] || [ ! -f "/firstsync" ]; then
+	# Sync NVTs, CERT data, and SCAP data on container start
+	/sync-all.sh
+	touch /firstsync
+fi
 
 ###########################
 #Remove leftover pid files#
