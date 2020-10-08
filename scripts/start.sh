@@ -121,13 +121,6 @@ if [ $DB_PASSWORD != "none" ]; then
 	su -c "psql --dbname=gvmd --command=\"alter user gvm password '$DB_PASSWORD';\"" postgres
 fi
 
-if  [ ! -h /usr/local/var/lib/gvm/gvmd ]; then
-	echo "Fixing report_formats folder..."
-	ln -s /usr/local/share/gvm/gvmd/report_formats /usr/local/var/lib/gvm/gvmd/report_formats
-	
-	chown gvm:gvm -R /usr/local/share/gvm/gvmd/report_formats
-fi
-
 if  [ ! -d /data/gvmd ]; then
 	echo "Creating gvmd folder..."
 	mkdir /data/gvmd
