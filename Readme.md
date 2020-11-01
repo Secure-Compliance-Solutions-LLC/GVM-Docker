@@ -20,4 +20,4 @@ The key points to take away from the diagram below, is the way our setup establi
 Soon we will release instructions on connecting your OpenVAS vulnerability details to elastic to create dashboards that are interactive and actually work. 
 
 Below is a preview of what we're working on.
-![Sneak Peak](https://securecompliance.co/wp-content/uploads/2020/11/vuln-dashboard.png)
+![Sneak Peak](https://securecompliance.co/wp-content/uploads/2020/11/dashboard.png)
