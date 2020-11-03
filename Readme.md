@@ -7,7 +7,7 @@
 This setup is based on Greenbone Vulnerability Management and OpenVAS. We have made improvements to help stability and functionality.
 
 ## Documentation
-* [View our detailed instructions on gitbook](https://app.gitbook.com/@securecompliance/s/projects/openvas-greenbone-deployment-full-guide)
+* [View our detailed instructions on gitbook](https://securecompliance.gitbook.io/projects/openvas-greenbone-deployment-full-guide)
 
 ## Architecture
 
