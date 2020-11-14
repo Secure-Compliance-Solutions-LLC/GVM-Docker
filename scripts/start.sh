@@ -222,8 +222,6 @@ if [ ! -h /usr/local/var/lib/gvm/data-objects ]; then
 	
 	rm -rf /usr/local/var/lib/gvm/data-objects
 	
-	mkdir -p /usr/local/var/lib/gvm/data-objects
-	
 	ln -s /data/data-objects /usr/local/var/lib/gvm/data-objects
 	
 	chown gvm:gvm -R /data/data-objects
