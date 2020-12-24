@@ -151,4 +151,6 @@ COPY sshd_config /sshd_config
 
 COPY scripts/* /
 
+RUN chmod +x /*.sh
+
 CMD '/start.sh'
