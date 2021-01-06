@@ -22,6 +22,7 @@ gnutls-bin
 graphviz
 heimdal-dev
 ike-scan
+impacket-wmiexec
 libgcrypt20-dev
 libglib2.0-dev
 libgnutls28-dev
