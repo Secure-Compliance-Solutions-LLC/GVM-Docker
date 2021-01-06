@@ -22,7 +22,6 @@ gnutls-bin
 graphviz
 heimdal-dev
 ike-scan
-impacket-wmiexec
 libgcrypt20-dev
 libglib2.0-dev
 libgnutls28-dev
@@ -57,6 +56,7 @@ python3-pip
 python3-polib
 python3-psutil
 python3-setuptools
+python-impacket
 redis-server
 redis-tools
 rsync
