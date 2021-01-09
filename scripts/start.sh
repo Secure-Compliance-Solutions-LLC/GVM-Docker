@@ -104,6 +104,7 @@ if [ ! -f "/data/firstrun" ]; then
 	
 	echo "listen_addresses = '*'" >> /data/database/postgresql.conf
 	echo "port = 5432" >> /data/database/postgresql.conf
+	echo "jit = off" >> /data/database/postgresql.conf
 	
 	echo "host    all             all              0.0.0.0/0                 md5" >> /data/database/pg_hba.conf
 	echo "host    all             all              ::/0                      md5" >> /data/database/pg_hba.conf
