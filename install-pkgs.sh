@@ -45,6 +45,7 @@ openssh-client
 openssh-server
 perl-base
 pkg-config
+postfix
 postgresql-12
 postgresql-server-dev-12
 python3-defusedxml
@@ -58,8 +59,8 @@ python3-setuptools
 redis-server
 redis-tools
 rsync
-sendmail
 smbclient
+sshpass
 texlive-fonts-recommended
 texlive-latex-extra
 uuid-dev
