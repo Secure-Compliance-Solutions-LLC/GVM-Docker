@@ -34,23 +34,47 @@ while  [ "${X}" != "PONG" ]; do
 done
 echo "Redis ready."
 
-
-if  [ ! -d /data ]; then
-	echo "Creating Data folder..."
-        mkdir /data
-fi
-
 if  [ ! -d /data/database ]; then
-	echo "Creating Database folder..."
-	mkdir /data/database
+	mkdir -p /data/database
+	echo "Creating Data and Database folder..."
+	mv /var/lib/postgresql/12/main/* /data/database
+	ln -s /data/database /var/lib/postgresql/12/main
+	chown postgres:postgres -R /var/lib/postgresql/12/main
 	chown postgres:postgres -R /data/database
+	chmod 700 /data/database	
 	su -c "/usr/lib/postgresql/12/bin/initdb /data/database" postgres
 fi
 
-chown postgres:postgres -R /data/database
+if [ ! -L /usr/local/var/lib  ]; then
+	echo "Fixing local/var/lib ... "
+	if [ ! -d /data/var-lib ]; then
+		mkdir /data/var-lib
+	fi
+	cp -rf /usr/local/var/lib/* /data/var-lib
+	rm -rf /usr/local/var/lib
+	ln -s /data/var-lib /usr/local/var/lib
+fi
+if [ ! -L /usr/local/share ]; then
+	echo "Fixing local/share ... "
+	if [ ! -d /data/local-share ]; then mkdir /data/local-share; fi
+	cp -rf /usr/local/share/* /data/local-share/
+	rm -rf /usr/local/share 
+	ln -s /data/local-share /usr/local/share 
+fi
+
+if [ ! -f "/setup" ]; then
+	echo "Creating postgresql.conf and pg_hba.conf"
+	echo "listen_addresses = '*'" >> /data/database/postgresql.conf
+	echo "port = 5432" >> /data/database/postgresql.conf
+	echo -e "host\tall\tall\t0.0.0.0/0\ttrust" >> /data/database/pg_hba.conf
+	echo -e "host\tall\tall\t::0/0\ttrust" >> /data/database/pg_hba.conf
+	echo -e "local\tall\tall\ttrust"  >> /data/database/pg_hba.conf
+fi
 
 echo "Starting PostgreSQL..."
 su -c "/usr/lib/postgresql/12/bin/pg_ctl -D /data/database start" postgres
+
+
 
 if  [ ! -d /data/ssh ]; then
 	echo "Creating SSH folder..."
