@@ -9,7 +9,7 @@ This setup is based on Greenbone Vulnerability Management and OpenVAS. We have m
 ## Documentation
 * [View our detailed instructions on gitbook](https://securecompliance.gitbook.io/projects/openvas-greenbone-deployment-full-guide)
 
-## You can view our old documentation in our wiki, but we are converting everything to gitbook.
+##### You can view our old documentation in our wiki, but we are converting everything to gitbook.
 * [View old Wiki](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki)
 
 ## Architecture
