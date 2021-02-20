@@ -11,9 +11,6 @@ This setup is based on Greenbone Vulnerability Management and OpenVAS. We have m
 
 If you would like something added to the documentation please create a issue [GVM-Docker Gitbook Repo](https://github.com/Secure-Compliance-Solutions-LLC/gitbook/issues)
 
-##### You can view our old documentation in our wiki, but we are converting everything to gitbook.
-* [View old Wiki](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki)
-
 ## Architecture
 
 The key points to take away from the diagram below, is the way our setup establishes connection with the remote sensor, and the available ports on the GMV-Docker container. You can still use any add on tools you've used in the past with OpenVAS on 9390. One of the latest/best upgrades allows you connect directly to postgres using your favorite database tool. 
