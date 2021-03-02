@@ -18,6 +18,10 @@ The key points to take away from the diagram below, is the way our setup establi
 ![GVM Container Architecture](https://securecompliance.co/wp-content/uploads/2020/11/SCS-GVM-Docker.svg)
 
 
+## About
+
+We will do our best to conduct all development openly by documenting features and requirements, and managing the project using [issues](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/issues), [milestones](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/milestones), and [projects](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/projects).
+
 <!--
 ## Dashboard - Sneak peak at our upcoming kibana dashboards
 
