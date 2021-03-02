@@ -1,6 +1,15 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
+containerstopped() {
+    echo "Container stopped, performing shutdown"
+    su -c "/usr/lib/postgresql/12/bin/pg_ctl -D /data/database stop" postgres
+}
+
+#Trap SIGTERM
+trap 'containerstopped' SIGTERM
+
+
 USERNAME=${USERNAME:-admin}
 PASSWORD=${PASSWORD:-admin}
 TIMEOUT=${TIMEOUT:-15}
