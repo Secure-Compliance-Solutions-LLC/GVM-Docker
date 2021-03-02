@@ -6,7 +6,7 @@ containerstopped() {
     su -c "/usr/lib/postgresql/12/bin/pg_ctl -D /data/database stop" postgres
 }
 
-#Trap SIGTERM
+# SIGTERM (trap)
 trap 'containerstopped' SIGTERM
 
 
