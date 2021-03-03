@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+data-object#!/usr/bin/env bash
 set -Eeuo pipefail
 
 containerstopped() {
@@ -141,9 +141,7 @@ if  [ ! -h /usr/local/var/lib/gvm/gvmd ]; then
 	echo "Fixing gvmd folder..."
 	rm -rf /usr/local/var/lib/gvm/gvmd
 	ln -s /data/gvmd /usr/local/var/lib/gvm/gvmd
-	
 	chown gvm:gvm -R /data/gvmd
-	chown gvm:gvm -R /usr/local/var/lib/gvm/gvmd
 fi
 
 if  [ ! -d /data/certs ]; then
@@ -153,11 +151,8 @@ if  [ ! -d /data/certs ]; then
 	
 	echo "Generating certs..."
 	gvm-manage-certs -a
-	
 	cp /usr/local/var/lib/gvm/CA/* /data/certs/CA/
-	
 	cp -r /usr/local/var/lib/gvm/private/* /data/certs/private/
-	
 	chown gvm:gvm -R /data/certs
 fi
 
@@ -165,9 +160,8 @@ if [ ! -h /usr/local/var/lib/gvm/CA ]; then
 	echo "Fixing certs CA folder..."
 	rm -rf /usr/local/var/lib/gvm/CA
 	ln -s /data/certs/CA /usr/local/var/lib/gvm/CA
-	
 	chown gvm:gvm -R /data/certs
-	chown gvm:gvm -R /usr/local/var/lib/gvm/CA
+
 fi
 
 if [ ! -h /usr/local/var/lib/gvm/private ]; then
@@ -175,7 +169,7 @@ if [ ! -h /usr/local/var/lib/gvm/private ]; then
 	rm -rf /usr/local/var/lib/gvm/private
 	ln -s /data/certs/private /usr/local/var/lib/gvm/private
 	chown gvm:gvm -R /data/certs
-	chown gvm:gvm -R /usr/local/var/lib/gvm/private
+
 fi
 
 if  [ ! -d /data/plugins ]; then
@@ -201,42 +195,40 @@ if [ ! -h /usr/local/var/lib/gvm/cert-data ]; then
 	rm -rf /usr/local/var/lib/gvm/cert-data
 	ln -s /data/cert-data /usr/local/var/lib/gvm/cert-data
 	chown gvm:gvm -R /data/cert-data
-	chown gvm:gvm -R /usr/local/var/lib/gvm/cert-data
 fi
 
 if  [ ! -d /data/scap-data ]; then
 	echo "Creating SCAP Feed folder..."
-	
 	mkdir /data/scap-data
 fi
 
 if [ ! -h /usr/local/var/lib/gvm/scap-data ]; then
 	echo "Fixing SCAP Feed folder..."
-	
 	rm -rf /usr/local/var/lib/gvm/scap-data
-	
 	ln -s /data/scap-data /usr/local/var/lib/gvm/scap-data
-	
 	chown gvm:gvm -R /data/scap-data
-	chown gvm:gvm -R /usr/local/var/lib/gvm/scap-data
 fi
 
 if  [ ! -d /data/data-objects/gvmd ]; then
 	echo "Creating GVMd Data Objects folder..."
-	
 	mkdir -p /data/data-objects/gvmd
 fi
 
 if [ ! -h /usr/local/var/lib/gvm/data-objects ]; then
 	echo "Fixing GVMd Data Objects folder..."
-	
 	rm -rf /usr/local/var/lib/gvm/data-objects
-	
 	ln -s /data/data-objects /usr/local/var/lib/gvm/data-objects
-	
 	chown gvm:gvm -R /data/data-objects
-	chown gvm:gvm -R /usr/local/var/lib/gvm/data-objects
 fi
+
+
+if [ ! -d /usr/local/var/lib/gvm/data-objects/gvmd/20.08/report_formats ]; then
+	echo "Creating dir structure for feed sync"
+	for dir in configs port_lists report_formats; do 
+		su -c "mkdir -p /usr/local/var/lib/gvm/data-objects/gvmd/20.08/${dir}" gvm
+	done
+fi
+
 
 # Sync NVTs, CERT data, and SCAP data on container start
 /sync-all.sh
