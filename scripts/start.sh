@@ -92,11 +92,10 @@ if [ ! -f "/firstrun" ]; then
 	
 	mkdir /usr/local/var/lib/gvm/cert-data
 	
-	chown gvm:gvm -R /usr/local/var/lib/gvm
-	chmod 770 -R /usr/local/var/lib/gvm
-	
-	chown gvm:gvm -R /usr/local/var/log/gvm
-	chown gvm:gvm -R /usr/local/var/run
+	chown gvm:gvm -R /usr/local/var/lib/gvm #
+	chmod 770 -R /usr/local/var/lib/gvm #
+	chown gvm:gvm -R /usr/local/var/log/gvm #
+	chown gvm:gvm -R /usr/local/var/run #
 	
 	touch /firstrun
 fi
@@ -226,6 +225,12 @@ if [ ! -d /usr/local/var/lib/gvm/data-objects/gvmd/20.08/report_formats ]; then
 	for dir in configs port_lists report_formats; do 
 		su -c "mkdir -p /usr/local/var/lib/gvm/data-objects/gvmd/20.08/${dir}" gvm
 	done
+fi
+
+chmod 777 /usr/local/var/run/
+if [ -f /usr/local/var/run/feed-update.lock ]; then
+        echo "Removing feed-update.lock"
+	rm /usr/local/var/run/feed-update.lock
 fi
 
 
