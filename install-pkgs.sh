@@ -69,6 +69,8 @@ wget
 whiptail
 xml-twig-tools
 xsltproc
+fakeroot
+rpm
 EOF
 } | xargs apt-get install -yq --no-install-recommends
 
