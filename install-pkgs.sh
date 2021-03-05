@@ -15,6 +15,7 @@ build-essential
 ca-certificates
 cmake
 curl
+fakeroot
 gcc
 gcc-mingw-w64
 geoip-database
@@ -58,6 +59,7 @@ python3-psutil
 python3-setuptools
 redis-server
 redis-tools
+rpm
 rsync
 smbclient
 sshpass
@@ -69,8 +71,6 @@ wget
 whiptail
 xml-twig-tools
 xsltproc
-fakeroot
-rpm
 EOF
 } | xargs apt-get install -yq --no-install-recommends
 
