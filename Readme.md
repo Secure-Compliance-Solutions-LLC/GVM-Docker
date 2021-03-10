@@ -8,7 +8,6 @@ This setup is based on Greenbone Vulnerability Management and OpenVAS. We have m
 
 You want to send GVM/OpenVAS results to Elasticsearch, try our [GVM Logstash project](https://github.com/Secure-Compliance-Solutions-LLC/gvm-logstash).
 
-
 ## Documentation
 * [View our detailed instructions on gitbook](https://securecompliance.gitbook.io/projects/openvas-greenbone-deployment-full-guide)
 
