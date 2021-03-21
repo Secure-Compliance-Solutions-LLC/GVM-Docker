@@ -7,9 +7,9 @@ COPY install-pkgs.sh /install-pkgs.sh
 
 RUN bash /install-pkgs.sh
 
-ENV gvm_libs_version="v20.8.0" \
+ENV gvm_libs_version="v20.8.1" \
     openvas_scanner_version="v20.8.0" \
-    gvmd_version="v20.8.0" \
+    gvmd_version="v20.8.1" \
     gsa_version="v20.8.0" \
     gvm_tools_version="2.1.0" \
     openvas_smb="v1.0.5" \
@@ -93,6 +93,10 @@ RUN mkdir /build && \
     cd /build && \
     wget --no-verbose https://github.com/greenbone/gsa/archive/$gsa_version.tar.gz && \
     tar -zxf $gsa_version.tar.gz && \
+    # https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/issues/115
+    sed -i 's/300000/90000000/g' /build/*/gsa/src/gmp/gmpsettings.js && \
+    find /build/ -type f -exec sed -i 's/timeout: 30000/timeout: 9000000/g' {} \; && \
+    find /build/ -type f -exec sed -i 's/expect(settings.timeout).toEqual(30000)/expect(settings.timeout).toEqual(9000000)/g' {} \; && \
     cd /build/*/ && \
     mkdir build && \
     cd build && \
@@ -150,5 +154,7 @@ RUN patch /usr/local/sbin/greenbone-feed-sync /greenbone-feed-sync-patch.txt
 COPY sshd_config /sshd_config
 
 COPY scripts/* /
+
+RUN chmod +x /*.sh
 
 CMD '/start.sh'

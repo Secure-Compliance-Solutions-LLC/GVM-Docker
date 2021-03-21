@@ -1,66 +1,32 @@
-# Greenbone Vulnerability Stack Docker Image
-
 [![Docker Pulls](https://img.shields.io/docker/pulls/securecompliance/gvm.svg)](https://hub.docker.com/r/securecompliance/gvm/)
 [![Docker Stars](https://img.shields.io/docker/stars/securecompliance/gvm.svg)](https://hub.docker.com/r/securecompliance/gvm/)
 [![Gitter](https://badges.gitter.im/Secure-Compliance-Solutions-LLC/gvm-docker.svg)](https://gitter.im/Secure-Compliance-Solutions-LLC/gvm-docker)
 
-This docker image is based on Greenbone Vulnerability Management 11. This Docker image was developed to help steamline, cleanup, and improve reliability of the components of the Greenbone Vulnerability stack (Which includes OpenVAS).
+![Greenbone Vulnerability Management with OpenVAS](https://github.com/SCS-Labs/Images/raw/main/scs-gvm.png)
 
-|       Stack Component                           | Version |
-|-------------------------------------------------|---------|
-|Greenbone Vulnerability Manager                  |v9.0.1   |
-|Greenbone Security Assistant                     |v9.0.1   |
-|Open Vulnerability Assessment Scanner            |v7.0.1   |
-|Greenbone Vulnerability Management Libraries     |v11.0.1  |
-|ospd-openvas                                     |v1.0.1   |
-|GVM Tools (Remote control your(GVM))             |v2.1.0   |
-|SMB module for OpenVAS Scanner                   |v1.0.5   |
-|Greenbone Vulnerability Management Python Library|v1.6.0   |
-|Open Scanner Protocol daemon                     |v2.0.1   |
+This setup is based on Greenbone Vulnerability Management and OpenVAS. We have made improvements to help stability and functionality.
 
+## Documentation
+* [View our detailed instructions on gitbook](https://securecompliance.gitbook.io/projects/openvas-greenbone-deployment-full-guide)
 
-**GVM Architecture**
+If you would like something added to the documentation please create a issue [GVM-Docker Gitbook Repo](https://github.com/Secure-Compliance-Solutions-LLC/gitbook/issues)
 
-![GVM Stack Diagram](https://www.greenbone.net/wp-content/uploads/gse-gvm-10-architecture.png)
+## Architecture
 
-## Quick start
+The key points to take away from the diagram below, is the way our setup establishes connection with the remote sensor, and the available ports on the GMV-Docker container. You can still use any add on tools you've used in the past with OpenVAS on 9390. One of the latest/best upgrades allows you connect directly to postgres using your favorite database tool. 
 
-### Install docker
-
-If you have a Debian-Based Operating System you can use the docker.io package.
-```console
-apt install docker.io
-```
-
-> If you are using a docker supported OS that does not have the docker.io package, you should take a look at [this page](https://docs.docker.com/engine/install/).
-
-You can also use the docker install script by running:
-```console
-curl https://get.docker.com | sh
-```
-
-### Runing the container
-
-This command will pull, create, and start the container: (replace {version} with the version you want)
-
-```console
-docker run --detach --publish 8080:9392 --env PASSWORD="Your admin password here" --volume gvm-data:/data --name gvm securecompliance/gvm:{version}
-```
+![GVM Container Architecture](https://securecompliance.co/wp-content/uploads/2020/11/SCS-GVM-Docker.svg)
 
 
-## Wiki Table of contents
-* [Components of the Greenbone Vulnerability Stack](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/Components-of-the-Greenbone-Vulnerability-Stack)
-* [GVM Environment Variables](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/GVM-image-Environment-Variables)
-* [Scanner image Environment Variables](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/Scanner-image-Environment-Variables)
-* [GVM image Ports](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/GVM-image-Ports)
-* [Image tags](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/Image-tags)
-* [Upgrading](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/Upgrading)
-* [Runing the container (Additional)](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/Runing-the-container-(Additional))
-* [Checking Deployment Progress](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/Checking-Deployment-Progress)
-* [Accessing Web Interface](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/Accessing-Web-Interface)
-* [Change GVM report result limit](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/Change-GVM-report-result-limit)
-* [Checking the GVM logs](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/Checking-the-GVM-logs)
-* [Monitoring scan progress](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/Monitoring-scan-progress)
-* [Updating the NVTs](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/Updating-the-NVTs)
-* [Setup Remote scanner](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/wiki/Setup-Remote-scanner)
+## About
 
+We will do our best to conduct all development openly by documenting features and requirements, and managing the project using [issues](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/issues), [milestones](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/milestones), and [projects](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/projects).
+
+<!--
+## Dashboard - Sneak peak at our upcoming kibana dashboards
+
+Soon we will release instructions on connecting your OpenVAS vulnerability details to elastic to create dashboards that are interactive and actually work. 
+
+Below is a preview of what we're working on.
+![Sneak Peak](https://securecompliance.co/wp-content/uploads/2020/11/dashboard.png)
+-->

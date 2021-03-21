@@ -1,13 +1,20 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
+containerstopped() {
+    echo "Container stopped, performing shutdown"
+    su -c "/usr/lib/postgresql/12/bin/pg_ctl -D /data/database stop" postgres
+}
+
+# SIGTERM (trap)
+trap 'containerstopped' SIGTERM
+
+
 USERNAME=${USERNAME:-admin}
 PASSWORD=${PASSWORD:-admin}
 TIMEOUT=${TIMEOUT:-15}
 RELAYHOST=${RELAYHOST:-smtp}
 SMTPPORT=${SMTPPORT:-25}
-
-AUTO_SYNC=${AUTO_SYNC:-true}
 
 HTTPS=${HTTPS:-true}
 TZ=${TZ:-UTC}
@@ -85,12 +92,10 @@ if [ ! -f "/firstrun" ]; then
 	
 	mkdir /usr/local/var/lib/gvm/cert-data
 	
-	chown gvm:gvm -R /usr/local/var/lib/gvm
-	chmod 770 -R /usr/local/var/lib/gvm
-	
-	chown gvm:gvm -R /usr/local/var/log/gvm
-	
-	chown gvm:gvm -R /usr/local/var/run
+	chown gvm:gvm -R /usr/local/var/lib/gvm #
+	chmod 770 -R /usr/local/var/lib/gvm #
+	chown gvm:gvm -R /usr/local/var/log/gvm #
+	chown gvm:gvm -R /usr/local/var/run #
 	
 	touch /firstrun
 fi
@@ -106,6 +111,7 @@ if [ ! -f "/data/firstrun" ]; then
 	
 	echo "listen_addresses = '*'" >> /data/database/postgresql.conf
 	echo "port = 5432" >> /data/database/postgresql.conf
+	echo "jit = off" >> /data/database/postgresql.conf
 	
 	echo "host    all             all              0.0.0.0/0                 md5" >> /data/database/pg_hba.conf
 	echo "host    all             all              ::/0                      md5" >> /data/database/pg_hba.conf
@@ -123,13 +129,6 @@ if [ $DB_PASSWORD != "none" ]; then
 	su -c "psql --dbname=gvmd --command=\"alter user gvm password '$DB_PASSWORD';\"" postgres
 fi
 
-if  [ ! -h /usr/local/var/lib/gvm/gvmd ]; then
-	echo "Fixing report_formats folder..."
-	ln -s /usr/local/share/gvm/gvmd/report_formats /usr/local/var/lib/gvm/gvmd/report_formats
-	
-	chown gvm:gvm -R /usr/local/share/gvm/gvmd/report_formats
-fi
-
 if  [ ! -d /data/gvmd ]; then
 	echo "Creating gvmd folder..."
 	mkdir /data/gvmd
@@ -140,9 +139,7 @@ if  [ ! -h /usr/local/var/lib/gvm/gvmd ]; then
 	echo "Fixing gvmd folder..."
 	rm -rf /usr/local/var/lib/gvm/gvmd
 	ln -s /data/gvmd /usr/local/var/lib/gvm/gvmd
-	
 	chown gvm:gvm -R /data/gvmd
-	chown gvm:gvm -R /usr/local/var/lib/gvm/gvmd
 fi
 
 if  [ ! -d /data/certs ]; then
@@ -152,11 +149,8 @@ if  [ ! -d /data/certs ]; then
 	
 	echo "Generating certs..."
 	gvm-manage-certs -a
-	
 	cp /usr/local/var/lib/gvm/CA/* /data/certs/CA/
-	
 	cp -r /usr/local/var/lib/gvm/private/* /data/certs/private/
-	
 	chown gvm:gvm -R /data/certs
 fi
 
@@ -164,9 +158,8 @@ if [ ! -h /usr/local/var/lib/gvm/CA ]; then
 	echo "Fixing certs CA folder..."
 	rm -rf /usr/local/var/lib/gvm/CA
 	ln -s /data/certs/CA /usr/local/var/lib/gvm/CA
-	
 	chown gvm:gvm -R /data/certs
-	chown gvm:gvm -R /usr/local/var/lib/gvm/CA
+
 fi
 
 if [ ! -h /usr/local/var/lib/gvm/private ]; then
@@ -174,7 +167,7 @@ if [ ! -h /usr/local/var/lib/gvm/private ]; then
 	rm -rf /usr/local/var/lib/gvm/private
 	ln -s /data/certs/private /usr/local/var/lib/gvm/private
 	chown gvm:gvm -R /data/certs
-	chown gvm:gvm -R /usr/local/var/lib/gvm/private
+
 fi
 
 if  [ ! -d /data/plugins ]; then
@@ -200,43 +193,44 @@ if [ ! -h /usr/local/var/lib/gvm/cert-data ]; then
 	rm -rf /usr/local/var/lib/gvm/cert-data
 	ln -s /data/cert-data /usr/local/var/lib/gvm/cert-data
 	chown gvm:gvm -R /data/cert-data
-	chown gvm:gvm -R /usr/local/var/lib/gvm/cert-data
 fi
 
 if  [ ! -d /data/scap-data ]; then
 	echo "Creating SCAP Feed folder..."
-	
 	mkdir /data/scap-data
 fi
 
 if [ ! -h /usr/local/var/lib/gvm/scap-data ]; then
 	echo "Fixing SCAP Feed folder..."
-	
 	rm -rf /usr/local/var/lib/gvm/scap-data
-	
 	ln -s /data/scap-data /usr/local/var/lib/gvm/scap-data
-	
 	chown gvm:gvm -R /data/scap-data
-	chown gvm:gvm -R /usr/local/var/lib/gvm/scap-data
 fi
 
 if  [ ! -d /data/data-objects/gvmd ]; then
 	echo "Creating GVMd Data Objects folder..."
-	
 	mkdir -p /data/data-objects/gvmd
 fi
 
 if [ ! -h /usr/local/var/lib/gvm/data-objects ]; then
 	echo "Fixing GVMd Data Objects folder..."
-	
 	rm -rf /usr/local/var/lib/gvm/data-objects
-	
-	mkdir -p /usr/local/var/lib/gvm/data-objects
-	
 	ln -s /data/data-objects /usr/local/var/lib/gvm/data-objects
-	
 	chown gvm:gvm -R /data/data-objects
-	chown gvm:gvm -R /usr/local/var/lib/gvm/data-objects
+fi
+
+
+if [ ! -d /usr/local/var/lib/gvm/data-objects/gvmd/20.08/report_formats ]; then
+	echo "Creating dir structure for feed sync"
+	for dir in configs port_lists report_formats; do 
+		su -c "mkdir -p /usr/local/var/lib/gvm/data-objects/gvmd/20.08/${dir}" gvm
+	done
+fi
+
+chmod 777 /usr/local/var/run/
+if [ -f /usr/local/var/run/feed-update.lock ]; then
+        echo "Removing feed-update.lock"
+	rm /usr/local/var/run/feed-update.lock
 fi
 
 if [ AUTO_SYNC ] || [ ! -f "/firstsync" ]; then
@@ -266,7 +260,8 @@ sed -i "s/^relayhost.*$/relayhost = ${RELAYHOST}:${SMTPPORT}/" /etc/postfix/main
 service postfix start
 
 echo "Starting Open Scanner Protocol daemon for OpenVAS..."
-ospd-openvas --log-file /usr/local/var/log/gvm/ospd-openvas.log --unix-socket /var/run/ospd/ospd.sock --log-level INFO
+ospd-openvas --log-file /usr/local/var/log/gvm/ospd-openvas.log \
+             --unix-socket /var/run/ospd/ospd.sock --log-level INFO
 
 while  [ ! -S /var/run/ospd/ospd.sock ]; do
 	sleep 1
@@ -279,7 +274,7 @@ rm -rf /tmp/ospd.sock
 ln -s /var/run/ospd/ospd.sock /tmp/ospd.sock
 
 echo "Starting Greenbone Vulnerability Manager..."
-su -c "gvmd --listen=127.0.0.1 --port=9390" gvm
+su -c "gvmd --listen=0.0.0.0 --port=9390" gvm
 
 echo "Waiting for Greenbone Vulnerability Manager to finish startup..."
 until su -c "gvmd --get-users" gvm; do
