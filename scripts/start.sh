@@ -244,6 +244,10 @@ if [ -S /tmp/ospd.sock ]; then
   rm /tmp/ospd.sock
 fi
 
+if [ -S /var/run/ospd/ospd.sock ]; then
+  rm /var/run/ospd/ospd.sock
+fi
+
 if [ ! -d /var/run/ospd ]; then
   mkdir /var/run/ospd
 fi
