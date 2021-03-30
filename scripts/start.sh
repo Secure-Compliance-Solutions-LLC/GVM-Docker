@@ -327,7 +327,7 @@ if [ $SSHD == "true" ]; then
 fi
 
 echo "++++++++++++++++++++++++++++++++++++++++++++++"
-echo "+ Your GVM 20.04 container is now ready to use! +"
+echo "+ Your GVM 20.8.1 container is now ready to use! +"
 echo "++++++++++++++++++++++++++++++++++++++++++++++"
 echo ""
 echo "-----------------------------------------------------------"
