@@ -15,3 +15,5 @@ AllowAgentForwarding no
 MaxAuthTries 2
 MaxSessions 0
 StreamLocalBindUnlink yes
+ClientAliveInterval 10
+ClientAliveCountMax 3
