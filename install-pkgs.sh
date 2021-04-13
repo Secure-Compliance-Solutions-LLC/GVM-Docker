@@ -36,6 +36,7 @@ libmicrohttpd-dev
 libnet-snmp-perl
 libpcap-dev
 libpopt-dev
+libradcli-dev
 libsnmp-dev
 libssh-gcrypt-dev
 libxml2-dev
