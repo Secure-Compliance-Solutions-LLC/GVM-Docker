@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:20.10
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV LANG=C.UTF-8
@@ -7,15 +7,15 @@ COPY install-pkgs.sh /install-pkgs.sh
 
 RUN bash /install-pkgs.sh
 
-ENV gvm_libs_version="v20.8.1" \
-    openvas_scanner_version="v20.8.0" \
-    gvmd_version="v20.8.1" \
-    gsa_version="v20.8.0" \
-    gvm_tools_version="2.1.0" \
-    openvas_smb="v1.0.5" \
-    open_scanner_protocol_daemon="v20.8.1" \
-    ospd_openvas="v20.8.0" \
-    python_gvm_version="1.6.0"
+ENV gvm_libs_version="v21.4.0" \
+    openvas_scanner_version="v21.4.0" \
+    gvmd_version="v21.4.0" \
+    gsa_version="v21.4.0" \
+    gvm_tools_version="21.1.0" \
+    openvas_smb="v21.4.0" \
+    open_scanner_protocol_daemon="v21.4.0" \
+    ospd_openvas="v21.4.0" \
+    python_gvm_version="21.1.3"
 
     #
     # install libraries module for the Greenbone Vulnerability Management Solution

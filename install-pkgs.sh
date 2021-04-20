@@ -4,7 +4,7 @@ apt-get update
 
 apt-get install -y gnupg curl
 
-echo "deb http://apt.postgresql.org/pub/repos/apt focal-pgdg main" > /etc/apt/sources.list.d/pgdg.list
+echo "deb http://apt.postgresql.org/pub/repos/apt groovy-pgdg main" > /etc/apt/sources.list.d/pgdg.list
 curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
 
 apt-get update
@@ -19,6 +19,7 @@ fakeroot
 gcc
 gcc-mingw-w64
 geoip-database
+git
 gnutls-bin
 graphviz
 heimdal-dev
@@ -33,12 +34,14 @@ libical-dev
 libksba-dev
 libldap2-dev
 libmicrohttpd-dev
+libnet1-dev
 libnet-snmp-perl
 libpcap-dev
 libpopt-dev
 libradcli-dev
 libsnmp-dev
 libssh-gcrypt-dev
+libunistring-dev
 libxml2-dev
 net-tools
 nmap
