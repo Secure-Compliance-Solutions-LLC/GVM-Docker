@@ -1,6 +1,15 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
+#CORRECT WAY OF SHUTING DOWN
+cleanup() {
+    echo "Container stopped, performing shutdown"
+    su -c "/usr/lib/postgresql/12/bin/pg_ctl -D /data/database stop" postgres
+}
+
+#SIGTERM
+trap 'cleanup' SIGTERM
+
 USERNAME=${USERNAME:-admin}
 PASSWORD=${PASSWORD:-admin}
 TIMEOUT=${TIMEOUT:-15}
@@ -344,3 +353,6 @@ echo "++++++++++++++++"
 echo "+ Tailing logs +"
 echo "++++++++++++++++"
 tail -F /usr/local/var/log/gvm/*
+
+# THIS ENSURES A PROPER SHUTDOWN OF POSTGRES ON THE CONTAINER
+wait $!
