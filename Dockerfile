@@ -9,7 +9,7 @@ RUN bash /install-pkgs.sh
 
 ENV gvm_libs_version="v21.4.0" \
     openvas_scanner_version="v21.4.0" \
-    gvmd_version="v21.4.0" \
+    gvmd_version="3e53b7701bb4af2023c82d954f383289653feeb7" \
     gsa_version="v21.4.0" \
     gvm_tools_version="21.1.0" \
     openvas_smb="v21.4.0" \
