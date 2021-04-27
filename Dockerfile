@@ -9,6 +9,7 @@ RUN bash /install-pkgs.sh
 
 ENV gvm_libs_version="v21.4.0" \
     openvas_scanner_version="v21.4.0" \
+    pggvm_version="fa973261bee877590e0d0096eb0f9213a38a7965" \
     gvmd_version="3e53b7701bb4af2023c82d954f383289653feeb7" \
     gsa_version="v21.4.0" \
     gvm_tools_version="21.1.0" \
@@ -50,7 +51,24 @@ RUN mkdir /build && \
     make install && \
     cd / && \
     rm -rf /build
+
+    #
+    # Install Greenbone Library for GVM helper functions in PostgreSQL
+    #
     
+RUN mkdir /build && \
+    cd /build && \
+    wget --no-verbose https://github.com/greenbone/pg-gvm/archive/$pggvm_version.tar.gz && \
+    tar -zxf $pggvm_version.tar.gz && \
+    cd /build/*/ && \
+    mkdir build && \
+    cd build && \
+    cmake -DCMAKE_BUILD_TYPE=Release .. && \
+    make && \
+    make install && \
+    cd / && \
+    rm -rf /build
+
     #
     # Install Greenbone Vulnerability Manager (GVMD)
     #
