@@ -119,6 +119,7 @@ fi
 
 if [ ! -f "/data/created_pg_gvm" ]; then
 	su -c "psql --dbname=gvmd --command='create extension \"pg-gvm\";'" postgres
+	touch /data/created_pg_gvm
 fi
 
 su -c "gvmd --migrate" gvm
