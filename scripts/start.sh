@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
+# Proper Shutdown
+cleanup() {
+    echo "Container stopped, performing shutdown"
+    su -c "/usr/lib/postgresql/12/bin/pg_ctl -D /data/database stop" postgres
+}
+
+# Trap SIGTERM
+trap 'cleanup' SIGTERM
 
 USERNAME=${USERNAME:-admin}
 PASSWORD=${PASSWORD:-admin}
@@ -339,8 +347,9 @@ if [ $SSHD == "true" ]; then
 	/usr/sbin/sshd -f /sshd_config -E /usr/local/var/log/gvm/sshd.log
 fi
 
+GVMVER=$(su -c "gvmd --version" gvm )
 echo "++++++++++++++++++++++++++++++++++++++++++++++"
-echo "+ Your GVM 20.8.1 container is now ready to use! +"
+echo "+ Your $GVMVER" container is now ready to use! +"
 echo "++++++++++++++++++++++++++++++++++++++++++++++"
 echo ""
 echo "-----------------------------------------------------------"
@@ -351,3 +360,5 @@ echo "++++++++++++++++"
 echo "+ Tailing logs +"
 echo "++++++++++++++++"
 tail -F /usr/local/var/log/gvm/*
+# This ensures the proper shutdown of postgres on container shtudown.
+wait $!
