@@ -21,7 +21,7 @@ We follow the [GitHub forking model](https://help.github.com/articles/fork-a-rep
 
 This repository follows a similar approach to other repositories within the [Secure Compliance Solutions](https://github.com/Secure-Compliance-Solutions-LLC) organization, with a few exceptions that make our life easier. One way this repository is simpler is the lack of major version breaking changes. This means we have less backport commits to worry about and makes us a little more productive.
 
-The basic branching workflow we follow for Detection Rules:
+The basic branching workflow we follow for our code:
 
 * All changes for the next release of code are made to the `main` branch
 * During feature freeze for a release, we will create a branch from `main` for the release version `{majorVersion.minorVersion}`. This means that we can continue contributing to `main`, even during feature freeze, and it will just target `{majorVersion.minorVersion+1}`
