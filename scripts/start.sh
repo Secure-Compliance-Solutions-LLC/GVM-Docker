@@ -102,7 +102,6 @@ if [ ! -f "/data/firstrun" ]; then
 	su -c "psql --dbname=gvmd --command='grant dba to gvm;'" postgres
 	su -c "psql --dbname=gvmd --command='create extension \"uuid-ossp\";'" postgres
 	su -c "psql --dbname=gvmd --command='create extension \"pgcrypto\";'" postgres
-	su -c "psql --dbname=gvmd --command='create extension \"pg-gvm\";'" postgres
 	
 	echo "listen_addresses = '*'" >> /data/database/postgresql.conf
 	echo "port = 5432" >> /data/database/postgresql.conf
@@ -116,6 +115,10 @@ if [ ! -f "/data/firstrun" ]; then
 	su -c "/usr/lib/postgresql/12/bin/pg_ctl -D /data/database restart" postgres
 	
 	touch /data/firstrun
+fi
+
+if [ ! -f "/data/created_pg_gvm" ]; then
+	su -c "psql --dbname=gvmd --command='create extension \"pg-gvm\";'" postgres
 fi
 
 su -c "gvmd --migrate" gvm
