@@ -119,12 +119,17 @@ fi
 
 if [ ! -f "/data/upgrade_to_21.4.0" ]; then
 	su -c "psql --dbname=gvmd --command='CREATE TABLE IF NOT EXISTS vt_severities (id SERIAL PRIMARY KEY,vt_oid text NOT NULL,type text NOT NULL, origin text,date integer,score double precision,value text);'" postgres
-	su -c "psql --dbname=gvmd --command='SELECT create_index ('vt_severities_by_vt_oid','vt_severities', 'vt_oid');'" postgres
-	su -c "psql --dbname=gvmd --command='ALTER TABLE vt_severities OWNER TO gvmd;'" postgres
-	touch /data/upgrade_to_21.4.0
+	su -c "psql --dbname=gvmd --command='ALTER TABLE vt_severities ALTER COLUMN score SET DATA TYPE double precision;'" postgres
+	su -c "psql --dbname=gvmd --command='UPDATE vt_severities SET score = round((score / 10.0)::numeric, 1);'" postgres
+	su -c "psql --dbname=gvmd --command='ALTER TABLE vt_severities OWNER TO gvm;'" postgres
 fi
 
 su -c "gvmd --migrate" gvm
+
+if [ ! -f "/data/upgrade_to_21.4.0" ]; then
+	su -c "gvmd --rebuild" gvm
+	touch /data/upgrade_to_21.4.0
+fi
 
 if [ $DB_PASSWORD != "none" ]; then
 	su -c "psql --dbname=gvmd --command=\"alter user gvm password '$DB_PASSWORD';\"" postgres
