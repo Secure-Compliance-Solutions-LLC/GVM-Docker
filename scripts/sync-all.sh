@@ -14,7 +14,3 @@ sleep 5
 
 echo "Updating CERT data..."
 su -c "greenbone-feed-sync --type CERT" gvm
-
-if [ su -c "gvmd --get-users" gvm ]; then
-	su -c "gvmd --rebuild" gvm
-fi
