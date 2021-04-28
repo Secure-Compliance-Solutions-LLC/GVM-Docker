@@ -344,8 +344,9 @@ if [ $SSHD == "true" ]; then
 	/usr/sbin/sshd -f /sshd_config -E /usr/local/var/log/gvm/sshd.log
 fi
 
+GVMVER=$(su -c "gvmd --version" gvm )
 echo "++++++++++++++++++++++++++++++++++++++++++++++"
-echo "+ Your GVM 20.8.1 container is now ready to use! +"
+echo "+ Your $GVMVER" container is now ready to use! +"
 echo "++++++++++++++++++++++++++++++++++++++++++++++"
 echo ""
 echo "-----------------------------------------------------------"
