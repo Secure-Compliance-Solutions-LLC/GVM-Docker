@@ -122,6 +122,7 @@ if [ ! -f "/data/upgrade_to_21.4.0" ]; then
 	su -c "psql --dbname=gvmd --command='ALTER TABLE vt_severities ALTER COLUMN score SET DATA TYPE double precision;'" postgres
 	su -c "psql --dbname=gvmd --command='UPDATE vt_severities SET score = round((score / 10.0)::numeric, 1);'" postgres
 	su -c "psql --dbname=gvmd --command='ALTER TABLE vt_severities OWNER TO gvm;'" postgres
+	touch /data/upgrade_to_21.4.0
 fi
 
 su -c "gvmd --migrate" gvm
@@ -302,11 +303,6 @@ if [ ! -f "/data/created_gvm_user" ]; then
 fi
 
 su -c "gvmd --user=\"$USERNAME\" --new-password=\"$PASSWORD\"" gvm
-
-if [ ! -f "/data/upgrade_to_21.4.0" ]; then
-	su -c "gvmd --rebuild" gvm
-	touch /data/upgrade_to_21.4.0
-fi
 
 echo "Starting Greenbone Security Assistant..."
 if [ $HTTPS == "true" ]; then
