@@ -126,11 +126,6 @@ fi
 
 su -c "gvmd --migrate" gvm
 
-if [ ! -f "/data/upgrade_to_21.4.0" ]; then
-	su -c "gvmd --rebuild" gvm
-	touch /data/upgrade_to_21.4.0
-fi
-
 if [ $DB_PASSWORD != "none" ]; then
 	su -c "psql --dbname=gvmd --command=\"alter user gvm password '$DB_PASSWORD';\"" postgres
 fi
@@ -308,6 +303,11 @@ fi
 
 su -c "gvmd --user=\"$USERNAME\" --new-password=\"$PASSWORD\"" gvm
 
+if [ ! -f "/data/upgrade_to_21.4.0" ]; then
+	su -c "gvmd --rebuild" gvm
+	touch /data/upgrade_to_21.4.0
+fi
+
 echo "Starting Greenbone Security Assistant..."
 if [ $HTTPS == "true" ]; then
 	su -c "gsad --verbose --gnutls-priorities=SECURE128:-AES-128-CBC:-CAMELLIA-128-CBC:-VERS-SSL3.0:-VERS-TLS1.0 --timeout=$TIMEOUT --no-redirect --mlisten=127.0.0.1 --mport=9390 --port=9392" gvm
@@ -346,7 +346,7 @@ fi
 
 GVMVER=$(su -c "gvmd --version" gvm )
 echo "++++++++++++++++++++++++++++++++++++++++++++++"
-echo "+ Your $GVMVER" container is now ready to use! +"
+echo "+ Your GVM $GVMVER container is now ready to use! +"
 echo "++++++++++++++++++++++++++++++++++++++++++++++"
 echo ""
 echo "-----------------------------------------------------------"
