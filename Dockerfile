@@ -3,6 +3,10 @@ FROM ubuntu:20.10
 ENV DEBIAN_FRONTEND=noninteractive
 ENV LANG=C.UTF-8
 
+# RUN apt-get install -y tzdata
+# ENV TZ=America/Chicago
+# RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 COPY install-pkgs.sh /install-pkgs.sh
 
 RUN bash /install-pkgs.sh
