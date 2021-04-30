@@ -119,8 +119,9 @@ fi
 
 if [ ! -f "/data/upgrade_to_21.4.0" ]; then
 	su -c "psql --dbname=gvmd --command='CREATE TABLE IF NOT EXISTS vt_severities (id SERIAL PRIMARY KEY,vt_oid text NOT NULL,type text NOT NULL, origin text,date integer,score double precision,value text);'" postgres
-	su -c "psql --dbname=gvmd --command='SELECT create_index ('vt_severities_by_vt_oid','vt_severities', 'vt_oid');'" postgres
-	su -c "psql --dbname=gvmd --command='ALTER TABLE vt_severities OWNER TO gvmd;'" postgres
+	su -c "psql --dbname=gvmd --command='ALTER TABLE vt_severities ALTER COLUMN score SET DATA TYPE double precision;'" postgres
+	su -c "psql --dbname=gvmd --command='UPDATE vt_severities SET score = round((score / 10.0)::numeric, 1);'" postgres
+	su -c "psql --dbname=gvmd --command='ALTER TABLE vt_severities OWNER TO gvm;'" postgres
 	touch /data/upgrade_to_21.4.0
 fi
 
@@ -339,8 +340,9 @@ if [ $SSHD == "true" ]; then
 	/usr/sbin/sshd -f /sshd_config -E /usr/local/var/log/gvm/sshd.log
 fi
 
+GVMVER=$(su -c "gvmd --version" gvm )
 echo "++++++++++++++++++++++++++++++++++++++++++++++"
-echo "+ Your GVM 20.8.1 container is now ready to use! +"
+echo "+ Your GVM $GVMVER container is now ready to use! +"
 echo "++++++++++++++++++++++++++++++++++++++++++++++"
 echo ""
 echo "-----------------------------------------------------------"
