@@ -1,8 +1,7 @@
 [![Docker Pulls](https://img.shields.io/docker/pulls/securecompliance/gvm.svg)](https://hub.docker.com/r/securecompliance/gvm/)
 [![Docker Stars](https://img.shields.io/docker/stars/securecompliance/gvm.svg)](https://hub.docker.com/r/securecompliance/gvm/)
 [![Gitter](https://badges.gitter.im/Secure-Compliance-Solutions-LLC/gvm-docker.svg)](https://gitter.im/Secure-Compliance-Solutions-LLC/gvm-docker)
-<a href="https://microbadger.com/images/securecompliance/gvm" title="Get your own image badge on microbadger.com"><img src="https://images.microbadger.com/badges/image/securecompliance/gvm.svg"></a>
-<a href="https://microbadger.com/images/securecompliance/gvm" title="Get your own version badge on microbadger.com"><img src="https://images.microbadger.com/badges/version/securecompliance/gvm.svg"></a>
+
 
 
 Feature Requests Ideas [Click Here](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/discussions/categories/feature-request)
