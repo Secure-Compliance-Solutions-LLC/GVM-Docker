@@ -53,23 +53,6 @@ RUN mkdir /build && \
     rm -rf /build
 
     #
-    # Install Greenbone Library for GVM helper functions in PostgreSQL
-    #
-    
-#RUN mkdir /build && \
-#    cd /build && \
-#    wget --no-verbose https://github.com/greenbone/pg-gvm/archive/$pggvm_version.tar.gz && \
-#    tar -zxf $pggvm_version.tar.gz && \
-#    cd /build/*/ && \
-#    mkdir build && \
-#    cd build && \
-#    cmake -DCMAKE_BUILD_TYPE=Release .. && \
-#    make && \
-#    make install && \
-#    cd / && \
-#    rm -rf /build
-
-    #
     # Install Greenbone Vulnerability Manager (GVMD)
     #
     
