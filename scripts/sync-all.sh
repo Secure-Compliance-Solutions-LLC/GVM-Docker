@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-if [ ! -f "/firstsync" ]; then
+if [ ! -f "/data/firstsync" ]; then
 	echo "Downloading data TAR to speed up first sync..."
 	curl -o /tmp/data.tar.xz https://vulndata.securecompliance.solutions/file/VulnData/data.tar.xz # This file is updated at 0:00 UTC every day
 	mkdir /tmp/data
