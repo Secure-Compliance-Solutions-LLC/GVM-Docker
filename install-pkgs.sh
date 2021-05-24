@@ -81,7 +81,7 @@ EOF
 
 
 # Install Node.js
-curl -sL https://deb.nodesource.com/setup_10.x | bash -
+curl -sL https://deb.nodesource.com/setup_12.x | bash -
 apt-get install nodejs -yq --no-install-recommends
 
 
