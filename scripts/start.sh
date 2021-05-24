@@ -69,7 +69,7 @@ if  [ ! -h /etc/ssh ]; then
 	ln -s /data/ssh /etc/ssh
 fi
 
-if [ ! -f "/firstrun" ]; then
+if [ ! -f "/data/firstrun" ]; then
 	echo "Running first start configuration..."
 	
 	ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
@@ -91,10 +91,6 @@ if [ ! -f "/firstrun" ]; then
 	
 	chown gvm:gvm -R /usr/local/var/run
 	
-	touch /firstrun
-fi
-
-if [ ! -f "/data/firstrun" ]; then
 	echo "Creating Greenbone Vulnerability Manager database"
 	su -c "createuser -DRS gvm" postgres
 	su -c "createdb -O gvm gvmd" postgres
@@ -238,10 +234,10 @@ if [ ! -h /usr/local/var/lib/gvm/data-objects ]; then
 	chown gvm:gvm -R /usr/local/var/lib/gvm/data-objects
 fi
 
-if [ "$AUTO_SYNC" = true ] || [ ! -f "/firstsync" ]; then
+if [ "$AUTO_SYNC" = true ] || [ ! -f "/data/firstsync" ]; then
 	# Sync NVTs, CERT data, and SCAP data on container start
 	/sync-all.sh
-	touch /firstsync
+	touch /data/firstsync
 fi
 
 ###########################
