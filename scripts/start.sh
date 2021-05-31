@@ -69,7 +69,7 @@ if  [ ! -h /etc/ssh ]; then
 	ln -s /data/ssh /etc/ssh
 fi
 
-if [ ! -f "/data/firstrun" ]; then
+if [ ! -f "/firstrun" ]; then
 	echo "Running first start configuration..."
 	
 	ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
@@ -90,7 +90,11 @@ if [ ! -f "/data/firstrun" ]; then
 	chown gvm:gvm -R /usr/local/var/log/gvm
 	
 	chown gvm:gvm -R /usr/local/var/run
-	
+
+	touch /firstrun
+fi
+
+if [ ! -f "/data/firstrun" ]; then
 	echo "Creating Greenbone Vulnerability Manager database"
 	su -c "createuser -DRS gvm" postgres
 	su -c "createdb -O gvm gvmd" postgres
