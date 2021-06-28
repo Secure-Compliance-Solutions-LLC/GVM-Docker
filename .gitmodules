@@ -1,0 +1,4 @@
+[submodule "apk-build"]
+	path = apk-build
+	url = git@github.com:Secure-Compliance-Solutions-LLC/GVM-APK-build
+	branch = master
