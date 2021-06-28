@@ -24,7 +24,7 @@ ARG SETUP=0
 RUN mkdir -p /repo/main \
     && mkdir -p /repo/community
 
-COPY apk-build/target/* /repo/
+COPY apk-build/target/ /repo/
 COPY apk-build/user.abuild/*.pub /etc/apk/keys/
 
 ENV SUPVISD=${SUPVISD:-supervisorctl} \
@@ -41,11 +41,22 @@ ENV SUPVISD=${SUPVISD:-supervisorctl} \
     DB_PASSWORD=${DB_PASSWORD:-none}\
     SETUP=${SETUP:-0}
 
-RUN ls -lahR /repo \
-    && { echo '/repo/main'; echo '/repo/community'; cat /etc/apk/repositories; } >/etc/apk/repositories.new \
-    && mv /etc/apk/repositories.new /etc/apk/repositories \
-    && apk --update upgrade --no-cache --available\
-    && apk --update add --no-cache curl su-exec tzdata postfix mailx bash openssh supervisor openvas openvas-smb openvas-config gvmd gvm-libs greenbone-security-assistant ospd-openvas \
+RUN { \
+    echo '@custcom /repo/community/'; \
+    echo 'https://dl-5.alpinelinux.org/alpine/v3.14/main/' ; \
+    echo 'https://dl-5.alpinelinux.org/alpine/v3.14/community/' ;\
+    echo 'https://dl-4.alpinelinux.org/alpine/v3.14/main/' ; \
+    echo 'https://dl-4.alpinelinux.org/alpine/v3.14/community/' ;\
+    echo 'https://dl-cdn.alpinelinux.org/alpine/v3.14/main/' ; \
+    echo 'https://dl-cdn.alpinelinux.org/alpine/v3.14/community/' ; \
+    } >/etc/apk/repositories \
+    && cat /etc/apk/repositories \
+    && sleep 5 \
+    && apk update --update-cache \
+    && sleep 5 \
+    && apk upgrade --available \
+    && sleep 5 \
+    && apk add --allow-untrusted curl su-exec tzdata postfix mailx bash openssh supervisor openvas@custcom openvas-smb@custcom openvas-config@custcom gvmd@custcom gvm-libs@custcom greenbone-security-assistant@custcom ospd-openvas@custcom \
     && mkdir -p /var/log/supervisor/ \
     && su -c "mkdir /var/lib/gvm/.ssh/ && chmod 700 /var/lib/gvm/.ssh/ && touch /var/lib/gvm/.ssh/authorized_keys && chmod 644 /var/lib/gvm/.ssh/authorized_keys" gvm \
     && sync
