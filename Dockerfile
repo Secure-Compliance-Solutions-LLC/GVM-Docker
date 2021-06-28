@@ -21,6 +21,9 @@ ARG SSHD=false
 ARG DB_PASSWORD=none
 ARG SETUP=0
 
+COPY apk-build/target/* /repo/
+COPY apk-build/user.abuild/*.pub /etc/apk/keys/
+
 ENV SUPVISD=${SUPVISD:-supervisorctl} \
     USERNAME=${GVMD_USER:-${USERNAME:-admin}} \
     PASSWORD=${GVMD_PASSWORD:-${PASSWORD:-admin}} \
@@ -35,8 +38,10 @@ ENV SUPVISD=${SUPVISD:-supervisorctl} \
     DB_PASSWORD=${DB_PASSWORD:-none}\
     SETUP=${SETUP:-0}
 
-RUN apk upgrade --no-cache --available\
-    && apk --update add --no-cache curl su-exec tzdata postfix mailx bash openssh supervisor openvas openvas-config gvmd gvm-libs greenbone-security-assistant ospd-openvas \
+RUN { echo -n '/repo/main'; echo -n '/repo/community'; cat /etc/apk/repositories; } >/etc/apk/repositories.new \
+    && mv /etc/apk/repositories{.new,} \
+    && apk --update upgrade --no-cache --available\
+    && apk --update add --no-cache curl su-exec tzdata postfix mailx bash openssh supervisor openvas openvas-smb openvas-config gvmd gvm-libs greenbone-security-assistant ospd-openvas \
     && mkdir -p /var/log/supervisor/ \
     && su -c "mkdir /var/lib/gvm/.ssh/ && chmod 700 /var/lib/gvm/.ssh/ && touch /var/lib/gvm/.ssh/authorized_keys && chmod 644 /var/lib/gvm/.ssh/authorized_keys" gvm \
     && sync
