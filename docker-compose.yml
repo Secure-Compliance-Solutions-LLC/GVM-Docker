@@ -3,7 +3,9 @@ services:
     gvm:
         image: securecompliance/gvm
         volumes:
-          - <path to data>:/data
+          - <path to data>:/data/database
+          - <path to data of gvm>:/var/lib/gvm
+          - <path to data of openvas plugins>:/var/lib/openvas/plugins
         environment:
           - USERNAME="admin"
           - PASSWORD="admin"
