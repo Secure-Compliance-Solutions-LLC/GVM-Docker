@@ -21,6 +21,9 @@ ARG SSHD=false
 ARG DB_PASSWORD=none
 ARG SETUP=0
 
+RUN mkdir -p /repo/main \
+    && mkdir -p /repo/community
+
 COPY apk-build/target/* /repo/
 COPY apk-build/user.abuild/*.pub /etc/apk/keys/
 
@@ -38,8 +41,9 @@ ENV SUPVISD=${SUPVISD:-supervisorctl} \
     DB_PASSWORD=${DB_PASSWORD:-none}\
     SETUP=${SETUP:-0}
 
-RUN { echo -n '/repo/main'; echo -n '/repo/community'; cat /etc/apk/repositories; } >/etc/apk/repositories.new \
-    && mv /etc/apk/repositories{.new,} \
+RUN ls -lahR /repo \
+    && { echo '/repo/main'; echo '/repo/community'; cat /etc/apk/repositories; } >/etc/apk/repositories.new \
+    && mv /etc/apk/repositories.new /etc/apk/repositories \
     && apk --update upgrade --no-cache --available\
     && apk --update add --no-cache curl su-exec tzdata postfix mailx bash openssh supervisor openvas openvas-smb openvas-config gvmd gvm-libs greenbone-security-assistant ospd-openvas \
     && mkdir -p /var/log/supervisor/ \

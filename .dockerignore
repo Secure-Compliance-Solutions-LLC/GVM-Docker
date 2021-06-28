@@ -1,0 +1,7 @@
+*
+!apk-build/target/
+!apk-build/user.abuild/*.pub
+!config/
+!gvm-sync-data/
+!report_formats/
+!scripts/*.sh
