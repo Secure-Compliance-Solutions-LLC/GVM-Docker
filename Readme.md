@@ -7,7 +7,14 @@
 
 Feature Requests Ideas [Click Here](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/discussions/categories/feature-request)
 
+![](https://i.imgur.com/xNlUgCJ.png)
+
+
+1. Please read these [DIRECTIONS](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/discussions/193) if you would like to be assign issues to work on
+2. Here is a list of [MILESTONES](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/milestones) to work on.
+
 ![Greenbone Vulnerability Management with OpenVAS](https://github.com/SCS-Labs/Images/raw/main/scs-gvm.png)
+
 
 This setup is based on Greenbone Vulnerability Management and OpenVAS. We have made improvements to help stability and functionality.
 

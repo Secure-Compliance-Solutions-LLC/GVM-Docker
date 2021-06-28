@@ -90,7 +90,7 @@ if [ ! -f "/firstrun" ]; then
 	chown gvm:gvm -R /usr/local/var/log/gvm
 	
 	chown gvm:gvm -R /usr/local/var/run
-	
+
 	touch /firstrun
 fi
 
@@ -238,10 +238,10 @@ if [ ! -h /usr/local/var/lib/gvm/data-objects ]; then
 	chown gvm:gvm -R /usr/local/var/lib/gvm/data-objects
 fi
 
-if [ "$AUTO_SYNC" = true ] || [ ! -f "/firstsync" ]; then
+if [ "$AUTO_SYNC" = true ] || [ ! -f "/data/firstsync" ]; then
 	# Sync NVTs, CERT data, and SCAP data on container start
 	/sync-all.sh
-	touch /firstsync
+	touch /data/firstsync
 fi
 
 ###########################

@@ -1,0 +1,21 @@
+version: "3"
+services:
+    gvm:
+        image: securecompliance/gvm
+        volumes:
+          - <path to data>:/data
+        environment:
+          - USERNAME="admin"
+          - PASSWORD="admin"
+          - RELAYHOST="smtp"
+          - SMTPPORT=25
+          - AUTO_SYNC=true
+          - HTTPS=true
+          - TZ="UTC"
+          - SSHD=false
+          - DB_PASSWORD="none"
+        ports:
+          - "8080:9392"  # Web interface
+          #- "5432:5432" # Access PostgreSQL database from external tools
+          #- "2222:22"   # SSH for remote sensors
+        restart: unless-stopped
