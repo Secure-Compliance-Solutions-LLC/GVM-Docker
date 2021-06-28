@@ -9,5 +9,5 @@ echo "Adding scanner $SCANNER_NAME..."
 
 su -c "gvmd --create-scanner='$SCANNER_NAME' --scanner-type=OpenVAS --scanner-host='/sockets/$SCANNER_ID.sock'" gvm
 
-echo "$SCANNER_KEY\n" >> /data/ssh/authorized_keys
-chown gvm:gvm -R /data/ssh
+echo "$SCANNER_KEY\n" >>/var/lib/gvm/.ssh/authorized_keys
+chown gvm:gvm -R /var/lib/gvm/.ssh
