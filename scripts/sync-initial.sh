@@ -30,4 +30,8 @@ if [ ! -f "/var/lib/gvm/.firstsync" ] && [ -f "/opt/gvm-sync-data.tar.xz" ]; the
 	rm -r /tmp/data
 fi
 
+# Sync NVTs, CERT data, and SCAP data on container start
+/sync-all.sh
+touch /var/lib/gvm/.firstsync
+
 true

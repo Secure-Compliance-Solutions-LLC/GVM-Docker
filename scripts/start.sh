@@ -1,20 +1,18 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -Eeuo pipefail
 
-SUPVISD=${SUPVISD:-supervisorctl}
-
-USERNAME=${GVMD_USER:-${USERNAME:-admin}}
-PASSWORD=${GVMD_PASSWORD:-${PASSWORD:-adminpassword}}
-TIMEOUT=${TIMEOUT:-15}
-DEBUG=${DEBUG:-N}
-RELAYHOST=${RELAYHOST:-smtp}
-SMTPPORT=${SMTPPORT:-25}
-
-AUTO_SYNC=${AUTO_SYNC:-true}
-HTTPS=${HTTPS:-true}
-TZ=${TZ:-UTC}
-SSHD=${SSHD:-false}
-DB_PASSWORD=${DB_PASSWORD:-none}
+export SUPVISD=${SUPVISD:-supervisorctl}
+export USERNAME=${GVMD_USER:-${USERNAME:-admin}}
+export PASSWORD=${GVMD_PASSWORD:-${PASSWORD:-adminpassword}}
+export TIMEOUT=${TIMEOUT:-15}
+export DEBUG=${DEBUG:-N}
+export RELAYHOST=${RELAYHOST:-smtp}
+export SMTPPORT=${SMTPPORT:-25}
+export AUTO_SYNC=${AUTO_SYNC:-true}
+export HTTPS=${HTTPS:-true}
+export TZ=${TZ:-UTC}
+export SSHD=${SSHD:-false}
+export DB_PASSWORD=${DB_PASSWORD:-none}
 
 mkdir -p /var/lib/gvm
 mkdir -p /var/lib/gvm/CA
@@ -171,17 +169,9 @@ if [ ! -d /var/lib/gvm/CA ] || [ ! -d /var/lib/gvm/private ] || [ ! -d /var/lib/
 	chown gvm:gvm -R /var/lib/gvm/
 fi
 
-if [ ! -f "/var/lib/gvm/.firstsync" ]; then
-	# Sync NVTs, CERT data, and SCAP data on container start
-	# See this as a super fallback to have at least some data, even if it is then out of date.
-	/sync-initial.sh
-fi
-
-if [ "$AUTO_SYNC" = true ] || [ ! -f "/var/lib/gvm/.firstsync" ]; then
-	# Sync NVTs, CERT data, and SCAP data on container start
-	/sync-all.sh
-	touch /var/lib/gvm/.firstsync
-fi
+# Sync NVTs, CERT data, and SCAP data on container start
+# See this as a super fallback to have at least some data, even if it is then out of date.
+/sync-initial.sh
 
 #############################
 # Remove leftover pid files #

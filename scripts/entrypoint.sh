@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 export GVMD_USER=${GVMD_USER:-${USERNAME:-admin}}
 export GVMD_PASSWORD=${GVMD_PASSWORD:-${PASSWORD:-adminpassword}}
