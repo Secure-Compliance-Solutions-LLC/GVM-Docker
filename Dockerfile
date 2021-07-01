@@ -50,14 +50,14 @@ RUN { \
     echo 'https://dl-cdn.alpinelinux.org/alpine/v3.14/main/' ; \
     echo 'https://dl-cdn.alpinelinux.org/alpine/v3.14/community/' ; \
     } >/etc/apk/repositories \
-    && sleep 5 \
-    && apk upgrade --update-cache --available \
-    && sleep 5 \
-    && apk add --allow-untrusted curl wget su-exec tzdata postfix mailx bash openssh supervisor \
-    openssh-client-common texlive-full libxslt xmlstarlet zip sshpass socat net-snmp-tools samba-client py3-lxml \
-    py3-gvm@custcom openvas@custcom openvas-smb@custcom openvas-config@custcom gvmd@custcom gvm-libs@custcom greenbone-security-assistant@custcom ospd-openvas@custcom \
+    && cat /etc/apk/repositories \
+    && apk upgrade --no-cache --available \
+    && sleep 10 \
+    && apk add --no-cache --allow-untrusted curl wget su-exec tzdata postfix mailx bash openssh supervisor openssh-client-common libxslt xmlstarlet zip sshpass socat net-snmp-tools samba-client py3-lxml py3-gvm@custcom openvas@custcom openvas-smb@custcom openvas-config@custcom gvmd@custcom gvm-libs@custcom greenbone-security-assistant@custcom ospd-openvas@custcom \
     && mkdir -p /var/log/supervisor/ \
-    && su -c "mkdir /var/lib/gvm/.ssh/ && chmod 700 /var/lib/gvm/.ssh/ && touch /var/lib/gvm/.ssh/authorized_keys && chmod 644 /var/lib/gvm/.ssh/authorized_keys" gvm 
+    && su -c "mkdir /var/lib/gvm/.ssh/ && chmod 700 /var/lib/gvm/.ssh/ && touch /var/lib/gvm/.ssh/authorized_keys && chmod 644 /var/lib/gvm/.ssh/authorized_keys" gvm \
+    && apk add --no-cache --allow-untrusted texlive-dvi texlive-xetex xdvik texlive-luatex \
+    && apk add --no-cache --allow-untrusted texlive
 
 COPY gvm-sync-data/gvm-sync-data.tar.xz /opt/gvm-sync-data.tar.xz
 COPY scripts/* /
