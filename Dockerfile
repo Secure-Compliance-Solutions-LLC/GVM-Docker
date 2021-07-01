@@ -10,6 +10,7 @@ ARG GVMD_USER
 ARG GVMD_PASSWORD
 ARG USERNAME=admin
 ARG PASSWORD=adminpassword
+ARG PASSWORD_FILE=none
 ARG TIMEOUT=15
 ARG DEBUG=N
 ARG RELAYHOST=smtp
@@ -20,7 +21,6 @@ ARG TZ=Etc/UTC
 ARG SSHD=false
 ARG DB_PASSWORD=none
 
-
 RUN mkdir -p /repo/main \
     && mkdir -p /repo/community
 
@@ -28,8 +28,9 @@ COPY apk-build/target/ /repo/
 COPY apk-build/user.abuild/*.pub /etc/apk/keys/
 
 ENV SUPVISD=${SUPVISD:-supervisorctl} \
-    USERNAME=${GVMD_USER:-${USERNAME:-admin}} \
-    PASSWORD=${GVMD_PASSWORD:-${PASSWORD:-admin}} \
+    USERNAME=${USERNAME:-${GVMD_USER:-admin}} \
+    PASSWORD=${PASSWORD:-${GVMD_PASSWORD:-admin}} \
+    PASSWORD_FILE=${PASSWORD_FILE:-${GVMD_PASSWORD_FILE:-none}} \
     TIMEOUT=${TIMEOUT:-15} \
     DEBUG=${DEBUG:-N} \
     RELAYHOST=${RELAYHOST:-smtp} \
@@ -39,13 +40,12 @@ ENV SUPVISD=${SUPVISD:-supervisorctl} \
     TZ=${TZ:-Etc/UTC} \
     SSHD=${SSHD:-false} \
     DB_PASSWORD=${DB_PASSWORD:-none} \
+    DB_PASSWORD_FILE=${DB_PASSWORD:-none} \
     LANG=en_US.UTF-8 \
     LANGUAGE=en_US.UTF-8 \
     LC_ALL=en_US.UTF-8
 
-
 ENV MUSL_LOCPATH="/usr/share/i18n/locales/musl"
-
 
 RUN { \
     echo '@custcom /repo/community/'; \

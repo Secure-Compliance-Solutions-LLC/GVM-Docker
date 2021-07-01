@@ -2,8 +2,9 @@
 set -Eeuo pipefail
 
 export SUPVISD=${SUPVISD:-supervisorctl}
-export USERNAME=${GVMD_USER:-${USERNAME:-admin}}
-export PASSWORD=${GVMD_PASSWORD:-${PASSWORD:-adminpassword}}
+export USERNAME=${USERNAME:-${GVMD_USER:-admin}}
+export PASSWORD=${PASSWORD:-${GVMD_PASSWORD:-adminpassword}}
+export PASSWORD_FILE=${PASSWORD_FILE:-${GVMD_PASSWORD_FILE:-none}}
 export TIMEOUT=${TIMEOUT:-15}
 export DEBUG=${DEBUG:-N}
 export RELAYHOST=${RELAYHOST:-smtp}
@@ -13,6 +14,7 @@ export HTTPS=${HTTPS:-true}
 export TZ=${TZ:-Etc/UTC}
 export SSHD=${SSHD:-false}
 export DB_PASSWORD=${DB_PASSWORD:-none}
+export DB_PASSWORD_FILE=${DB_PASSWORD_FILE:-none}
 export OPT_PDF=${OPT_PDF:-0}
 
 if [ "${OPT_PDF}" == "1" ]; then
@@ -155,7 +157,9 @@ fi
 echo "gvmd --migrate"
 su -c "gvmd --migrate" gvm
 
-if [ "$DB_PASSWORD" != "none" ]; then
+if [ "$DB_PASSWORD_FILE" != "none" ] && [ -e "$DB_PASSWORD_FILE" ]; then
+	su -c "psql --dbname=gvmd --command=\"alter user gvm password '$(<"$DB_PASSWORD_FILE")';\"" postgres
+elif [ "$DB_PASSWORD" != "none" ]; then
 	su -c "psql --dbname=gvmd --command=\"alter user gvm password '$DB_PASSWORD';\"" postgres
 fi
 
@@ -230,8 +234,11 @@ done
 
 if [ ! -f "/var/lib/gvm/.created_gvm_user" ]; then
 	echo "Creating Greenbone Vulnerability Manager admin user"
-	su -c "gvmd --role=\"Super Admin\" --create-user=\"$USERNAME\" --password=\"$PASSWORD\"" gvm
-
+	if [ "$PASSWORD_FILE" != "none" ] && [ -e "$PASSWORD_FILE" ]; then
+		su -c "gvmd --role=\"Super Admin\" --create-user=\"$USERNAME\" --password=\"$(<"$PASSWORD_FILE")\"" gvm
+	else
+		su -c "gvmd --role=\"Super Admin\" --create-user=\"$USERNAME\" --password=\"$PASSWORD\"" gvm
+	fi
 	USERSLIST=$(su -c "gvmd --get-users --verbose" gvm)
 	IFS=' '
 	read -ra ADDR <<<"$USERSLIST"
@@ -241,6 +248,12 @@ if [ ! -f "/var/lib/gvm/.created_gvm_user" ]; then
 	su -c "gvmd --modify-setting 78eceaec-3385-11ea-b237-28d24461215b --value ${ADDR[1]}" gvm
 
 	touch /var/lib/gvm/.created_gvm_user
+fi
+
+if [ "$PASSWORD_FILE" != "none" ] && [ -e "$PASSWORD_FILE" ]; then
+	su -c "gvmd --user=\"$USERNAME\" --new-password=\"$(<"$PASSWORD_FILE")\"" gvm
+else
+	su -c "gvmd --user=\"$USERNAME\" --new-password=\"$PASSWORD\"" gvm
 fi
 
 echo "Starting Greenbone Security Assistant..."
