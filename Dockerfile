@@ -63,6 +63,7 @@ COPY gvm-sync-data/gvm-sync-data.tar.xz /opt/gvm-sync-data.tar.xz
 COPY scripts/* /
 COPY report_formats/* /report_formats/
 COPY config/supervisord.conf /etc/supervisord.conf
+COPY config/logrotate-gvm.conf /etc/logrotate.d/gvm
 COPY config/redis-openvas.conf /etc/redis.conf
 
 VOLUME [ "/opt/database", "/var/lib/openvas/plugins", "/var/lib/gvm", "/etc/ssh" ]
