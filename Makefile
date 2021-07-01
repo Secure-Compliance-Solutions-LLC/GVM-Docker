@@ -1,4 +1,6 @@
+SHELL:=/bin/bash
 PWD ?= $(PWD)
+
 .DEFAULT_GOAL := all
 
 all: apkbuild build
@@ -8,14 +10,8 @@ apkbuild:
 	cd ${PWD}/apk-build ; \
 	make build
 
-
 .PHONY: build
 build: 
 	cd ${PWD} ; \
-	docker build --no-cache  \
-		-t securecompliance/gvm:nodata \
-		-t securecompliance/gvm:latest \
-		. ; \
-	docker build --no-cache --build-arg SETUP=1 \ 
-		-t securecompliance/gvm:data \
-		.
+	docker build -t securecompliance/gvm:no-data -t securecompliance/gvm:latest . ; \
+	docker build --build-arg SETUP=1 -t securecompliance/gvm:data . ; 
