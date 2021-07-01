@@ -80,7 +80,7 @@ RUN env \
     && echo "UTC" >/etc/timezone \
     && rm -rf /tmp/* /var/cache/apk/* \
     && echo "!!! FINISH Setup !!!"
-
+ENV SETUP=0
 #
 #   Owned by User gvm
 #
