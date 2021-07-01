@@ -57,7 +57,7 @@ RUN { \
     && mkdir -p /var/log/supervisor/ \
     && su -c "mkdir /var/lib/gvm/.ssh/ && chmod 700 /var/lib/gvm/.ssh/ && touch /var/lib/gvm/.ssh/authorized_keys && chmod 644 /var/lib/gvm/.ssh/authorized_keys" gvm \
     && apk add --no-cache --allow-untrusted texlive-dvi texlive-xetex xdvik texlive-luatex \
-    && apk add --no-cache --allow-untrusted texlive
+    && apk add --no-cache --allow-untrusted texlive logrotate
 
 COPY gvm-sync-data/gvm-sync-data.tar.xz /opt/gvm-sync-data.tar.xz
 COPY scripts/* /
