@@ -10,7 +10,7 @@ export RELAYHOST=${RELAYHOST:-smtp}
 export SMTPPORT=${SMTPPORT:-25}
 export AUTO_SYNC=${AUTO_SYNC:-true}
 export HTTPS=${HTTPS:-true}
-export TZ=${TZ:-UTC}
+export TZ=${TZ:-Etc/UTC}
 export SSHD=${SSHD:-false}
 export DB_PASSWORD=${DB_PASSWORD:-none}
 
@@ -61,7 +61,7 @@ while [ "${X}" != "PONG" ]; do
 done
 echo "Redis ready."
 
-if [[ ! -d "/opt/database/" ]] || [[ -d "/opt/database/" && $(find /opt/database/ -type d -empty) ]]; then
+if [ ! -d "/opt/database/" ] || ([ -d "/opt/database/" ] && [ "$(find /opt/database/ -maxdepth 0 -empty)" ]); then
 	echo "Creating Database folder..."
 	mkdir -p /opt/database
 	mkdir -p /run/postgresql
@@ -82,6 +82,7 @@ if [[ ! -d "/opt/database/" ]] || [[ -d "/opt/database/" && $(find /opt/database
 fi
 sleep 1
 chown postgres:postgres -R /opt/database
+mkdir -p /run/postgresql
 chown postgres:postgres -R /run/postgresql/
 sleep 2
 echo "Starting PostgreSQL..."
@@ -157,8 +158,8 @@ cp -r /report_formats /var/lib/gvm/gvmd/
 
 if [ ! -d /var/lib/gvm/CA ] || [ ! -d /var/lib/gvm/private ] || [ ! -d /var/lib/gvm/private/CA ] ||
 	[ ! -f /var/lib/gvm/CA/cacert.pem ] || [ ! -f /var/lib/gvm/CA/clientcert.pem ] ||
-	[ ! -f /var/lib/gvm/CA/clientcert.pem ] || [ ! -f /var/lib/gvm/private/CA/cacert.pem ] ||
-	[ ! -f /var/lib/gvm/private/CA/clientcert.pem ] || [ ! -f /var/lib/gvm/private/CA/clientcert.pem ]; then
+	[ ! -f /var/lib/gvm/CA/servercert.pem ] || [ ! -f /var/lib/gvm/private/CA/cakey.pem ] ||
+	[ ! -f /var/lib/gvm/private/CA/clientkey.pem ] || [ ! -f /var/lib/gvm/private/CA/serverkey.pem ]; then
 	echo "Creating certs folder..."
 	mkdir -p /var/lib/gvm/CA
 	mkdir -p /var/lib/gvm/private

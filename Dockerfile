@@ -16,7 +16,7 @@ ARG RELAYHOST=smtp
 ARG SMTPPORT=25
 ARG AUTO_SYNC=true
 ARG HTTPS=true
-ARG TZ=UTC
+ARG TZ=Etc/UTC
 ARG SSHD=false
 ARG DB_PASSWORD=none
 ARG SETUP=0
@@ -36,10 +36,17 @@ ENV SUPVISD=${SUPVISD:-supervisorctl} \
     SMTPPORT=${SMTPPORT:-25} \
     AUTO_SYNC=${AUTO_SYNC:-true} \
     HTTPS=${HTTPS:-true} \
-    TZ=${TZ:-UTC} \
+    TZ=${TZ:-Etc/UTC} \
     SSHD=${SSHD:-false} \
     DB_PASSWORD=${DB_PASSWORD:-none}\
-    SETUP=${SETUP:-0}
+    SETUP=${SETUP:-0} \
+    LANG=en_US.UTF-8 \
+    LANGUAGE=en_US.UTF-8 \
+    LC_ALL=en_US.UTF-8
+
+
+ENV MUSL_LOCPATH="/usr/share/i18n/locales/musl"
+
 
 RUN { \
     echo '@custcom /repo/community/'; \
@@ -52,6 +59,18 @@ RUN { \
     } >/etc/apk/repositories \
     && cat /etc/apk/repositories \
     && apk upgrade --no-cache --available \
+    # install libintl
+    # then install dev dependencies for musl-locales
+    # clone the sources
+    # build and install musl-locales
+    # remove sources and compile artifacts
+    # lastly remove dev dependencies again
+    && apk --no-cache add libintl \
+    && apk --no-cache --virtual .locale_build add cmake make musl-dev gcc gettext-dev git \
+    && git clone https://gitlab.com/rilian-la-te/musl-locales \
+    && cd musl-locales && cmake -DLOCALE_PROFILE=OFF -DCMAKE_INSTALL_PREFIX:PATH=/usr . && make && make install \
+    && cd .. && rm -r musl-locales \
+    && apk del --no-cache .locale_build \
     && sleep 10 \
     && apk add --no-cache --allow-untrusted curl wget su-exec tzdata postfix mailx bash openssh supervisor openssh-client-common libxslt xmlstarlet zip sshpass socat net-snmp-tools samba-client py3-lxml py3-gvm@custcom openvas@custcom openvas-smb@custcom openvas-config@custcom gvmd@custcom gvm-libs@custcom greenbone-security-assistant@custcom ospd-openvas@custcom \
     && mkdir -p /var/log/supervisor/ \
