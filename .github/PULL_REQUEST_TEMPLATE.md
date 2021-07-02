@@ -9,9 +9,7 @@ Delete any items that are not applicable to this PR.
 
 - [ ] [Update Documentation](https://github.com/Secure-Compliance-Solutions-LLC/gitbook) was added for features that require explanation or tutorials
 
-
-### Milestones:
-
+### Enhancements:
 
 
 ### Fixed Bug/Issues solved:
