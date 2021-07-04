@@ -13,6 +13,11 @@ export HTTPS=${HTTPS:-true}
 export TZ=${TZ:-Etc/UTC}
 export SSHD=${SSHD:-false}
 export DB_PASSWORD=${DB_PASSWORD:-none}
+export OPT_PDF=${OPT_PDF:-0}
+
+if [ "${OPT_PDF}" == "1" ]; then
+	apk add --no-cache --allow-untrusted texlive texmf-dist-latexextra texmf-dist-fontsextra
+fi
 
 mkdir -p /var/lib/gvm
 mkdir -p /var/lib/gvm/CA
@@ -45,7 +50,9 @@ if [ -S /run/redis-openvas/redis.sock ]; then
 fi
 
 ${SUPVISD} start redis
-${SUPVISD} status redis
+if [ "${DEBUG}" == "Y" ]; then
+	${SUPVISD} status redis
+fi
 
 echo "Wait for redis socket to be created..."
 while [ ! -S /run/redis-openvas/redis.sock ]; do
@@ -153,9 +160,10 @@ if [ "$DB_PASSWORD" != "none" ]; then
 fi
 
 echo "Creating gvmd folder..."
-su-exec gvm mkdir -p /var/lib/gvm/gvmd/report_formats
+su -c "mkdir -p /var/lib/gvm/gvmd/report_formats" gvm
 cp -r /report_formats /var/lib/gvm/gvmd/
 chown gvm:gvm -R /var/lib/gvm
+find /var/lib/gvm/gvmd/report_formats -type f -name "generate" -exec chmod +x {} \;
 
 if [ ! -d /var/lib/gvm/CA ] || [ ! -d /var/lib/gvm/private ] || [ ! -d /var/lib/gvm/private/CA ] ||
 	[ ! -f /var/lib/gvm/CA/cacert.pem ] || [ ! -f /var/lib/gvm/CA/clientcert.pem ] ||
@@ -206,7 +214,7 @@ while [ ! -S /var/run/ospd/ospd.sock ]; do
 done
 
 # echo "Creating OSPd socket link from old location..."
-# rm -rf /tmp/ospd.sock
+# rm -rfv /tmp/ospd.sock
 # ln -s /var/run/ospd/ospd.sock /tmp/ospd.sock
 
 echo "Starting Greenbone Vulnerability Manager..."
@@ -260,7 +268,7 @@ if [ "$SSHD" == "true" ]; then
 		chown gvm:gvm -R /sockets
 	fi
 	echo "gvm:gvm" | chpasswd
-	rm -rf /var/run/sshd
+	rm -rfv /var/run/sshd
 	mkdir -p /var/run/sshd
 	if [ ! -f /etc/ssh/sshd_config ]; then
 		mv /sshd_config /etc/ssh/sshd_config
@@ -275,9 +283,6 @@ ${SUPVISD} start GVMUpdate
 if [ "${DEBUG}" == "Y" ]; then
 	${SUPVISD} status GVMUpdate
 fi
-if [ "${SETUP}" == "1" ]; then
-	${SUPVISD} shutdown
-fi
 GVMVER=$(su -c "gvmd --version" gvm)
 echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 echo "+     $GVMVER"
@@ -291,3 +296,7 @@ echo "-----------------------------------------------------------"
 echo "+        Find logs at: /var/log/supervisor/               +"
 echo "+              and at: /var/log/gvm/                      +"
 echo "==========================================================="
+
+if [ "${SETUP}" == "1" ]; then
+	${SUPVISD} shutdown || true
+fi

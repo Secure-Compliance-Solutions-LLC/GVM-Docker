@@ -20,6 +20,7 @@ ARG TZ=Etc/UTC
 ARG SSHD=false
 ARG DB_PASSWORD=none
 ARG SETUP=0
+ARG OPT_PDF=0
 
 RUN mkdir -p /repo/main \
     && mkdir -p /repo/community
@@ -75,8 +76,8 @@ RUN { \
     && apk add --no-cache --allow-untrusted curl wget su-exec tzdata postfix mailx bash openssh supervisor openssh-client-common libxslt xmlstarlet zip sshpass socat net-snmp-tools samba-client py3-lxml py3-gvm@custcom openvas@custcom openvas-smb@custcom openvas-config@custcom gvmd@custcom gvm-libs@custcom greenbone-security-assistant@custcom ospd-openvas@custcom \
     && mkdir -p /var/log/supervisor/ \
     && su -c "mkdir /var/lib/gvm/.ssh/ && chmod 700 /var/lib/gvm/.ssh/ && touch /var/lib/gvm/.ssh/authorized_keys && chmod 644 /var/lib/gvm/.ssh/authorized_keys" gvm \
-    && apk add --no-cache --allow-untrusted texlive-dvi texlive-xetex xdvik texlive-luatex \
-    && apk add --no-cache --allow-untrusted texlive logrotate
+    && if [ "${OPT_PDF}" == "1" ]; then apk add --no-cache --allow-untrusted texlive texmf-dist-latexextra texmf-dist-fontsextra ; fi \
+    && apk add --no-cache --allow-untrusted logrotate
 
 COPY gvm-sync-data/gvm-sync-data.tar.xz /opt/gvm-sync-data.tar.xz
 COPY scripts/* /
@@ -85,21 +86,21 @@ COPY config/supervisord.conf /etc/supervisord.conf
 COPY config/logrotate-gvm.conf /etc/logrotate.d/gvm
 COPY config/redis-openvas.conf /etc/redis.conf
 
-VOLUME [ "/opt/database", "/var/lib/openvas/plugins", "/var/lib/gvm", "/etc/ssh" ]
-
 RUN env \
     && if [ "${SETUP}" == "1" ]; then \
     ln -snf "/usr/share/zoneinfo/$TZ" /etc/localtime && echo "$TZ" >/etc/timezone \
     && /usr/bin/supervisord -c /etc/supervisord.conf || true ; \
     unset SETUP ;\
     fi \
-    && rm -rf /var/lib/gvm/CA || true \
-    && rm -rf /var/lib/gvm/private || true \
+    && rm -rfv /var/lib/gvm/CA || true \
+    && rm -rfv /var/lib/gvm/private || true \
     && rm /etc/localtime || true\
-    && echo "UTC" >/etc/timezone \
-    && rm -rf /tmp/* /var/cache/apk/* \
+    && echo "Etc/UTC" >/etc/timezone \
+    && rm -rfv /tmp/* /var/cache/apk/* \
     && echo "!!! FINISH Setup !!!"
 ENV SETUP=0
+VOLUME [ "/opt/database", "/var/lib/openvas/plugins", "/var/lib/gvm", "/etc/ssh" ]
+
 #
 #   Owned by User gvm
 #

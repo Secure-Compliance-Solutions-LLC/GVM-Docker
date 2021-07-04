@@ -24,6 +24,7 @@ if [ ! -f "/var/lib/gvm/.firstsync" ]; then
 	find /var/lib/gvm/ -type d -exec chmod 755 {} +
 	find /var/lib/openvas/ -type f -exec chmod 644 {} +
 	find /var/lib/gvm/ -type f -exec chmod 644 {} +
+	find /var/lib/gvm/gvmd/report_formats -type f -name "generate" -exec chmod +x {} \;
 
 	rm /tmp/data.tar.xz
 	rm -r /tmp/data
