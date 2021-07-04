@@ -155,6 +155,7 @@ fi
 echo "Creating gvmd folder..."
 su-exec gvm mkdir -p /var/lib/gvm/gvmd/report_formats
 cp -r /report_formats /var/lib/gvm/gvmd/
+chown gvm:gvm -R /var/lib/gvm
 
 if [ ! -d /var/lib/gvm/CA ] || [ ! -d /var/lib/gvm/private ] || [ ! -d /var/lib/gvm/private/CA ] ||
 	[ ! -f /var/lib/gvm/CA/cacert.pem ] || [ ! -f /var/lib/gvm/CA/clientcert.pem ] ||
@@ -234,8 +235,6 @@ if [ ! -f "/var/lib/gvm/.created_gvm_user" ]; then
 	touch /var/lib/gvm/.created_gvm_user
 fi
 
-su -c "gvmd --user=\"$USERNAME\" --new-password=\"$PASSWORD\"" gvm
-
 echo "Starting Greenbone Security Assistant..."
 if [ "${HTTPS}" == "true" ]; then
 	${SUPVISD} start gsad-https
@@ -251,17 +250,10 @@ fi
 
 if [ "$SSHD" == "true" ]; then
 	echo "Starting OpenSSH Server..."
-	if [ ! -d /data/scanner-ssh-keys ]; then
+	if [ ! -d /usr/lib/gvm/.ssh ]; then
 		echo "Creating scanner SSH keys folder..."
-		mkdir /data/scanner-ssh-keys
-		chown gvm:gvm -R /data/scanner-ssh-keys
-	fi
-	if [ ! -h /usr/local/share/gvm/.ssh ]; then
-		echo "Fixing scanner SSH keys folder..."
-		rm -rf /usr/local/share/gvm/.ssh
-		ln -s /data/scanner-ssh-keys /usr/local/share/gvm/.ssh
-		chown gvm:gvm -R /data/scanner-ssh-keys
-		chown gvm:gvm -R /usr/local/share/gvm/.ssh
+		mkdir /usr/lib/gvm/.ssh
+		chown gvm:gvm -R /usr/lib/gvm/.ssh
 	fi
 	if [ ! -d /sockets ]; then
 		mkdir /sockets
@@ -270,8 +262,8 @@ if [ "$SSHD" == "true" ]; then
 	echo "gvm:gvm" | chpasswd
 	rm -rf /var/run/sshd
 	mkdir -p /var/run/sshd
-	if [ ! -f /data/ssh/sshd_config ]; then
-		mv /sshd_config /data/ssh/sshd_config
+	if [ ! -f /etc/ssh/sshd_config ]; then
+		mv /sshd_config /etc/ssh/sshd_config
 	fi
 	${SUPVISD} start sshd
 	if [ "${DEBUG}" == "Y" ]; then
