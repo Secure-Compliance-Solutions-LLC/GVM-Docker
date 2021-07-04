@@ -250,10 +250,10 @@ fi
 
 if [ "$SSHD" == "true" ]; then
 	echo "Starting OpenSSH Server..."
-	if [ ! -d /usr/lib/gvm/.ssh ]; then
+	if [ ! -d /var/lib/gvm/.ssh ]; then
 		echo "Creating scanner SSH keys folder..."
-		mkdir /usr/lib/gvm/.ssh
-		chown gvm:gvm -R /usr/lib/gvm/.ssh
+		mkdir /var/lib/gvm/.ssh
+		chown gvm:gvm -R /var/lib/gvm/.ssh
 	fi
 	if [ ! -d /sockets ]; then
 		mkdir /sockets
@@ -289,5 +289,5 @@ echo "Server Public key: $(cat /etc/ssh/ssh_host_ed25519_key.pub)"
 echo "-----------------------------------------------------------"
 echo "-----------------------------------------------------------"
 echo "+        Find logs at: /var/log/supervisor/               +"
-echo "+              and at: /usr/local/var/log/gvm/            +"
+echo "+              and at: /var/log/gvm/                      +"
 echo "==========================================================="
