@@ -28,6 +28,13 @@ If applicable, add screenshots to help explain your problem.
  - OS:
  - Version:
 
+**Image in use:**
+- Self build? 
+- Output from `docker image inspect <image>` :
+```
+# docker image inspect <image> 
+```
+
 **Additional context**
 Add any other context about the problem here.
 
