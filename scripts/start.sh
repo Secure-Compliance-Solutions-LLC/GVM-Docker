@@ -250,12 +250,6 @@ if [ ! -f "/var/lib/gvm/.created_gvm_user" ]; then
 	touch /var/lib/gvm/.created_gvm_user
 fi
 
-if [ "$PASSWORD_FILE" != "none" ] && [ -e "$PASSWORD_FILE" ]; then
-	su -c "gvmd --user=\"$USERNAME\" --new-password=\"$(<"$PASSWORD_FILE")\"" gvm
-else
-	su -c "gvmd --user=\"$USERNAME\" --new-password=\"$PASSWORD\"" gvm
-fi
-
 echo "Starting Greenbone Security Assistant..."
 if [ "${HTTPS}" == "true" ]; then
 	${SUPVISD} start gsad-https
