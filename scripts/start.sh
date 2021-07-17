@@ -11,6 +11,8 @@ export RELAYHOST=${RELAYHOST:-smtp}
 export SMTPPORT=${SMTPPORT:-25}
 export AUTO_SYNC=${AUTO_SYNC:-true}
 export HTTPS=${HTTPS:-true}
+export CERTIFICATE=${CERTIFICATE:-none}
+export CERTIFICATE_KEY=${CERTIFICATE_KEY:-none}
 export TZ=${TZ:-Etc/UTC}
 export SSHD=${SSHD:-false}
 export DB_PASSWORD=${DB_PASSWORD:-none}
@@ -104,7 +106,7 @@ until (pg_isready --username=postgres >/dev/null 2>&1 && psql --username=postgre
 	sleep 1
 done
 
-if [[ ! -d "/etc/ssh" ]] || [[ -d "/etc/ssh/" && $(find /etc/ssh/ -type d -empty) ]]; then
+if [[ ! -d "/etc/ssh" ]] || [[ -d "/etc/ssh/" && $(find /etc/ssh/ -maxdepth 0 -empty) ]]; then
 	mkdir /etc/ssh
 	ssh-keygen -A
 fi
@@ -251,7 +253,12 @@ if [ ! -f "/var/lib/gvm/.created_gvm_user" ]; then
 fi
 
 echo "Starting Greenbone Security Assistant..."
-if [ "${HTTPS}" == "true" ]; then
+if [ "${HTTPS}" == "true" ] && [ -e "${CERTIFICATE}" ] && [ -e "${CERTIFICATE_KEY}" ]; then
+	${SUPVISD} start gsad-https-owncert
+	if [ "${DEBUG}" == "Y" ]; then
+		${SUPVISD} status gsad-https-owncert
+	fi
+elif [ "${HTTPS}" == "true" ]; then
 	${SUPVISD} start gsad-https
 	if [ "${DEBUG}" == "Y" ]; then
 		${SUPVISD} status gsad-https
