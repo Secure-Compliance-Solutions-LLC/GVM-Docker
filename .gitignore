@@ -68,3 +68,4 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+apk-build/
