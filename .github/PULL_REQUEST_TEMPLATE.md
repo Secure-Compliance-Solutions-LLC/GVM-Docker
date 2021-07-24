@@ -1,6 +1,6 @@
 ## Summary
 
-Summarize your PR. If it involves visual changes include a screenshot or gif.
+Summarize your PR. If it involves visual changes, include a screenshot or GIF.
 
 
 ### Checklist
@@ -15,5 +15,5 @@ Delete any items that are not applicable to this PR.
 ### Fixed Bug/Issues solved:
 
 
-### Braking Changes:
+### Breaking Changes:
 
