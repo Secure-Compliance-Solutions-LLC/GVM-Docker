@@ -32,6 +32,13 @@ mkdir -p /var/lib/gvm/private
 mkdir -p /var/lib/gvm/scap-data
 chown gvm:gvm -R /var/lib/gvm
 
+# fix for greenbone-nvt-sync
+mkdir -p /run/ospd/
+chown gvm:gvm /run/ospd
+su -c "touch /run/ospd/feed-update.lock" gvm
+mkdir -p /var/lib/openvas/plugins/
+chown -R gvm:gvm /var/lib/openvas/plugins/
+
 ## This need on HyperVisor for GVM
 #echo 'never' >/sys/kernel/mm/transparent_hugepage/enabled
 #echo 'never' >/sys/kernel/mm/transparent_hugepage/defrag
