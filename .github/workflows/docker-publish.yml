@@ -3,8 +3,6 @@ name: Docker Image Build and Release
 on:
   push:
     branches: [master]
-    # Publish semver tags as releases.
-    tags: ["v*.*.*", "v*.*.*-*"]
   pull_request:
     branches: [master, dev]
   create:
@@ -64,7 +62,7 @@ jobs:
         id: releasePreareLatestTag
         shell: bash
         run: |
-          if [[ "$GITHUB_EVENT_NAME" == "create" ]]  && [[ "$GITHUB_REF" =~ ^user.* ]]; then
+          if [[ "$GITHUB_EVENT_NAME" == "create" ]] && [[ "$GITHUB_REF" =~ ^refs/tags/v.* ]]; then
             echo -n "::set-output name=latest::true"
           else
             echo -n "::set-output name=latest::false"
