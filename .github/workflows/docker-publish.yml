@@ -141,6 +141,7 @@ jobs:
             latest=${{ steps.releasePreareLatestTag.outputs.latest}}
             prefix=
             suffix=-full
+            suffixLatest=${{ steps.releasePreareLatestTag.outputs.latest}}
           tags: |
             type=ref,event=branch
             type=ref,event=tag
@@ -174,6 +175,7 @@ jobs:
             latest=${{ steps.releasePreareLatestTag.outputs.latest}}
             prefix=
             suffix=-data
+            suffixLatest=${{ steps.releasePreareLatestTag.outputs.latest}}
           tags: |
             type=ref,event=branch
             type=ref,event=pr
@@ -205,6 +207,7 @@ jobs:
             latest=${{ steps.releasePreareLatestTag.outputs.latest}}
             prefix=
             suffix=-data-full
+            suffixLatest=${{ steps.releasePreareLatestTag.outputs.latest}}
           tags: |
             type=ref,event=branch
             type=ref,event=pr
