@@ -102,7 +102,6 @@ jobs:
             type=semver,pattern={{version}},prefix=,suffix=
             type=semver,pattern={{raw}},prefix=,suffix=
             type=semver,pattern={{major}}.{{minor}},prefix=,suffix=
-            type=sha,prefix=,suffix=
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
@@ -131,7 +130,6 @@ jobs:
             type=semver,pattern={{version}},prefix=,suffix=-full
             type=semver,pattern={{raw}},prefix=,suffix=-full
             type=semver,pattern={{major}}.{{minor}},prefix=,suffix=-full
-            type=sha,prefix=,suffix=-full
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
@@ -160,7 +158,6 @@ jobs:
             type=semver,pattern={{version}},prefix=,suffix=-data
             type=semver,pattern={{raw}},prefix=,suffix=-data
             type=semver,pattern={{major}}.{{minor}},prefix=,suffix=-data
-            type=sha,prefix=,suffix=-data
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
@@ -188,7 +185,6 @@ jobs:
             type=semver,pattern={{version}},prefix=,suffix=-data-full
             type=semver,pattern={{raw}},prefix=,suffix=-data-full
             type=semver,pattern={{major}}.{{minor}},prefix=,suffix=-data-full
-            type=sha,prefix=,suffix=-data-full
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
