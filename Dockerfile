@@ -85,6 +85,7 @@ COPY report_formats/* /report_formats/
 COPY config/supervisord.conf /etc/supervisord.conf
 COPY config/logrotate-gvm.conf /etc/logrotate.d/gvm
 COPY config/redis-openvas.conf /etc/redis.conf
+COPY ./sshd_config /etc/ssh/sshd_config
 
 
 ARG SETUP=0

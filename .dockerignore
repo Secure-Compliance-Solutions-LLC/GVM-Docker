@@ -5,3 +5,4 @@
 !gvm-sync-data/
 !report_formats/
 !scripts/*.sh
+!sshd_config
