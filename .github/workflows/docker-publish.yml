@@ -179,7 +179,7 @@ jobs:
             latest=${{ steps.releasePreareLatestTag.outputs.latest}}
             onlatest=${{ steps.releasePreareLatestTag.outputs.latest}}
             prefix=
-            suffix=-full
+            suffix=-full,onlatest=${{ steps.releasePreareLatestTag.outputs.latest}}
           tags: |
             type=ref,event=branch
             type=ref,event=tag
@@ -213,7 +213,7 @@ jobs:
             latest=${{ steps.releasePreareLatestTag.outputs.latest}}
             onlatest=${{ steps.releasePreareLatestTag.outputs.latest}}
             prefix=
-            suffix=-data
+            suffix=-data,onlatest=${{ steps.releasePreareLatestTag.outputs.latest}}
           tags: |
             type=ref,event=branch
             type=ref,event=pr
@@ -245,7 +245,7 @@ jobs:
             latest=${{ steps.releasePreareLatestTag.outputs.latest}}
             onlatest=${{ steps.releasePreareLatestTag.outputs.latest}}
             prefix=
-            suffix=-data-full
+            suffix=-data-full,onlatest=${{ steps.releasePreareLatestTag.outputs.latest}}
           tags: |
             type=ref,event=branch
             type=ref,event=pr
