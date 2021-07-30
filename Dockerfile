@@ -94,6 +94,7 @@ ENV SETUP=${SETUP:-0} \
     OPT_PDF=${OPT_PDF:-0}
 
 RUN env \
+    && chmod +x /*.sh \
     && if [ "${SETUP}" == "1" ]; then \
     ln -snf "/usr/share/zoneinfo/$TZ" /etc/localtime && echo "$TZ" >/etc/timezone \
     && /usr/bin/supervisord -c /etc/supervisord.conf || true ; \
