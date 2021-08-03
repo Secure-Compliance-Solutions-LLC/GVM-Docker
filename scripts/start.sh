@@ -112,9 +112,10 @@ fi
 until (pg_isready --username=postgres >/dev/null 2>&1 && psql --username=postgres --list >/dev/null 2>&1); do
 	sleep 1
 done
-
-if [[ ! -d "/etc/ssh" ]] || [[ -d "/etc/ssh/" && $(find /etc/ssh/ -maxdepth 0 -empty) ]]; then
-	mkdir /etc/ssh
+if [[ ! -d "/etc/ssh" ]]; then
+	mkdir -p /etc/ssh
+fi
+if [[ -d "/etc/ssh/" && $(find /etc/ssh/ -maxdepth 0 -empty) ]]; then
 	ssh-keygen -A
 fi
 echo "Generate SSH-HOST Keys"
@@ -174,7 +175,7 @@ fi
 
 echo "Creating gvmd folder..."
 su -c "mkdir -p /var/lib/gvm/gvmd/report_formats" gvm
-cp -r /report_formats /var/lib/gvm/gvmd/
+#cp -r /report_formats /var/lib/gvm/gvmd/
 chown gvm:gvm -R /var/lib/gvm
 find /var/lib/gvm/gvmd/report_formats -type f -name "generate" -exec chmod +x {} \;
 
@@ -292,7 +293,7 @@ if [ "$SSHD" == "true" ]; then
 	rm -rfv /var/run/sshd
 	mkdir -p /var/run/sshd
 	if [ ! -f /etc/ssh/sshd_config ]; then
-		mv /sshd_config /etc/ssh/sshd_config
+		cp /sshd_config /etc/ssh/sshd_config
 	fi
 	${SUPVISD} start sshd
 	if [ "${DEBUG}" == "Y" ]; then
