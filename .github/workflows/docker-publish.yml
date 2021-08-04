@@ -53,13 +53,29 @@ jobs:
           repo: Secure-Compliance-Solutions-LLC/GVM-APK-build
 
       - name: Build the Docker image
-        run: docker build . --file Dockerfile --build-arg OPT_PDF=1 --tag myapp:${{ steps.vars.outputs.docker_tag }}
+        run: docker build . --file Dockerfile --build-arg OPT_PDF=1 --tag myapp:${{ github.sha }}
 
-      - name: Scan with Phonito Security
-        uses: phonito/phonito-scanner-action@master
+      - uses: actions/cache@v2.1.4
         with:
-          image: myapp:${{ steps.vars.outputs.docker_tag }}
-          phonito-token: ${{ secrets.PHONITO_TOKEN }}
+          path: .trivy
+          key: ${{ runner.os }}-trivy-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-trivy-
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: "my-app:${{ github.sha }}"
+          format: "table"
+          exit-code: "1"
+          ignore-unfixed: true
+          vuln-type: "os,library"
+          severity: "CRITICAL,HIGH"
+          cache-dir: .trivy
+
+      - name: Correct Trivy cache permissions
+        if: always()
+        run: sudo chown -R $USER:$GROUP .trivy
 
   build_release:
     name: Build and Release
