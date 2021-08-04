@@ -28,6 +28,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+
+      - name: PrepareReg Names
+        run: |
+          echo IMAGE_REPOSITORY_GHCR=$(echo "ghcr.io/${{ github.repository }}" | tr '[:upper:]' '[:lower:]') >> $GITHUB_ENV
+          echo IMAGE_TAG=$(echo ${{ github.ref }} | tr '[:upper:]' '[:lower:]' | awk '{split($0,a,"/"); print a[3]}') >> $GITHUB_ENV
+
       - name: Set tag var
         id: vars
         run: echo ::set-output name=docker_tag::$(echo ${GITHUB_REF} | cut -d'/' -f3)-${GITHUB_SHA}
@@ -53,7 +59,7 @@ jobs:
           repo: Secure-Compliance-Solutions-LLC/GVM-APK-build
 
       - name: Build the Docker image
-        run: docker build . --file Dockerfile --build-arg OPT_PDF=1 --tag myapp:${{ github.sha }}
+        run: docker build . --file Dockerfile --build-arg OPT_PDF=1 --tag ${{ env.IMAGE_REPOSITORY_GHCR }}:${{ github.sha }}
 
       - uses: actions/cache@v2.1.4
         with:
@@ -65,7 +71,7 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: "my-app:${{ github.sha }}"
+          image-ref: "${{ env.IMAGE_REPOSITORY_GHCR }}:${{ github.sha }}"
           format: "table"
           exit-code: "1"
           ignore-unfixed: true
