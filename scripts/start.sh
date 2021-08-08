@@ -293,7 +293,8 @@ if [ "$SSHD" == "true" ]; then
 	rm -rfv /var/run/sshd
 	mkdir -p /var/run/sshd
 	if [ ! -f /etc/ssh/sshd_config ]; then
-		cp /sshd_config /etc/ssh/sshd_config
+		cp /opt/config/sshd_config /etc/ssh/sshd_config
+		chown root:root /etc/ssh/sshd_config
 	fi
 	${SUPVISD} start sshd
 	if [ "${DEBUG}" == "Y" ]; then

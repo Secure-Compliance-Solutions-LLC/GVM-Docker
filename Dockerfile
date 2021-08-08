@@ -86,6 +86,7 @@ COPY config/supervisord.conf /etc/supervisord.conf
 COPY config/logrotate-gvm.conf /etc/logrotate.d/gvm
 COPY config/redis-openvas.conf /etc/redis.conf
 COPY config/sshd_config /etc/ssh/sshd_config
+COPY config/* /opt/config/
 
 
 ARG SETUP=0
