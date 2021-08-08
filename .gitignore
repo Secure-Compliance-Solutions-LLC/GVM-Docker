@@ -69,7 +69,8 @@ $RECYCLE.BIN/
 *.lnk
 
 # Docker Build Local
-apk-build/
+/apk-build/
+/storage/
 # For github.com/nektos/act local workflow testing
 .env
 .secrets
