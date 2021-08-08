@@ -44,7 +44,7 @@ chown -R gvm:gvm /var/lib/openvas/plugins/
 #echo 'never' >/sys/kernel/mm/transparent_hugepage/defrag
 
 if [ ! -d "/run/redis" ]; then
-	mkdir /run/redis
+	mkdir -p /run/redis
 fi
 
 if [ -S /run/redis/redis.sock ]; then
@@ -53,7 +53,7 @@ fi
 
 if [ ! -d "/run/redis-openvas" ]; then
 	echo "create /run/redis-openvas"
-	mkdir /run/redis-openvas
+	mkdir -p /run/redis-openvas
 fi
 
 if [ -S /run/redis-openvas/redis.sock ]; then
@@ -160,7 +160,7 @@ if [ ! -f "/opt/database/.upgrade_to_21.4.0" ]; then
 fi
 
 if [ ! -d "/run/gvmd" ]; then
-	mkdir /run/gvmd
+	mkdir -p /run/gvmd
 	chown gvm:gvm -R /run/gvmd/
 fi
 
@@ -214,7 +214,7 @@ if [ -S /var/run/ospd/ospd.sock ]; then
 fi
 
 if [ ! -d /var/run/ospd ]; then
-	mkdir /var/run/ospd
+	mkdir -p /var/run/ospd
 fi
 
 echo "Starting Open Scanner Protocol daemon for OpenVAS..."
@@ -282,11 +282,11 @@ if [ "$SSHD" == "true" ]; then
 	echo "Starting OpenSSH Server..."
 	if [ ! -d /var/lib/gvm/.ssh ]; then
 		echo "Creating scanner SSH keys folder..."
-		mkdir /var/lib/gvm/.ssh
+		mkdir -p /var/lib/gvm/.ssh
 		chown gvm:gvm -R /var/lib/gvm/.ssh
 	fi
 	if [ ! -d /sockets ]; then
-		mkdir /sockets
+		mkdir -p /sockets
 		chown gvm:gvm -R /sockets
 	fi
 	echo "gvm:gvm" | chpasswd
