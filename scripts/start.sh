@@ -44,7 +44,7 @@ chown -R gvm:gvm /var/lib/openvas/plugins/
 #echo 'never' >/sys/kernel/mm/transparent_hugepage/defrag
 
 if [ ! -d "/run/redis" ]; then
-	mkdir /run/redis
+	mkdir -p /run/redis
 fi
 
 if [ -S /run/redis/redis.sock ]; then
@@ -53,7 +53,7 @@ fi
 
 if [ ! -d "/run/redis-openvas" ]; then
 	echo "create /run/redis-openvas"
-	mkdir /run/redis-openvas
+	mkdir -p /run/redis-openvas
 fi
 
 if [ -S /run/redis-openvas/redis.sock ]; then
@@ -112,9 +112,10 @@ fi
 until (pg_isready --username=postgres >/dev/null 2>&1 && psql --username=postgres --list >/dev/null 2>&1); do
 	sleep 1
 done
-
-if [[ ! -d "/etc/ssh" ]] || [[ -d "/etc/ssh/" && $(find /etc/ssh/ -maxdepth 0 -empty) ]]; then
-	mkdir /etc/ssh
+if [[ ! -d "/etc/ssh" ]]; then
+	mkdir -p /etc/ssh
+fi
+if [[ -d "/etc/ssh/" && $(find /etc/ssh/ -maxdepth 0 -empty) ]]; then
 	ssh-keygen -A
 fi
 echo "Generate SSH-HOST Keys"
@@ -159,7 +160,7 @@ if [ ! -f "/opt/database/.upgrade_to_21.4.0" ]; then
 fi
 
 if [ ! -d "/run/gvmd" ]; then
-	mkdir /run/gvmd
+	mkdir -p /run/gvmd
 	chown gvm:gvm -R /run/gvmd/
 fi
 
@@ -174,7 +175,7 @@ fi
 
 echo "Creating gvmd folder..."
 su -c "mkdir -p /var/lib/gvm/gvmd/report_formats" gvm
-cp -r /report_formats /var/lib/gvm/gvmd/
+#cp -r /report_formats /var/lib/gvm/gvmd/
 chown gvm:gvm -R /var/lib/gvm
 find /var/lib/gvm/gvmd/report_formats -type f -name "generate" -exec chmod +x {} \;
 
@@ -213,7 +214,7 @@ if [ -S /var/run/ospd/ospd.sock ]; then
 fi
 
 if [ ! -d /var/run/ospd ]; then
-	mkdir /var/run/ospd
+	mkdir -p /var/run/ospd
 fi
 
 echo "Starting Open Scanner Protocol daemon for OpenVAS..."
@@ -281,18 +282,19 @@ if [ "$SSHD" == "true" ]; then
 	echo "Starting OpenSSH Server..."
 	if [ ! -d /var/lib/gvm/.ssh ]; then
 		echo "Creating scanner SSH keys folder..."
-		mkdir /var/lib/gvm/.ssh
+		mkdir -p /var/lib/gvm/.ssh
 		chown gvm:gvm -R /var/lib/gvm/.ssh
 	fi
 	if [ ! -d /sockets ]; then
-		mkdir /sockets
+		mkdir -p /sockets
 		chown gvm:gvm -R /sockets
 	fi
 	echo "gvm:gvm" | chpasswd
 	rm -rfv /var/run/sshd
 	mkdir -p /var/run/sshd
 	if [ ! -f /etc/ssh/sshd_config ]; then
-		mv /sshd_config /etc/ssh/sshd_config
+		cp /opt/config/sshd_config /etc/ssh/sshd_config
+		chown root:root /etc/ssh/sshd_config
 	fi
 	${SUPVISD} start sshd
 	if [ "${DEBUG}" == "Y" ]; then

@@ -3,8 +3,8 @@ set -Eeuo pipefail
 
 RESET_USERNAME=${USERNAME:-${GVMD_USER:-admin}}
 
-read -pr "Reset to new password: " RESET_PASSWORD
-read -pr "Repeate new password: " RESET_PASSWORD2
+read -rp "Reset to new password: " RESET_PASSWORD
+read -rp "Repeate new password: " RESET_PASSWORD2
 
 if [ "${RESET_PASSWORD}" == "${RESET_PASSWORD2}" ]; then
 
