@@ -169,7 +169,22 @@ jobs:
         uses: docker/setup-qemu-action@v1
 
       - name: Setup Docker Buildx
+        id: buildx
         uses: docker/setup-buildx-action@v1
+      - name: Inspect builder
+        run: |
+          echo "Name        : ${{ steps.buildx.output.name }}"
+          echo "Endpoint    : ${{ steps.buildx.output.endpoint }}"
+          echo "Status      : ${{ steps.buildx.output.status }}"
+          echo "Flags       : ${{ steps.buildx.output.flags }}"
+          echo "Plfatforms  : ${{ steps.buildx.output.plfatforms }}"
+          echo "Architecture: ${{ steps.buildx.output.architecture }}"
+          echo "Version     : ${{ steps.buildx.output.version }}"
+          echo "OS          : ${{ steps.buildx.output.os }}"
+          echo "OS Version  : ${{ steps.buildx.output.os_version }}"
+          echo "CPUs        : ${{ steps.buildx.output.cpus }}"
+          echo "Memory      : ${{ steps.buildx.output.memory }}"
+          echo "Kernel      : ${{ steps.buildx.output.kernel }}"
 
       # Login against a Docker registry except on PR
       # https://github.com/docker/login-action
@@ -252,6 +267,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
+          platforms: ${{ steps.buildx.output.plfatforms }}
           push: true
           tags: ${{ steps.meta2.outputs.tags }}
           labels: ${{ steps.meta2.outputs.labels }}
