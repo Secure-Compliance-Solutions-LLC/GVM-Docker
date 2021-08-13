@@ -180,7 +180,7 @@ jobs:
           echo "Endpoint    : ${{ steps.buildx.outputs.endpoint }}"
           echo "Status      : ${{ steps.buildx.outputs.status }}"
           echo "Flags       : ${{ steps.buildx.outputs.flags }}"
-          echo "Plfatforms  : ${{ steps.buildx.outputs.plfatforms }}"
+          echo "Plfatforms  : ${{ steps.buildx.outputs.platforms }}"
 
       # Login against a Docker registry except on PR
       # https://github.com/docker/login-action
