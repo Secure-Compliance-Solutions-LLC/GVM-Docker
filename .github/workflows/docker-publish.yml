@@ -180,7 +180,7 @@ jobs:
           echo "Endpoint    : ${{ steps.buildx.outputs.endpoint }}"
           echo "Status      : ${{ steps.buildx.outputs.status }}"
           echo "Flags       : ${{ steps.buildx.outputs.flags }}"
-          echo "Plfatforms  : ${{ steps.buildx.outputs.platforms }}"
+          echo "Platforms   : ${{ steps.buildx.outputs.platforms }}"
 
       # Login against a Docker registry except on PR
       # https://github.com/docker/login-action
@@ -263,7 +263,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          platforms: ${{ steps.buildx.output.plfatforms }}
+          platforms: ${{ steps.buildx.outputs.platforms }}
           push: true
           tags: ${{ steps.meta2.outputs.tags }}
           labels: ${{ steps.meta2.outputs.labels }}
