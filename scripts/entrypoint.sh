@@ -16,9 +16,14 @@ export CERTIFICATE=${CERTIFICATE:-none}
 export CERTIFICATE_KEY=${CERTIFICATE_KEY:-none}
 export TZ=${TZ:-Etc/UTC}
 export DEBUG=${DEBUG:-N}
+export ACTIVE_DEBUG=${ACTIVE_DEBUG:-N}
 export SSHD=${SSHD:-false}
 export DB_PASSWORD=${DB_PASSWORD:-none}
 export DB_PASSWORD_FILE=${DB_PASSWORD_FILE:-none}
+
+if [ "${ACTIVE_DEBUG}" == "Y" ]; then
+    apk add --no-cache --allow-untrusted gdb nmap-dbg@custcom gvmd-dbg@custcom gvm-libs-dbg@custcom openvas-dbg@custcom openvas-smb-dbg@custcom
+fi
 
 if [ "$1" == "/usr/bin/supervisord" ]; then
     echo "Starting Postfix for report delivery by email"

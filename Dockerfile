@@ -13,6 +13,7 @@ ARG PASSWORD=adminpassword
 ARG PASSWORD_FILE=none
 ARG TIMEOUT=15
 ARG DEBUG=N
+ARG ACTIVE_DEBUG=N
 ARG RELAYHOST=smtp
 ARG SMTPPORT=25
 ARG AUTO_SYNC=true
@@ -24,7 +25,9 @@ ARG SSHD=false
 ARG DB_PASSWORD=none
 
 RUN mkdir -p /repo/main \
-    && mkdir -p /repo/community
+    && mkdir -p /repo/community \
+    && mkdir -p /var/crash \
+    && chmod 777 /var/crash 
 
 COPY apk-build/target/ /repo/
 COPY apk-build/user.abuild/*.pub /etc/apk/keys/
@@ -35,6 +38,7 @@ ENV SUPVISD=${SUPVISD:-supervisorctl} \
     PASSWORD_FILE=${PASSWORD_FILE:-${GVMD_PASSWORD_FILE:-none}} \
     TIMEOUT=${TIMEOUT:-15} \
     DEBUG=${DEBUG:-N} \
+    ACTIVE_DEBUG=${ACTIVE_DEBUG:-N} \
     RELAYHOST=${RELAYHOST:-smtp} \
     SMTPPORT=${SMTPPORT:-25} \
     AUTO_SYNC=${AUTO_SYNC:-true} \
@@ -68,14 +72,19 @@ RUN { \
     # build and install musl-locales
     # remove sources and compile artifacts
     # lastly remove dev dependencies again
-    && apk --no-cache add libintl \
-    && apk --no-cache --virtual .locale_build add cmake make musl-dev gcc gettext-dev git \
+    && apk --no-cache add libintl musl-dbg musl-utils musl-nscd \
+    && apk --no-cache --virtual .locale_build add cmake make musl-dev musl-nscd-dev gcc gettext-dev git \
     && git clone https://gitlab.com/rilian-la-te/musl-locales \
     && cd musl-locales && cmake -DLOCALE_PROFILE=OFF -DCMAKE_INSTALL_PREFIX:PATH=/usr . && make && make install \
     && cd .. && rm -r musl-locales \
     && apk del --no-cache .locale_build \
     && sleep 10 \
-    && apk add --no-cache --allow-untrusted logrotate curl wget su-exec tzdata postfix mailx bash openssh supervisor openssh-client-common libxslt xmlstarlet zip sshpass socat net-snmp-tools samba-client py3-lxml py3-gvm@custcom openvas@custcom openvas-smb@custcom openvas-config@custcom gvmd@custcom gvm-libs@custcom greenbone-security-assistant@custcom ospd-openvas@custcom \
+    && apk add --no-cache --allow-untrusted nmap@custcom musl-libintl  \
+    && apk add --no-cache --allow-untrusted logrotate curl wget su-exec tzdata postfix mailx bash openssh supervisor openssh-client-common libxslt xmlstarlet zip sshpass socat net-snmp-tools samba-client py3-lxml \
+    && apk add --no-cache --allow-untrusted py3-gvm@custcom openvas@custcom openvas-smb@custcom openvas-config@custcom gvmd@custcom gvm-libs@custcom greenbone-security-assistant@custcom ospd-openvas@custcom \
+    && if [ "${ACTIVE_DEBUG}" == "Y" ]; then \
+    apk add --no-cache --allow-untrusted gdb nmap-dbg@custcom gvmd-dbg@custcom gvm-libs-dbg@custcom openvas-dbg@custcom openvas-smb-dbg@custcom ; \
+    fi \
     && mkdir -p /var/log/supervisor/ \
     && su -c "mkdir -p /var/lib/gvm/.ssh/ && chmod 700 /var/lib/gvm/.ssh/ && touch /var/lib/gvm/.ssh/authorized_keys && chmod 644 /var/lib/gvm/.ssh/authorized_keys" gvm 
 
