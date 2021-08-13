@@ -171,20 +171,16 @@ jobs:
       - name: Setup Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@v1
+        with:
+          install: true
+
       - name: Inspect builder
         run: |
-          echo "Name        : ${{ steps.buildx.output.name }}"
-          echo "Endpoint    : ${{ steps.buildx.output.endpoint }}"
-          echo "Status      : ${{ steps.buildx.output.status }}"
-          echo "Flags       : ${{ steps.buildx.output.flags }}"
-          echo "Plfatforms  : ${{ steps.buildx.output.plfatforms }}"
-          echo "Architecture: ${{ steps.buildx.output.architecture }}"
-          echo "Version     : ${{ steps.buildx.output.version }}"
-          echo "OS          : ${{ steps.buildx.output.os }}"
-          echo "OS Version  : ${{ steps.buildx.output.os_version }}"
-          echo "CPUs        : ${{ steps.buildx.output.cpus }}"
-          echo "Memory      : ${{ steps.buildx.output.memory }}"
-          echo "Kernel      : ${{ steps.buildx.output.kernel }}"
+          echo "Name        : ${{ steps.buildx.outputs.name }}"
+          echo "Endpoint    : ${{ steps.buildx.outputs.endpoint }}"
+          echo "Status      : ${{ steps.buildx.outputs.status }}"
+          echo "Flags       : ${{ steps.buildx.outputs.flags }}"
+          echo "Plfatforms  : ${{ steps.buildx.outputs.plfatforms }}"
 
       # Login against a Docker registry except on PR
       # https://github.com/docker/login-action
