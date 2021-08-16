@@ -4,5 +4,5 @@
 !config/
 !gvm-sync-data/
 !report_formats/
-!scripts/*.sh
+!scripts/
 !sshd_config

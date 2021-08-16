@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 set -e
+set -o allexport
+# shellcheck disable=SC1091
+source /opt/setup/.env
+set +o allexport
 export GVMD_USER=${USERNAME:-${GVMD_USER:-admin}}
 export GVMD_PASSWORD=${PASSWORD:-${GVMD_PASSWORD:-adminpassword}}
 export GVMD_PASSWORD_FILE=${PASSWORD_FILE:-${GVMD_PASSWORD_FILE:-adminpassword}}
@@ -21,6 +25,12 @@ export DB_PASSWORD=${DB_PASSWORD:-none}
 export DB_PASSWORD_FILE=${DB_PASSWORD_FILE:-none}
 
 if [ "$1" == "/usr/bin/supervisord" ]; then
+
+    cp /opt/setup/supervisord.conf /etc/supervisord.conf
+    cp /opt/setup/logrotate-gvm.conf /etc/logrotate.d/gvm
+    cp /opt/setup/redis-openvas.conf /etc/redis/redis-openvas.conf
+    cp /opt/setup/sshd_config /etc/ssh/sshd_config
+
     echo "Starting Postfix for report delivery by email"
     sed -i "s/^relayhost.*$/relayhost = ${RELAYHOST}:${SMTPPORT}/" /etc/postfix/main.cf
     /usr/sbin/postfix -c /etc/postfix start

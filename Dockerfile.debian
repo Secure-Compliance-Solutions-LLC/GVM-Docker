@@ -1,0 +1,62 @@
+FROM debian:10-slim
+
+ENTRYPOINT [ "/opt/setup/scripts/entrypoint.sh" ]
+CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisord.conf"]
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV LANG=C.UTF-8
+
+COPY config /opt/setup/
+COPY scripts /opt/setup/scripts/
+RUN chmod -R +x /opt/setup/scripts/*.sh
+#RUN bash /opt/setup/debian/install-pkgs.sh
+
+# gvmd: v21.4.3
+# gsa: v21.4.2
+# gvm-libs: v21.4.2
+# gvm-tools: v21.6.1
+# ospd: v21.4.3
+# ospd-openvas: v21.4.2
+# openvas-scanner: v21.4.2
+# openvas-smb: v21.4.0
+# python-gvm: v21.6.0
+
+ARG gvm_libs_version="21.4.2"
+ARG openvas_scanner_version="21.4.2" 
+ARG pggvm_version="fa973261bee877590e0d0096eb0f9213a38a7965" 
+ARG gvmd_version="21.4.3" 
+ARG gsa_version="21.4.2" 
+ARG gvm_tools_version="21.6.1" 
+ARG openvas_smb_version="21.4.0" 
+ARG open_scanner_protocol_daemon="21.4.3" 
+ARG ospd_openvas="21.4.2" 
+ARG python_gvm_version="21.6.0"
+
+ENV gvm_libs_version=${gvm_libs_version} \
+    openvas_scanner_version=${openvas_scanner_version} \
+    pggvm_version=${pggvm_version} \
+    gvmd_version=${gvmd_version} \
+    gsa_version=${gsa_version} \
+    gvm_tools_version=${gvm_tools_version} \
+    openvas_smb_version=${openvas_smb_version} \
+    open_scanner_protocol_daemon=${open_scanner_protocol_daemon} \
+    ospd_openvas=${ospd_openvas} \
+    python_gvm_version=${python_gvm_version} \
+    SYSTEM_DIST=debian
+
+RUN ls -lahR /opt/setup/ \
+    && /opt/setup/scripts/debian/prepare.sh \
+    && /opt/setup/scripts/debian/main_pkgs.sh
+
+#COPY report_formats/* /report_formats/
+
+# COPY greenbone-feed-sync-patch.txt /greenbone-feed-sync-patch.txt
+
+# RUN patch /usr/local/sbin/greenbone-feed-sync /greenbone-feed-sync-patch.txt
+
+
+
+
+
+
+VOLUME [ "/opt/database", "/var/lib/openvas/plugins", "/var/lib/gvm", "/etc/ssh" ]

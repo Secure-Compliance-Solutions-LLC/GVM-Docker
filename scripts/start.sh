@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -Eeuo pipefail
+set -Eeuxo pipefail
 
 export SUPVISD=${SUPVISD:-supervisorctl}
 export USERNAME=${USERNAME:-${GVMD_USER:-admin}}
@@ -19,8 +19,13 @@ export DB_PASSWORD=${DB_PASSWORD:-none}
 export DB_PASSWORD_FILE=${DB_PASSWORD_FILE:-none}
 export OPT_PDF=${OPT_PDF:-0}
 
-if [ "${OPT_PDF}" == "1" ]; then
+if [ "${OPT_PDF}" == "1" ] && [ "${SYSTEM_DIST}" == "alpine" ]; then
 	apk add --no-cache --allow-untrusted texlive texmf-dist-latexextra texmf-dist-fontsextra
+elif [ "${OPT_PDF}" == "1" ] && [ "${SYSTEM_DIST}" == "debian" ]; then
+	# Install optional dependencies for gvmd
+	sudo apt install -y --no-install-recommends \
+		texlive-latex-extra \
+		texlive-fonts-recommended
 fi
 
 mkdir -p /var/lib/gvm
@@ -195,7 +200,7 @@ fi
 
 # Sync NVTs, CERT data, and SCAP data on container start
 # See this as a super fallback to have at least some data, even if it is then out of date.
-/sync-initial.sh
+/opt/setup/scripts/sync-initial.sh
 
 #############################
 # Remove leftover pid files #
