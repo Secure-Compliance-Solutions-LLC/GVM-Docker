@@ -32,6 +32,24 @@ ARG open_scanner_protocol_daemon="21.4.3"
 ARG ospd_openvas="21.4.2" 
 ARG python_gvm_version="21.6.0"
 
+ARG SUPVISD=supervisorctl
+ARG GVMD_USER
+ARG GVMD_PASSWORD
+ARG USERNAME=admin
+ARG PASSWORD=adminpassword
+ARG PASSWORD_FILE=none
+ARG TIMEOUT=15
+ARG DEBUG=N
+ARG RELAYHOST=smtp
+ARG SMTPPORT=25
+ARG AUTO_SYNC=true
+ARG CERTIFICATE=none
+ARG CERTIFICATE_KEY=none
+ARG HTTPS=true
+ARG TZ=Etc/UTC
+ARG SSHD=false
+ARG DB_PASSWORD=none
+
 ENV gvm_libs_version=${gvm_libs_version} \
     openvas_scanner_version=${openvas_scanner_version} \
     pggvm_version=${pggvm_version} \
@@ -42,7 +60,26 @@ ENV gvm_libs_version=${gvm_libs_version} \
     open_scanner_protocol_daemon=${open_scanner_protocol_daemon} \
     ospd_openvas=${ospd_openvas} \
     python_gvm_version=${python_gvm_version} \
-    SYSTEM_DIST=debian
+    SYSTEM_DIST=debian \
+    SUPVISD=${SUPVISD:-supervisorctl} \
+    USERNAME=${USERNAME:-${GVMD_USER:-admin}} \
+    PASSWORD=${PASSWORD:-${GVMD_PASSWORD:-admin}} \
+    PASSWORD_FILE=${PASSWORD_FILE:-${GVMD_PASSWORD_FILE:-none}} \
+    TIMEOUT=${TIMEOUT:-15} \
+    DEBUG=${DEBUG:-N} \
+    RELAYHOST=${RELAYHOST:-smtp} \
+    SMTPPORT=${SMTPPORT:-25} \
+    AUTO_SYNC=${AUTO_SYNC:-true} \
+    HTTPS=${HTTPS:-true} \
+    CERTIFICATE=${CERTIFICATE:-none} \
+    CERTIFICATE_KEY=${CERTIFICATE_KEY:-none} \
+    TZ=${TZ:-Etc/UTC} \
+    SSHD=${SSHD:-false} \
+    DB_PASSWORD=${DB_PASSWORD:-none} \
+    DB_PASSWORD_FILE=${DB_PASSWORD:-none} \
+    LANG=en_US.UTF-8 \
+    LANGUAGE=en_US.UTF-8 \
+    LC_ALL=en_US.UTF-8
 
 RUN ls -lahR /opt/setup/ \
     && /opt/setup/scripts/debian/prepare.sh \

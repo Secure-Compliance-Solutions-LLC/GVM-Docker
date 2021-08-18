@@ -32,6 +32,7 @@ gpg --import GBCommunitySigningKey.asc
 # Install required dependencies for gvm-libs
 sudo apt-get install -y --no-install-recommends \
     libglib2.0-dev \
+    graphviz graphviz-dev \
     libgpgme-dev \
     libgpgme11 \
     libgnutls28-dev \
@@ -85,7 +86,7 @@ sudo apt-get install -y --no-install-recommends \
     libglib2.0-dev \
     libgnutls28-dev \
     libpq-dev \
-    postgresql-server-dev-13 \
+    postgresql-server-dev-all \
     libical-dev \
     libical3 \
     xsltproc \
@@ -153,6 +154,10 @@ sudo apt-get install -y --no-install-recommends \
 sudo apt-get install -y --no-install-recommends \
     nodejs \
     yarnpkg
+
+# looks like need because of an issue with yarn
+yarnpkg install
+yarnpkg upgrade
 
 curl -sSL https://github.com/greenbone/gsa/archive/refs/tags/v${gsa_version}.tar.gz -o ${SOURCE_DIR}/gsa-${gsa_version}.tar.gz
 curl -sSL https://github.com/greenbone/gsa/releases/download/v${gsa_version}/gsa-${gsa_version}.tar.gz.asc -o ${SOURCE_DIR}/gsa-${gsa_version}.tar.gz.asc
@@ -311,7 +316,7 @@ sudo cp -rv ${INSTALL_DIR}/* /
 # Install redis-server
 sudo apt-get install -y --no-install-recommends redis-server/buster-backports
 sudo mkdir -p /etc/redis
-sudo cp ${SOURCE_DIR}/openvas-scanner-${openvas_scanner_version}/config/redis-openvas.conf /etc/redis/redis-openvas.org.conf
+sudo cp ${SOURCE_DIR}/openvas-scanner-${openvas_scanner_version}/config/redis-openvas.conf /etc/redis/redis-openvas.conf
 sudo chown redis:redis /etc/redis/*.conf
 echo "db_address = /run/redis-openvas/redis.sock" | sudo tee -a /etc/openvas/openvas.conf
 
@@ -362,9 +367,10 @@ sudo apt-get purge --auto-remove -y \
     libxml2-dev \
     uuid-dev \
     build-essential \
-    postgresql-server-dev-13 \
+    postgresql-server-dev-all \
     nodejs \
     yarnpkg \
+    graphviz-dev \
     cmake
 sudo apt-get purge --auto-remove -y *-dev
 

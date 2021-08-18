@@ -18,6 +18,10 @@ apkbuild:
 .PHONY: build_debian
 build: build_debian_latest build_debian_full build_debian_data build_debian_data_full 
 
+build_debian_squash:
+	cd ${PWD} ; \
+	docker build -f Dockerfile.debian --squash -t ${DOCKER_ORG}/gvm:debian . ; \
+	docker push ${DOCKER_ORG}/gvm:debian
 build_debian_latest: 
 	cd ${PWD} ; \
 	docker build --platform ${PLATFORM} ${ADD_OPTIONS} -f Dockerfile.debian -t ${DOCKER_ORG}/gvm:debian -t ${DOCKER_ORG}/gvm:debian-latest .
@@ -35,6 +39,9 @@ build_debian_data_full:
 .PHONY: build
 build: build_latest build_full build_data build_data_full 
 
+build_squash:
+	cd ${PWD} ; \
+	docker build --no-cache --squash --platform ${PLATFORM} ${ADD_OPTIONS} -t ${DOCKER_ORG}/gvm:no-data-uid-squash .
 build_latest: 
 	cd ${PWD} ; \
 	docker build --platform ${PLATFORM} ${ADD_OPTIONS} -t ${DOCKER_ORG}/gvm:alpine -t ${DOCKER_ORG}/gvm:latest .
@@ -49,6 +56,7 @@ build_data_full:
 	docker build --platform ${PLATFORM} ${ADD_OPTIONS} --build-arg SETUP=1 --build-arg OPT_PDF=1 -t ${DOCKER_ORG}/gvm:data-full .
 	
 run-debian:
+	sudo rm -rf ${PWD}/storage
 	mkdir -p ${PWD}/storage/postgres-db
 	mkdir -p ${PWD}/storage/openvas-plugins
 	mkdir -p ${PWD}/storage/gvm
