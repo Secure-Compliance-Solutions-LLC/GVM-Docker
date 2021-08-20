@@ -19,8 +19,12 @@ sudo apt-get -yq upgrade
 
 sudo apt-get install -y postgresql postgresql-server-dev-all
 
-sudo update-alternatives --install /usr/bin/postgres postgres /usr/lib/postgresql/13/bin/postgres 50
-sudo update-alternatives --install /usr/bin/initdb initdb /usr/lib/postgresql/13/bin/initdb 50
+sudo update-alternatives --install /usr/bin/postgres postgres /usr/lib/postgresql/11/bin/postgres 10
+sudo update-alternatives --install /usr/bin/initdb initdb /usr/lib/postgresql/11/bin/initdb 10
+sudo update-alternatives --install /usr/bin/postgres postgres /usr/lib/postgresql/12/bin/postgres 20
+sudo update-alternatives --install /usr/bin/initdb initdb /usr/lib/postgresql/12/bin/initdb 20
+sudo update-alternatives --install /usr/bin/postgres postgres /usr/lib/postgresql/13/bin/postgres 30
+sudo update-alternatives --install /usr/bin/initdb initdb /usr/lib/postgresql/13/bin/initdb 40
 #ln -s /usr/lib/postgresql/13/bin/postgres /usr/bin/postgres
 #ln -s /usr/lib/postgresql/13/bin/initdb /usr/bin/initdb
 
