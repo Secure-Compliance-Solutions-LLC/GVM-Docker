@@ -3,7 +3,7 @@ services:
     gvm:
         image: securecompliance/gvm
         volumes:
-          - <path to data>:/data/database
+          - <path to data of postgres>:/opt/database
           - <path to data of gvm>:/var/lib/gvm
           - <path to data of openvas plugins>:/var/lib/openvas/plugins
         environment:
