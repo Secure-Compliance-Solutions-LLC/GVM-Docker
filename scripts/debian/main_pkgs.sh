@@ -187,6 +187,10 @@ make DESTDIR=${INSTALL_DIR} install
 sudo cp -rv ${INSTALL_DIR}/* /
 #rm -rf ${INSTALL_DIR}/*
 
+sudo apt-get purge -y \
+    nodejs \
+    yarnpkg
+
 # Install required dependencies for openvas-smb
 sudo apt-get install -y --no-install-recommends \
     gcc-mingw-w64 \

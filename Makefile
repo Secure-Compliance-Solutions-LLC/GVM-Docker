@@ -20,7 +20,7 @@ build: build_debian_latest build_debian_full build_debian_data build_debian_data
 
 build_debian_squash:
 	cd ${PWD} ; \
-	docker build -f Dockerfile.debian --squash -t ${DOCKER_ORG}/gvm:debian . ; \
+	docker build -f Dockerfile.debian --squash ${ADD_OPTIONS}  -t ${DOCKER_ORG}/gvm:debian . ; \
 	docker push ${DOCKER_ORG}/gvm:debian
 build_debian_latest: 
 	cd ${PWD} ; \
