@@ -34,7 +34,8 @@ if [ "$1" == "/usr/bin/supervisord" ]; then
     cp /opt/setup/sshd_config /etc/ssh/sshd_config
 
     echo "Starting Postfix for report delivery by email"
-    sed -i "s/^relayhost.*$/relayhost = ${RELAYHOST}:${SMTPPORT}/" /etc/postfix/main.cf
+    #sed -i "s/^relayhost.*$/relayhost = ${RELAYHOST}:${SMTPPORT}/" /etc/postfix/main.cf
+    postconf -e "relayhost = ${RELAYHOST}:${SMTPPORT}"
     /usr/sbin/postfix -c /etc/postfix start
 
     #  exec /start.sh
