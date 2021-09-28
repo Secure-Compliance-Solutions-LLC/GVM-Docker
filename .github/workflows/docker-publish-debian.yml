@@ -8,7 +8,7 @@ on:
   create:
     tags:
 
-concurrency: ci-${{ github.ref }}
+concurrency: ci-debian-${{ github.ref }}
 
 env:
   # Use docker.io for Docker Hub if empty
