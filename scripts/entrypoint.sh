@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -e
+touch /opt/setup/.env
 set -o allexport
 # shellcheck disable=SC1091
 source /opt/setup/.env
@@ -28,6 +29,7 @@ if [ "$1" == "/usr/bin/supervisord" ]; then
 
     cp /opt/setup/supervisord.conf /etc/supervisord.conf
     cp /opt/setup/logrotate-gvm.conf /etc/logrotate.d/gvm
+    mkdir -p /etc/redis/
     cp /opt/setup/redis-openvas.conf /etc/redis/redis-openvas.conf
     cp /opt/setup/sshd_config /etc/ssh/sshd_config
 

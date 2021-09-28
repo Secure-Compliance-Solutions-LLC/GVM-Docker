@@ -5,6 +5,7 @@ EXPOSE 22 5432 8081 9392
 ENTRYPOINT [ "/opt/setup/scripts/entrypoint.sh" ]
 CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisord.conf"]
 
+
 ARG SUPVISD=supervisorctl
 ARG GVMD_USER
 ARG GVMD_PASSWORD
@@ -22,6 +23,11 @@ ARG HTTPS=true
 ARG TZ=Etc/UTC
 ARG SSHD=false
 ARG DB_PASSWORD=none
+
+
+COPY config /opt/setup/
+COPY scripts /opt/setup/scripts/
+RUN chmod -R +x /opt/setup/scripts/*.sh
 
 RUN mkdir -p /repo/main \
     && mkdir -p /repo/community
@@ -69,7 +75,7 @@ RUN { \
     # build and install musl-locales
     # remove sources and compile artifacts
     # lastly remove dev dependencies again
-    && apk --no-cache add libintl \
+    && apk --no-cache add libintl sudo \
     && apk --no-cache --virtual .locale_build add cmake make musl-dev gcc gettext-dev git \
     && git clone https://gitlab.com/rilian-la-te/musl-locales \
     && cd musl-locales && cmake -DLOCALE_PROFILE=OFF -DCMAKE_INSTALL_PREFIX:PATH=/usr . && make && make install \
@@ -83,8 +89,8 @@ RUN { \
 COPY gvm-sync-data/gvm-sync-data.tar.xz /opt/gvm-sync-data.tar.xz
 
 COPY report_formats/* /report_formats/
-COPY config /opt/setup/
-COPY scripts /opt/setup/scripts/
+#COPY config /opt/setup/
+#COPY scripts /opt/setup/scripts/
 #RUN chmod -R +x /opt/setup/scripts/*.sh
 #COPY scripts/* /
 #COPY config/supervisord.conf /etc/supervisord.conf

@@ -85,4 +85,19 @@ run-full:
 	--volume "${PWD}/storage/openvas-plugins:/var/lib/openvas/plugins" \
 	--volume "${PWD}/storage/gvm:/var/lib/gvm" \
 	--volume "${PWD}/storage/ssh:/etc/ssh" \
-	--name gvm ${DOCKER_ORG}/gvm:data-full
+	--name gvm ${DOCKER_ORG}/gvm:data-
+	
+run-latest:
+	mkdir -p ${PWD}/storage/postgres-db
+	mkdir -p ${PWD}/storage/openvas-plugins
+	mkdir -p ${PWD}/storage/gvm
+	mkdir -p ${PWD}/storage/ssh
+	docker run --rm --publish 8080:9392 --publish 5432:5432 --publish 2222:22 \
+	--env DB_PASSWORD="postgres DB password" \
+	--env PASSWORD="webUI password" \
+	--env SSHD="true" \
+	--volume "${PWD}/storage/postgres-db:/opt/database" \
+	--volume "${PWD}/storage/openvas-plugins:/var/lib/openvas/plugins" \
+	--volume "${PWD}/storage/gvm:/var/lib/gvm" \
+	--volume "${PWD}/storage/ssh:/etc/ssh" \
+	--name gvm ${DOCKER_ORG}/gvm:alpine
