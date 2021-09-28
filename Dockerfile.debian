@@ -92,6 +92,26 @@ RUN ls -lahR /opt/setup/ \
 # RUN patch /usr/local/sbin/greenbone-feed-sync /greenbone-feed-sync-patch.txt
 
 
+ARG SETUP=0
+ARG OPT_PDF=0
+ENV SETUP=${SETUP:-0} \
+    OPT_PDF=${OPT_PDF:-0}
+
+RUN env \
+    && chmod -R +x /opt/setup/scripts/*.sh \
+    && if [ "${SETUP}" = "1" ]; then \
+    ln -snf "/usr/share/zoneinfo/$TZ" /etc/localtime && echo "$TZ" >/etc/timezone \
+    && /opt/setup/scripts/entrypoint.sh /usr/bin/supervisord -c /etc/supervisord.conf || true ; \
+    unset SETUP ;\
+    fi \
+    && rm -rfv /var/lib/gvm/CA || true \
+    && rm -rfv /var/lib/gvm/private || true \
+    && rm /etc/localtime || true\
+    && echo "Etc/UTC" >/etc/timezone \
+    && rm -rfv /tmp/* /var/cache/apk/* \
+    && echo "!!! FINISH Setup !!!"
+ENV SETUP=0
+
 
 
 

@@ -1,0 +1,373 @@
+name: Docker Image Build and Release for Debian
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master, dev]
+  create:
+    tags:
+
+concurrency: ci-${{ github.ref }}
+
+env:
+  # Use docker.io for Docker Hub if empty
+  REGISTRY: ghcr.io
+  # github.repository as <account>/<repo>
+  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME_GHCR: ghcr.io/${{ github.repository }}
+  IMAGE_NAME_DOCKER: securecompliance/gvm
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build_test_trivy:
+    name: Build and Test - Trivy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: PrepareReg Names
+        run: |
+          echo IMAGE_REPOSITORY_GHCR=$(echo "ghcr.io/${{ github.repository }}" | tr '[:upper:]' '[:lower:]') >> $GITHUB_ENV
+          echo IMAGE_TAG=$(echo ${{ github.ref }} | tr '[:upper:]' '[:lower:]' | awk '{split($0,a,"/"); print a[3]}') >> $GITHUB_ENV
+
+      - name: Set tag var
+        id: vars
+        run: echo ::set-output name=docker_tag::$(echo ${GITHUB_REF} | cut -d'/' -f3)-${GITHUB_SHA}
+
+      - name: Download artifact
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          # Optional, GitHub token, a Personal Access Token with `public_repo` scope if needed
+          # Required, if artifact is from a different repo
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          # Required, workflow file name or ID
+          workflow: build-apk.yml
+          # Optional, will use the branch
+          branch: master
+          # Optional, uploaded artifact name,
+          # will download all artifacts if not specified
+          # and extract them in respective subdirectories
+          # https://github.com/actions/download-artifact#download-all-artifacts
+          name: apk-builds
+          # Optional, directory where to extract artifact. Defaults to the artifact name (see `name` input)
+          path: ${{ github.workspace }}/apk-build/
+          # Optional, defaults to current repo
+          repo: Secure-Compliance-Solutions-LLC/GVM-APK-build
+
+      - name: Build the Docker image
+        run: docker build . --file Dockerfile.debian --build-arg OPT_PDF=1 --tag ${{ env.IMAGE_REPOSITORY_GHCR }}:${{ github.sha }}
+
+      - uses: actions/cache@v2.1.4
+        with:
+          path: .trivy
+          key: ${{ runner.os }}-trivy-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-trivy-
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: "${{ env.IMAGE_REPOSITORY_GHCR }}:${{ github.sha }}"
+          format: "table"
+          exit-code: "1"
+          ignore-unfixed: true
+          vuln-type: "os,library"
+          severity: "CRITICAL,HIGH"
+          cache-dir: .trivy
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        if: always()
+        with:
+          image-ref: "${{ env.IMAGE_REPOSITORY_GHCR }}:${{ github.sha }}"
+          format: "template"
+          template: "@/contrib/sarif.tpl"
+          output: "trivy-results.sarif"
+          severity: "CRITICAL,HIGH"
+          cache-dir: .trivy
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v1
+        if: always()
+        with:
+          sarif_file: "trivy-results.sarif"
+
+      - name: Correct Trivy cache permissions
+        if: always()
+        run: sudo chown -R $USER:$GROUP .trivy
+
+  build_test_anchore:
+    name: Build and Test - Anchore
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: PrepareReg Names
+        run: |
+          echo IMAGE_REPOSITORY_GHCR=$(echo "ghcr.io/${{ github.repository }}" | tr '[:upper:]' '[:lower:]') >> $GITHUB_ENV
+          echo IMAGE_TAG=$(echo ${{ github.ref }} | tr '[:upper:]' '[:lower:]' | awk '{split($0,a,"/"); print a[3]}') >> $GITHUB_ENV
+
+      - name: Set tag var
+        id: vars
+        run: echo ::set-output name=docker_tag::$(echo ${GITHUB_REF} | cut -d'/' -f3)-${GITHUB_SHA}
+
+      - name: Download artifact
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          # Optional, GitHub token, a Personal Access Token with `public_repo` scope if needed
+          # Required, if artifact is from a different repo
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          # Required, workflow file name or ID
+          workflow: build-apk.yml
+          # Optional, will use the branch
+          branch: master
+          # Optional, uploaded artifact name,
+          # will download all artifacts if not specified
+          # and extract them in respective subdirectories
+          # https://github.com/actions/download-artifact#download-all-artifacts
+          name: apk-builds
+          # Optional, directory where to extract artifact. Defaults to the artifact name (see `name` input)
+          path: ${{ github.workspace }}/apk-build/
+          # Optional, defaults to current repo
+          repo: Secure-Compliance-Solutions-LLC/GVM-APK-build
+
+      - name: Build the Docker image
+        run: docker build . --file Dockerfile.debian --build-arg OPT_PDF=1 --tag ${{ env.IMAGE_REPOSITORY_GHCR }}:${{ github.sha }}
+
+      - uses: anchore/scan-action@v2
+        if: always()
+        id: scan
+        with:
+          image: "${{ env.IMAGE_REPOSITORY_GHCR }}:${{ github.sha }}"
+          acs-report-enable: true
+
+      - name: upload Anchore scan SARIF report
+        if: always()
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: ${{ steps.scan.outputs.sarif }}
+
+  build_release:
+    name: Build and Release
+    runs-on: ubuntu-latest
+
+    outputs:
+      labels: ${{ steps.meta.outputs.labels }}
+      tags: ${{ steps.meta.outputs.tags }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Setup Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+        with:
+          install: true
+
+      - name: Inspect builder
+        run: |
+          echo "Name        : ${{ steps.buildx.outputs.name }}"
+          echo "Endpoint    : ${{ steps.buildx.outputs.endpoint }}"
+          echo "Status      : ${{ steps.buildx.outputs.status }}"
+          echo "Flags       : ${{ steps.buildx.outputs.flags }}"
+          echo "Platforms   : ${{ steps.buildx.outputs.platforms }}"
+
+      # Login against a Docker registry except on PR
+      # https://github.com/docker/login-action
+      - name: Login to GitHub Container Registry ${{ env.REGISTRY }}
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Login to DockerHub
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Relase Prepare for latest Tag
+        id: releasePreareLatestTag
+        shell: bash
+        run: |
+          if [[ "$GITHUB_EVENT_NAME" == "create" ]] && [[ "$GITHUB_REF" =~ ^refs/tags/v.* ]]; then
+            echo -n "::set-output name=latest::true"
+          else
+            echo -n "::set-output name=latest::false"
+          fi
+
+      - name: Relase Prepare
+        id: releasePreare
+        run: |
+          echo -n "::set-output name=images::"
+          if [ "${GITHUB_EVENT_NAME}" != "pull_request" ]; then
+            echo -n "${IMAGE_NAME_DOCKER}"
+            echo -n ","
+          fi
+          echo -n "${IMAGE_NAME_GHCR}"
+
+      - name: Download artifact
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          # Optional, GitHub token, a Personal Access Token with `public_repo` scope if needed
+          # Required, if artifact is from a different repo
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          # Required, workflow file name or ID
+          workflow: build-apk.yml
+          # Optional, will use the branch
+          branch: master
+          # Optional, uploaded artifact name,
+          # will download all artifacts if not specified
+          # and extract them in respective subdirectories
+          # https://github.com/actions/download-artifact#download-all-artifacts
+          name: apk-builds
+          # Optional, directory where to extract artifact. Defaults to the artifact name (see `name` input)
+          path: ${{ github.workspace }}/apk-build/
+          # Optional, defaults to current repo
+          repo: Secure-Compliance-Solutions-LLC/GVM-APK-build
+
+      # Extract metadata (tags, labels) for Docker
+      # https://github.com/docker/metadata-action
+      - name: Extract Docker metadata
+        id: meta2
+        uses: docker/metadata-action@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          images: ${{ steps.releasePreare.outputs.images }}
+          flavor: |
+            latest=${{ steps.releasePreareLatestTag.outputs.latest}}
+            prefix=debian-
+            suffix=
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{raw}}
+            type=semver,pattern={{major}}.{{minor}}
+
+      # Build and push Docker image with Buildx (don't push on PR)
+      # https://github.com/docker/build-push-action
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6
+          push: true
+          tags: ${{ steps.meta2.outputs.tags }}
+          labels: ${{ steps.meta2.outputs.labels }}
+          build-args: |
+            SETUP=0
+
+      # Extract metadata (tags, labels) for Docker
+      # https://github.com/docker/metadata-action
+      - name: Extract Docker metadata
+        id: meta3
+        uses: docker/metadata-action@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          images: ${{ steps.releasePreare.outputs.images }}
+          flavor: |
+            latest=${{ steps.releasePreareLatestTag.outputs.latest}}
+            onlatest=${{ steps.releasePreareLatestTag.outputs.latest}}
+            prefix=debian-
+            suffix=-full,onlatest=${{ steps.releasePreareLatestTag.outputs.latest}}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=tag
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{raw}}
+            type=semver,pattern={{major}}.{{minor}}
+
+      # Build and push Docker image with Buildx (don't push on PR)
+      # https://github.com/docker/build-push-action
+      - name: Build and push Docker image -full tag
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6
+          push: true
+          tags: ${{ steps.meta3.outputs.tags }}
+          labels: ${{ steps.meta3.outputs.labels }}
+          build-args: |
+            SETUP=0
+            OPT_PDF=1
+
+      # Extract metadata (tags, labels) for Docker
+      # https://github.com/docker/metadata-action
+      - name: Extract Docker metadata
+        id: meta4
+        uses: docker/metadata-action@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          images: ${{ steps.releasePreare.outputs.images }}
+          flavor: |
+            latest=${{ steps.releasePreareLatestTag.outputs.latest}}
+            onlatest=${{ steps.releasePreareLatestTag.outputs.latest}}
+            prefix=debian-
+            suffix=-data,onlatest=${{ steps.releasePreareLatestTag.outputs.latest}}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{raw}}
+            type=semver,pattern={{major}}.{{minor}}
+
+      # Build and push Docker image with Buildx (don't push on PR)
+      # https://github.com/docker/build-push-action
+      - name: Build and push Docker image with -data tag
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta4.outputs.tags }}
+          labels: ${{ steps.meta4.outputs.labels }}
+          build-args: |
+            SETUP=1
+
+      # Extract metadata (tags, labels) for Docker
+      # https://github.com/docker/metadata-action
+      - name: Extract Docker metadata
+        id: meta5
+        uses: docker/metadata-action@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          images: ${{ steps.releasePreare.outputs.images }}
+          flavor: |
+            latest=${{ steps.releasePreareLatestTag.outputs.latest}}
+            onlatest=${{ steps.releasePreareLatestTag.outputs.latest}}
+            prefix=debian-
+            suffix=-data-full,onlatest=${{ steps.releasePreareLatestTag.outputs.latest}}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{raw}}
+            type=semver,pattern={{major}}.{{minor}}
+
+      # Build and push Docker image with Buildx (don't push on PR)
+      # https://github.com/docker/build-push-action
+      - name: Build and push Docker image with -data-full tag
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta5.outputs.tags }}
+          labels: ${{ steps.meta5.outputs.labels }}
+          build-args: |
+            SETUP=1
+            OPT_PDF=1
