@@ -336,5 +336,21 @@ echo "+              and at: /var/log/gvm/                      +"
 echo "==========================================================="
 
 if [ "${SETUP}" == "1" ]; then
+	echo "==========================================================="
+	echo "==================  WebUI Password  ======================="
+	echo "================== ${PASSWORD} =================="
+	echo "================  Postgres Password  ======================"
+	echo "================== ${DB_PASSWORD} =================="
+	echo "==========================================================="
+
+	sleep 30
+	echo "<get_feeds/>" >/tmp/gvm_action.xml
+	su -c "gvm-cli --gmp-username ${USERNAME} --gmp-password ${PASSWORD} --protocol GMP tls /tmp/gvm_action.xml | grep -o -i 'currently_syncing' | wc -l " gvm
+	until [ "$(su -c "gvm-cli --gmp-username ${USERNAME} --gmp-password ${PASSWORD} --protocol GMP tls /tmp/gvm_action.xml | grep -o -i 'currently_syncing' | wc -l " gvm)" == "0" ]; do
+		sleep 60
+		echo "Wait for full sync!"
+	done
+	rm /tmp/gvm_action.xml
+	sleep 120
 	${SUPVISD} shutdown || true
 fi
