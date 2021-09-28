@@ -265,7 +265,7 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6
           push: true
-          file: "{context}/Dockerfile.debian"
+          file: "./Dockerfile.debian"
           tags: ${{ steps.meta2.outputs.tags }}
           labels: ${{ steps.meta2.outputs.labels }}
           build-args: |
@@ -300,7 +300,7 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6
           push: true
-          file: "{context}/Dockerfile.debian"
+          file: "./Dockerfile.debian"
           tags: ${{ steps.meta3.outputs.tags }}
           labels: ${{ steps.meta3.outputs.labels }}
           build-args: |
@@ -335,7 +335,7 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6
           push: ${{ github.event_name != 'pull_request' }}
-          file: "{context}/Dockerfile.debian"
+          file: "./Dockerfile.debian"
           tags: ${{ steps.meta4.outputs.tags }}
           labels: ${{ steps.meta4.outputs.labels }}
           build-args: |
@@ -369,7 +369,7 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6
           push: ${{ github.event_name != 'pull_request' }}
-          file: "{context}/Dockerfile.debian"
+          file: "./Dockerfile.debian"
           tags: ${{ steps.meta5.outputs.tags }}
           labels: ${{ steps.meta5.outputs.labels }}
           build-args: |
