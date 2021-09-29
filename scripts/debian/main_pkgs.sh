@@ -22,9 +22,11 @@ sudo apt-get install --no-install-recommends --assume-yes \
     cmake \
     pkg-config \
     python3 \
+    python3-dev \
     python3-pip \
     gnupg \
     supervisor
+sudo python3 -m pip install --upgrade pip
 
 curl -O https://www.greenbone.net/GBCommunitySigningKey.asc
 gpg --import GBCommunitySigningKey.asc
@@ -372,6 +374,7 @@ sudo apt-get purge --auto-remove -y \
     libunistring-dev \
     libxml2-dev \
     uuid-dev \
+    python3-dev \
     build-essential \
     postgresql-server-dev-all \
     nodejs \
