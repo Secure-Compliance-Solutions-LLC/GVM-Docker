@@ -274,6 +274,8 @@ sudo apt-get install -y --no-install-recommends \
     python3-redis \
     libnet1
 
+sudo python3 -m pip install --upgrade setuptools
+
 #sudo python3 -m pip install --no-warn-script-location psutil
 
 # Download and install ospd-openvas
@@ -307,7 +309,7 @@ sudo apt-get install -y --no-install-recommends \
     python3-lxml \
     python3-defusedxml \
     python3-paramiko
-
+sudo python3 -m pip install --upgrade setuptools
 # Install for user
 # python3 -m pip install --user gvm-tools
 
