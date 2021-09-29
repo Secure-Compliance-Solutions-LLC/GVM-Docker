@@ -248,7 +248,7 @@ jobs:
           images: ${{ steps.releasePreare.outputs.images }}
           flavor: |
             latest=${{ steps.releasePreareLatestTag.outputs.latest}}
-            prefix=debian-
+            prefix=debian-,onlatest=${{ steps.releasePreareLatestTag.outputs.latest}}
             suffix=
           tags: |
             type=ref,event=branch
@@ -282,7 +282,7 @@ jobs:
           flavor: |
             latest=${{ steps.releasePreareLatestTag.outputs.latest}}
             onlatest=${{ steps.releasePreareLatestTag.outputs.latest}}
-            prefix=debian-
+            prefix=debian-,onlatest=${{ steps.releasePreareLatestTag.outputs.latest}}
             suffix=-full,onlatest=${{ steps.releasePreareLatestTag.outputs.latest}}
           tags: |
             type=ref,event=branch
@@ -318,7 +318,7 @@ jobs:
           flavor: |
             latest=${{ steps.releasePreareLatestTag.outputs.latest}}
             onlatest=${{ steps.releasePreareLatestTag.outputs.latest}}
-            prefix=debian-
+            prefix=debian-,onlatest=${{ steps.releasePreareLatestTag.outputs.latest}}
             suffix=-data,onlatest=${{ steps.releasePreareLatestTag.outputs.latest}}
           tags: |
             type=ref,event=branch
@@ -334,7 +334,7 @@ jobs:
         with:
           context: .
           platforms: linux/amd64,linux/arm64
-          push: ${{ github.event_name != 'pull_request' }}
+          push: true
           file: "./Dockerfile.debian"
           tags: ${{ steps.meta4.outputs.tags }}
           labels: ${{ steps.meta4.outputs.labels }}
@@ -352,7 +352,7 @@ jobs:
           flavor: |
             latest=${{ steps.releasePreareLatestTag.outputs.latest}}
             onlatest=${{ steps.releasePreareLatestTag.outputs.latest}}
-            prefix=debian-
+            prefix=debian-,onlatest=${{ steps.releasePreareLatestTag.outputs.latest}}
             suffix=-data-full,onlatest=${{ steps.releasePreareLatestTag.outputs.latest}}
           tags: |
             type=ref,event=branch
@@ -368,7 +368,7 @@ jobs:
         with:
           context: .
           platforms: linux/amd64,linux/arm64
-          push: ${{ github.event_name != 'pull_request' }}
+          push: true
           file: "./Dockerfile.debian"
           tags: ${{ steps.meta5.outputs.tags }}
           labels: ${{ steps.meta5.outputs.labels }}
