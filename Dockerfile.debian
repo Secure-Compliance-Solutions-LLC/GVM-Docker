@@ -99,6 +99,11 @@ ENV SETUP=${SETUP:-0} \
 
 RUN env \
     && chmod -R +x /opt/setup/scripts/*.sh \
+    && if [ "${OPT_PDF}" = "1" ]; then \
+    sudo apt update ;\
+    sudo apt install -y --no-install-recommends texlive-latex-extra texlive-fonts-recommended ;\
+    unset OPT_PDF ;\
+    fi \
     && if [ "${SETUP}" = "1" ]; then \
     ln -snf "/usr/share/zoneinfo/$TZ" /etc/localtime && echo "$TZ" >/etc/timezone \
     && /opt/setup/scripts/entrypoint.sh /usr/bin/supervisord -c /etc/supervisord.conf || true ; \
@@ -108,7 +113,7 @@ RUN env \
     && rm -rfv /var/lib/gvm/private || true \
     && rm /etc/localtime || true\
     && echo "Etc/UTC" >/etc/timezone \
-    && rm -rfv /tmp/* /var/cache/apk/* \
+    && rm -rfv /tmp/* /var/cache/apk/* /var/lib/apt/lists/* \
     && echo "!!! FINISH Setup !!!"
 ENV SETUP=0
 
