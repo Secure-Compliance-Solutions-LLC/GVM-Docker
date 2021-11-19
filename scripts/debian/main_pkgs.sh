@@ -29,7 +29,8 @@ sudo apt-get install --no-install-recommends --assume-yes \
 sudo python3 -m pip install --upgrade pip
 
 curl -O https://www.greenbone.net/GBCommunitySigningKey.asc
-gpg --import GBCommunitySigningKey.asc
+gpg --import <GBCommunitySigningKey.asc
+(echo 5; echo y; echo save) | gpg --command-fd 0 --no-tty --no-greeting -q --edit-key "$( gpg --list-packets <key.asc | awk '$1=="keyid:"{print$2;exit}')" trust 
 
 # Install required dependencies for gvm-libs
 sudo apt-get install -y --no-install-recommends \
