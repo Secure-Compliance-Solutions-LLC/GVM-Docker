@@ -30,7 +30,11 @@ sudo python3 -m pip install --upgrade pip
 
 curl -O https://www.greenbone.net/GBCommunitySigningKey.asc
 gpg --import <GBCommunitySigningKey.asc
-(echo 5; echo y; echo save) | gpg --command-fd 0 --no-tty --no-greeting -q --edit-key "$( gpg --list-packets <GBCommunitySigningKey.asc | awk '$1=="keyid:"{print$2;exit}')" trust 
+(
+    echo 5
+    echo y
+    echo save
+) | gpg --command-fd 0 --no-tty --no-greeting -q --edit-key "$(gpg --list-packets <GBCommunitySigningKey.asc | awk '$1=="keyid:"{print$2;exit}')" trust
 
 # Install required dependencies for gvm-libs
 sudo apt-get install -y --no-install-recommends \
@@ -164,16 +168,17 @@ yarnpkg upgrade
 
 curl -sSL https://github.com/greenbone/gsa/archive/refs/tags/v${gsa_version}.tar.gz -o ${SOURCE_DIR}/gsa-${gsa_version}.tar.gz
 curl -sSL https://github.com/greenbone/gsa/releases/download/v${gsa_version}/gsa-${gsa_version}.tar.gz.asc -o ${SOURCE_DIR}/gsa-${gsa_version}.tar.gz.asc
-curl -sSL https://github.com/greenbone/gsa/releases/download/v${gsa_version}/gsa-node-modules-${gsa_version}.tar.gz -o ${SOURCE_DIR}/gsa-node-modules-${gsa_version}.tar.gz
-curl -sSL https://github.com/greenbone/gsa/releases/download/v${gsa_version}/gsa-node-modules-${gsa_version}.tar.gz.asc -o ${SOURCE_DIR}/gsa-node-modules-${gsa_version}.tar.gz.asc
-
 gpg --verify ${SOURCE_DIR}/gsa-${gsa_version}.tar.gz.asc ${SOURCE_DIR}/gsa-${gsa_version}.tar.gz
-gpg --verify ${SOURCE_DIR}/gsa-node-modules-${gsa_version}.tar.gz.asc ${SOURCE_DIR}/gsa-node-modules-${gsa_version}.tar.gz
-
 tar -C ${SOURCE_DIR} -xvzf ${SOURCE_DIR}/gsa-${gsa_version}.tar.gz
-tar -C ${SOURCE_DIR}/gsa-${gsa_version}/gsa -xvzf ${SOURCE_DIR}/gsa-node-modules-${gsa_version}.tar.gz
+
+#curl -sSL https://github.com/greenbone/gsa/releases/download/v${gsa_version}/gsa-node-modules-${gsa_version}.tar.gz -o ${SOURCE_DIR}/gsa-node-modules-${gsa_version}.tar.gz
+#curl -sSL https://github.com/greenbone/gsa/releases/download/v${gsa_version}/gsa-node-modules-${gsa_version}.tar.gz.asc -o ${SOURCE_DIR}/gsa-node-modules-${gsa_version}.tar.gz.asc
+#gpg --verify ${SOURCE_DIR}/gsa-node-modules-${gsa_version}.tar.gz.asc ${SOURCE_DIR}/gsa-node-modules-${gsa_version}.tar.gz
+#tar -C ${SOURCE_DIR}/gsa-${gsa_version}/gsa -xvzf ${SOURCE_DIR}/gsa-node-modules-${gsa_version}.tar.gz
 
 mkdir -p ${BUILD_DIR}/gsa && cd ${BUILD_DIR}/gsa
+
+yarnpkg install
 
 cmake ${SOURCE_DIR}/gsa-${gsa_version} \
     -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
