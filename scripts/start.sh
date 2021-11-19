@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -Eeuo pipefail
+set -Eeuxo pipefail
 
 export SUPVISD=${SUPVISD:-supervisorctl}
 export USERNAME=${USERNAME:-${GVMD_USER:-admin}}
@@ -15,12 +15,21 @@ export CERTIFICATE=${CERTIFICATE:-none}
 export CERTIFICATE_KEY=${CERTIFICATE_KEY:-none}
 export TZ=${TZ:-Etc/UTC}
 export SSHD=${SSHD:-false}
+export SETUP=${SETUP:-0}
 export DB_PASSWORD=${DB_PASSWORD:-none}
 export DB_PASSWORD_FILE=${DB_PASSWORD_FILE:-none}
 export OPT_PDF=${OPT_PDF:-0}
+export SYSTEM_DIST=${SYSTEM_DIST:-unsupported}
 
-if [ "${OPT_PDF}" == "1" ]; then
+if [ "${OPT_PDF}" == "1" ] && [ "${SYSTEM_DIST}" == "alpine" ]; then
 	apk add --no-cache --allow-untrusted texlive texmf-dist-latexextra texmf-dist-fontsextra
+elif [ "${OPT_PDF}" == "1" ] && [ "${SYSTEM_DIST}" == "debian" ]; then
+	# Install optional dependencies for gvmd
+	sudo apt update
+	sudo apt install -y --no-install-recommends \
+		texlive-latex-extra \
+		texlive-fonts-recommended
+	sudo rm -rf /var/lib/apt/lists/*
 fi
 
 mkdir -p /var/lib/gvm
@@ -35,6 +44,7 @@ chown gvm:gvm -R /var/lib/gvm
 # fix for greenbone-nvt-sync
 mkdir -p /run/ospd/
 chown gvm:gvm /run/ospd
+chmod 2775 /var/run/ospd/
 su -c "touch /run/ospd/feed-update.lock" gvm
 mkdir -p /var/lib/openvas/plugins/
 chown -R gvm:gvm /var/lib/openvas/plugins/
@@ -59,6 +69,9 @@ fi
 if [ -S /run/redis-openvas/redis.sock ]; then
 	rm /run/redis-openvas/redis.sock
 fi
+
+sudo chown -R redis:redis /run/redis-openvas/
+sudo chown -R redis:redis /etc/redis/
 
 ${SUPVISD} start redis
 if [ "${DEBUG}" == "Y" ]; then
@@ -162,6 +175,7 @@ fi
 if [ ! -d "/run/gvmd" ]; then
 	mkdir -p /run/gvmd
 	chown gvm:gvm -R /run/gvmd/
+	chmod 2775 /var/run/gvmd/
 fi
 
 echo "gvmd --migrate"
@@ -195,7 +209,7 @@ fi
 
 # Sync NVTs, CERT data, and SCAP data on container start
 # See this as a super fallback to have at least some data, even if it is then out of date.
-/sync-initial.sh
+/opt/setup/scripts/sync-initial.sh
 
 #############################
 # Remove leftover pid files #
@@ -256,7 +270,8 @@ if [ ! -f "/var/lib/gvm/.created_gvm_user" ]; then
 	echo "${ADDR[1]}"
 
 	su -c "gvmd --modify-setting 78eceaec-3385-11ea-b237-28d24461215b --value ${ADDR[1]}" gvm
-
+	su -c "gvmd --modify-scanner=08b69003-5fc2-4037-a479-93b440211c73 --scanner-host=/var/run/ospd/ospd.sock" gvm
+	su -c "gvmd --modify-scanner=08b69003-5fc2-4037-a479-93b440211c73 --value ${ADDR[1]}" gvm
 	touch /var/lib/gvm/.created_gvm_user
 fi
 
@@ -321,5 +336,21 @@ echo "+              and at: /var/log/gvm/                      +"
 echo "==========================================================="
 
 if [ "${SETUP}" == "1" ]; then
+	echo "==========================================================="
+	echo "==================  WebUI Password  ======================="
+	echo "================== ${PASSWORD} =================="
+	echo "================  Postgres Password  ======================"
+	echo "================== ${DB_PASSWORD} =================="
+	echo "==========================================================="
+
+	sleep 30
+	echo "<get_feeds/>" >/tmp/gvm_action.xml
+	su -c "gvm-cli --gmp-username ${USERNAME} --gmp-password ${PASSWORD} --protocol GMP tls /tmp/gvm_action.xml | grep -o -i 'currently_syncing' | wc -l " gvm
+	until [ "$(su -c "gvm-cli --gmp-username ${USERNAME} --gmp-password ${PASSWORD} --protocol GMP tls /tmp/gvm_action.xml | grep -o -i 'currently_syncing' | wc -l " gvm)" == "0" ]; do
+		sleep 60
+		echo "Wait for full sync!"
+	done
+	rm /tmp/gvm_action.xml
+	sleep 120
 	${SUPVISD} shutdown || true
 fi

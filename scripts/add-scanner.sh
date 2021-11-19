@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
+mkdir -p /var/lib/gvm/.ssh/
 touch /var/lib/gvm/.ssh/authorized_keys
 chmod 600 /var/lib/gvm/.ssh/authorized_keys
 

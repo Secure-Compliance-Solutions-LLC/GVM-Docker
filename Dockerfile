@@ -2,8 +2,9 @@ FROM alpine:3
 
 EXPOSE 22 5432 8081 9392
 
-ENTRYPOINT [ "/entrypoint.sh" ]
+ENTRYPOINT [ "/opt/setup/scripts/entrypoint.sh" ]
 CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisord.conf"]
+
 
 ARG SUPVISD=supervisorctl
 ARG GVMD_USER
@@ -22,6 +23,11 @@ ARG HTTPS=true
 ARG TZ=Etc/UTC
 ARG SSHD=false
 ARG DB_PASSWORD=none
+
+
+COPY config /opt/setup/
+COPY scripts /opt/setup/scripts/
+RUN chmod -R +x /opt/setup/scripts/*.sh
 
 RUN mkdir -p /repo/main \
     && mkdir -p /repo/community
@@ -47,7 +53,8 @@ ENV SUPVISD=${SUPVISD:-supervisorctl} \
     DB_PASSWORD_FILE=${DB_PASSWORD:-none} \
     LANG=en_US.UTF-8 \
     LANGUAGE=en_US.UTF-8 \
-    LC_ALL=en_US.UTF-8
+    LC_ALL=en_US.UTF-8\
+    SYSTEM_DIST=alpine
 
 ENV MUSL_LOCPATH="/usr/share/i18n/locales/musl"
 
@@ -68,7 +75,7 @@ RUN { \
     # build and install musl-locales
     # remove sources and compile artifacts
     # lastly remove dev dependencies again
-    && apk --no-cache add libintl \
+    && apk --no-cache add libintl sudo \
     && apk --no-cache --virtual .locale_build add cmake make musl-dev gcc gettext-dev git \
     && git clone https://gitlab.com/rilian-la-te/musl-locales \
     && cd musl-locales && cmake -DLOCALE_PROFILE=OFF -DCMAKE_INSTALL_PREFIX:PATH=/usr . && make && make install \
@@ -80,13 +87,17 @@ RUN { \
     && su -c "mkdir -p /var/lib/gvm/.ssh/ && chmod 700 /var/lib/gvm/.ssh/ && touch /var/lib/gvm/.ssh/authorized_keys && chmod 644 /var/lib/gvm/.ssh/authorized_keys" gvm 
 
 COPY gvm-sync-data/gvm-sync-data.tar.xz /opt/gvm-sync-data.tar.xz
-COPY scripts/* /
+
 COPY report_formats/* /report_formats/
-COPY config/supervisord.conf /etc/supervisord.conf
-COPY config/logrotate-gvm.conf /etc/logrotate.d/gvm
-COPY config/redis-openvas.conf /etc/redis.conf
-COPY config/sshd_config /etc/ssh/sshd_config
-COPY config/* /opt/config/
+#COPY config /opt/setup/
+#COPY scripts /opt/setup/scripts/
+#RUN chmod -R +x /opt/setup/scripts/*.sh
+#COPY scripts/* /
+#COPY config/supervisord.conf /etc/supervisord.conf
+#COPY config/logrotate-gvm.conf /etc/logrotate.d/gvm
+#COPY config/redis-openvas.conf /etc/redis/redis-openvas.conf
+#COPY config/sshd_config /etc/ssh/sshd_config
+#COPY config/* /opt/config/
 
 
 ARG SETUP=0
@@ -95,7 +106,7 @@ ENV SETUP=${SETUP:-0} \
     OPT_PDF=${OPT_PDF:-0}
 
 RUN env \
-    && chmod +x /*.sh \
+    && chmod -R +x /opt/setup/scripts/*.sh \
     && if [ "${SETUP}" == "1" ]; then \
     ln -snf "/usr/share/zoneinfo/$TZ" /etc/localtime && echo "$TZ" >/etc/timezone \
     && /usr/bin/supervisord -c /etc/supervisord.conf || true ; \

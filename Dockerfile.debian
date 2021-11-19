@@ -1,0 +1,124 @@
+FROM debian:10-slim
+
+ENTRYPOINT [ "/opt/setup/scripts/entrypoint.sh" ]
+CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisord.conf"]
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV LANG=C.UTF-8
+
+COPY config /opt/setup/
+COPY scripts /opt/setup/scripts/
+RUN chmod -R +x /opt/setup/scripts/*.sh
+#RUN bash /opt/setup/debian/install-pkgs.sh
+
+# gvmd: v21.4.3
+# gsa: v21.4.2
+# gvm-libs: v21.4.2
+# gvm-tools: v21.6.1
+# ospd: v21.4.3
+# ospd-openvas: v21.4.2
+# openvas-scanner: v21.4.2
+# openvas-smb: v21.4.0
+# python-gvm: v21.6.0
+
+ARG gvm_libs_version="21.4.3"
+ARG openvas_scanner_version="21.4.3" 
+ARG pggvm_version="da7bef426089e63da80fe85b723ce01714810871" 
+ARG gvmd_version="21.4.4" 
+ARG gsa_version="21.4.3" 
+ARG gvm_tools_version="21.6.1" 
+ARG openvas_smb_version="21.4.0" 
+ARG open_scanner_protocol_daemon="21.4.4" 
+ARG ospd_openvas="21.4.3" 
+ARG python_gvm_version="21.10.0"
+
+ARG SUPVISD=supervisorctl
+ARG GVMD_USER
+ARG GVMD_PASSWORD
+ARG USERNAME=admin
+ARG PASSWORD=adminpassword
+ARG PASSWORD_FILE=none
+ARG TIMEOUT=15
+ARG DEBUG=N
+ARG RELAYHOST=smtp
+ARG SMTPPORT=25
+ARG AUTO_SYNC=true
+ARG CERTIFICATE=none
+ARG CERTIFICATE_KEY=none
+ARG HTTPS=true
+ARG TZ=Etc/UTC
+ARG SSHD=false
+ARG DB_PASSWORD=none
+
+ENV gvm_libs_version=${gvm_libs_version} \
+    openvas_scanner_version=${openvas_scanner_version} \
+    pggvm_version=${pggvm_version} \
+    gvmd_version=${gvmd_version} \
+    gsa_version=${gsa_version} \
+    gvm_tools_version=${gvm_tools_version} \
+    openvas_smb_version=${openvas_smb_version} \
+    open_scanner_protocol_daemon=${open_scanner_protocol_daemon} \
+    ospd_openvas=${ospd_openvas} \
+    python_gvm_version=${python_gvm_version} \
+    SYSTEM_DIST=debian \
+    SUPVISD=${SUPVISD:-supervisorctl} \
+    USERNAME=${USERNAME:-${GVMD_USER:-admin}} \
+    PASSWORD=${PASSWORD:-${GVMD_PASSWORD:-admin}} \
+    PASSWORD_FILE=${PASSWORD_FILE:-${GVMD_PASSWORD_FILE:-none}} \
+    TIMEOUT=${TIMEOUT:-15} \
+    DEBUG=${DEBUG:-N} \
+    RELAYHOST=${RELAYHOST:-smtp} \
+    SMTPPORT=${SMTPPORT:-25} \
+    AUTO_SYNC=${AUTO_SYNC:-true} \
+    HTTPS=${HTTPS:-true} \
+    CERTIFICATE=${CERTIFICATE:-none} \
+    CERTIFICATE_KEY=${CERTIFICATE_KEY:-none} \
+    TZ=${TZ:-Etc/UTC} \
+    SSHD=${SSHD:-false} \
+    DB_PASSWORD=${DB_PASSWORD:-none} \
+    DB_PASSWORD_FILE=${DB_PASSWORD:-none} \
+    LANG=en_US.UTF-8 \
+    LANGUAGE=en_US.UTF-8 \
+    LC_ALL=en_US.UTF-8
+
+RUN ls -lahR /opt/setup/ \
+    && /opt/setup/scripts/debian/prepare.sh \
+    && /opt/setup/scripts/debian/main_pkgs.sh
+
+#COPY report_formats/* /report_formats/
+
+# COPY greenbone-feed-sync-patch.txt /greenbone-feed-sync-patch.txt
+
+# RUN patch /usr/local/sbin/greenbone-feed-sync /greenbone-feed-sync-patch.txt
+
+
+ARG SETUP=0
+ARG OPT_PDF=0
+ENV SETUP=${SETUP:-0} \
+    OPT_PDF=${OPT_PDF:-0}
+
+RUN env \
+    && chmod -R +x /opt/setup/scripts/*.sh \
+    && if [ "${OPT_PDF}" = "1" ]; then \
+    sudo apt update ;\
+    sudo apt install -y --no-install-recommends texlive-latex-extra texlive-fonts-recommended ;\
+    unset OPT_PDF ;\
+    fi \
+    && if [ "${SETUP}" = "1" ]; then \
+    ln -snf "/usr/share/zoneinfo/$TZ" /etc/localtime && echo "$TZ" >/etc/timezone \
+    && /opt/setup/scripts/entrypoint.sh /usr/bin/supervisord -c /etc/supervisord.conf || true ; \
+    unset SETUP ;\
+    fi \
+    && rm -rfv /var/lib/gvm/CA || true \
+    && rm -rfv /var/lib/gvm/private || true \
+    && rm /etc/localtime || true\
+    && echo "Etc/UTC" >/etc/timezone \
+    && rm -rfv /tmp/* /var/cache/apk/* /var/lib/apt/lists/* \
+    && echo "!!! FINISH Setup !!!"
+ENV SETUP=0
+
+
+
+
+
+VOLUME [ "/opt/database", "/var/lib/openvas/plugins", "/var/lib/gvm", "/etc/ssh" ]

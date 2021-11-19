@@ -1,5 +1,20 @@
 #!/usr/bin/env bash
 
+exec_as_gvm(){
+	# if root
+	if [ "$EUID" -eq 0 ]; then
+		su -c "$1" gvm
+		return
+	elif [ "$(whoami)" = "gvm" ]; then
+		eval "$1"
+		return
+	else
+		echo "Run this script either as root or as gvm user"
+	fi
+
+	false
+}
+
 if [ ! -f "/var/lib/gvm/.firstsync" ]; then
 	echo "Downloading data TAR to speed up first sync..."
 	curl -o /tmp/data.tar.xz https://vulndata.securecompliance.solutions/file/VulnData/data.tar.xz # This file is updated at 0:00 UTC every day
@@ -32,18 +47,18 @@ fi
 
 echo "Updating NVTs..."
 #su -c "rsync --compress-level=9 --links --times --omit-dir-times --recursive --partial --quiet rsync://feed.community.greenbone.net:/nvt-feed /var/lib/openvas/plugins" gvm
-su -c "greenbone-nvt-sync" gvm
+exec_as_gvm "greenbone-nvt-sync"
 sleep 5
 
 echo "Updating GVMd data..."
-su -c "greenbone-feed-sync --type GVMD_DATA" gvm
+exec_as_gvm "greenbone-feed-sync --type GVMD_DATA"
 sleep 5
 
 echo "Updating SCAP data..."
-su -c "greenbone-feed-sync --type SCAP" gvm
+exec_as_gvm "greenbone-feed-sync --type SCAP"
 sleep 5
 
 echo "Updating CERT data..."
-su -c "greenbone-feed-sync --type CERT" gvm
+exec_as_gvm "greenbone-feed-sync --type CERT"
 
 true

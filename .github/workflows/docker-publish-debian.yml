@@ -1,4 +1,4 @@
-name: Docker Image Build and Release
+name: Docker Image Build and Release for Debian
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
   create:
     tags:
 
-concurrency: ci-${{ github.ref }}
+concurrency: ci-debian-${{ github.ref }}
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -59,7 +59,7 @@ jobs:
           repo: Secure-Compliance-Solutions-LLC/GVM-APK-build
 
       - name: Build the Docker image
-        run: docker build . --file Dockerfile --build-arg OPT_PDF=1 --tag ${{ env.IMAGE_REPOSITORY_GHCR }}:${{ github.sha }}
+        run: docker build . --file Dockerfile.debian --build-arg OPT_PDF=1 --tag ${{ env.IMAGE_REPOSITORY_GHCR }}:${{ github.sha }}
 
       - uses: actions/cache@v2.1.4
         with:
@@ -136,7 +136,7 @@ jobs:
           repo: Secure-Compliance-Solutions-LLC/GVM-APK-build
 
       - name: Build the Docker image
-        run: docker build . --file Dockerfile --build-arg OPT_PDF=1 --tag ${{ env.IMAGE_REPOSITORY_GHCR }}:${{ github.sha }}
+        run: docker build . --file Dockerfile.debian --build-arg OPT_PDF=1 --tag ${{ env.IMAGE_REPOSITORY_GHCR }}:${{ github.sha }}
 
       - uses: anchore/scan-action@v2
         if: always()
@@ -248,7 +248,7 @@ jobs:
           images: ${{ steps.releasePreare.outputs.images }}
           flavor: |
             latest=${{ steps.releasePreareLatestTag.outputs.latest}}
-            prefix=
+            prefix=debian-,onlatest=${{ steps.releasePreareLatestTag.outputs.latest}}
             suffix=
           tags: |
             type=ref,event=branch
@@ -263,8 +263,9 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6
+          platforms: linux/amd64,linux/arm64
           push: true
+          file: "./Dockerfile.debian"
           tags: ${{ steps.meta2.outputs.tags }}
           labels: ${{ steps.meta2.outputs.labels }}
           build-args: |
@@ -281,7 +282,7 @@ jobs:
           flavor: |
             latest=${{ steps.releasePreareLatestTag.outputs.latest}}
             onlatest=${{ steps.releasePreareLatestTag.outputs.latest}}
-            prefix=
+            prefix=debian-,onlatest=${{ steps.releasePreareLatestTag.outputs.latest}}
             suffix=-full,onlatest=${{ steps.releasePreareLatestTag.outputs.latest}}
           tags: |
             type=ref,event=branch
@@ -297,8 +298,9 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6
+          platforms: linux/amd64,linux/arm64
           push: true
+          file: "./Dockerfile.debian"
           tags: ${{ steps.meta3.outputs.tags }}
           labels: ${{ steps.meta3.outputs.labels }}
           build-args: |
@@ -316,7 +318,7 @@ jobs:
           flavor: |
             latest=${{ steps.releasePreareLatestTag.outputs.latest}}
             onlatest=${{ steps.releasePreareLatestTag.outputs.latest}}
-            prefix=
+            prefix=debian-,onlatest=${{ steps.releasePreareLatestTag.outputs.latest}}
             suffix=-data,onlatest=${{ steps.releasePreareLatestTag.outputs.latest}}
           tags: |
             type=ref,event=branch
@@ -331,8 +333,9 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6
-          push: ${{ github.event_name != 'pull_request' }}
+          platforms: linux/amd64,linux/arm64
+          push: true
+          file: "./Dockerfile.debian"
           tags: ${{ steps.meta4.outputs.tags }}
           labels: ${{ steps.meta4.outputs.labels }}
           build-args: |
@@ -349,7 +352,7 @@ jobs:
           flavor: |
             latest=${{ steps.releasePreareLatestTag.outputs.latest}}
             onlatest=${{ steps.releasePreareLatestTag.outputs.latest}}
-            prefix=
+            prefix=debian-,onlatest=${{ steps.releasePreareLatestTag.outputs.latest}}
             suffix=-data-full,onlatest=${{ steps.releasePreareLatestTag.outputs.latest}}
           tags: |
             type=ref,event=branch
@@ -364,8 +367,9 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6
-          push: ${{ github.event_name != 'pull_request' }}
+          platforms: linux/amd64,linux/arm64
+          push: true
+          file: "./Dockerfile.debian"
           tags: ${{ steps.meta5.outputs.tags }}
           labels: ${{ steps.meta5.outputs.labels }}
           build-args: |
