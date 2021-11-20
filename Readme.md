@@ -25,6 +25,32 @@ You want to send GVM/OpenVAS results to Elasticsearch, try our [GVM Logstash pro
 
 If you would like something added to the documentation please create a issue [GVM-Docker Gitbook Repo](https://github.com/Secure-Compliance-Solutions-LLC/gitbook/issues)
 
+## Quick Start
+
+- Now all `-data` images are full pre-initialized (with available data from the build time)
+
+> Pre Initialized (-data) images, have a web ui password: `adminpassword` and should be changed after the deployment. Also the Postgres got a default password: `none`
+
+### Github Registry
+
+```
+docker pull ghcr.io/secure-compliance-solutions-llc/gvm-docker:debian-master-data-full
+docker pull ghcr.io/secure-compliance-solutions-llc/gvm-docker:debian-master-data
+docker pull ghcr.io/secure-compliance-solutions-llc/gvm-docker:debian-master-full
+docker pull ghcr.io/secure-compliance-solutions-llc/gvm-docker:debian-master
+```
+
+
+### Docker Hub
+
+```
+docker pull securecompliance/gvm:debian-master-data-full
+docker pull securecompliance/gvm:debian-master-data
+docker pull securecompliance/gvm:debian-master-full
+docker pull securecompliance/gvm:debian-master
+```
+
+
 ## Architecture
 
 The key points to take away from the diagram below, is the way our setup establishes connection with the remote sensor, and the available ports on the GMV-Docker container. You can still use any add on tools you've used in the past with OpenVAS on 9390. One of the latest/best upgrades allows you connect directly to postgres using your favorite database tool. 
