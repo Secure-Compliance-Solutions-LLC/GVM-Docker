@@ -4,6 +4,7 @@
 [![Open Source Love](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://github.com/ellerbrock/open-source-badges/)
 
 
+
 Feature Requests Ideas [Click Here](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/discussions/categories/feature-request)
 
 ![](https://i.imgur.com/xNlUgCJ.png)
@@ -23,6 +24,32 @@ You want to send GVM/OpenVAS results to Elasticsearch, try our [GVM Logstash pro
 * [View our detailed instructions on gitbook](https://securecompliance.gitbook.io/projects/openvas-greenbone-deployment-full-guide)
 
 If you would like something added to the documentation please create a issue [GVM-Docker Gitbook Repo](https://github.com/Secure-Compliance-Solutions-LLC/gitbook/issues)
+
+## Quick Start
+
+- Now all `-data` images are full pre-initialized (with available data from the build time)
+
+> Pre Initialized (-data) images, have a web ui password: `adminpassword` and should be changed after the deployment. Also the Postgres got a default password: `none`
+
+### Github Registry
+
+```
+docker pull ghcr.io/secure-compliance-solutions-llc/gvm-docker:debian-master-data-full
+docker pull ghcr.io/secure-compliance-solutions-llc/gvm-docker:debian-master-data
+docker pull ghcr.io/secure-compliance-solutions-llc/gvm-docker:debian-master-full
+docker pull ghcr.io/secure-compliance-solutions-llc/gvm-docker:debian-master
+```
+
+
+### Docker Hub
+
+```
+docker pull securecompliance/gvm:debian-master-data-full
+docker pull securecompliance/gvm:debian-master-data
+docker pull securecompliance/gvm:debian-master-full
+docker pull securecompliance/gvm:debian-master
+```
+
 
 ## Architecture
 
