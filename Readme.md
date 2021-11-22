@@ -50,6 +50,16 @@ docker pull securecompliance/gvm:debian-master-full
 docker pull securecompliance/gvm:debian-master
 ```
 
+## Hardware Requirements
+
+| Hosts              | CPU Cores     | Memory    | Disk Space |
+| :----------------- | :------------ | :-------- | :--------- |
+| 512 active IPs     | 4@2GHz cores  | 8 GB RAM  | 30 GB      |
+| 2,500 active IPs   | 6@2GHz cores  | 12 GB RAM | 60 GB      |
+| 10,000 active IPs  | 8@3GHz cores  | 16 GB RAM | 250 GB     |
+| 25,000 active IPs  | 16@3GHz cores | 32 GB RAM | 1 TB       |
+| 100,000 active IPs | 32@3GHz cores | 64 GB RAM | 2 TB       |
+
 
 ## Architecture
 
