@@ -104,6 +104,8 @@ jobs:
 
   build_test_anchore:
     name: Build and Test - Anchore
+    # ...but only when a `release` is `published` (combined with `on`)
+    if: github.event_name == 'release'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
