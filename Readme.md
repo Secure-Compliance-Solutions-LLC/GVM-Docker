@@ -50,7 +50,7 @@ docker pull securecompliance/gvm:debian-master-full
 docker pull securecompliance/gvm:debian-master
 ```
 
-## Hardware Requirements
+## Estimated Hardware Requirements
 
 | Hosts              | CPU Cores     | Memory    | Disk Space |
 | :----------------- | :------------ | :-------- | :--------- |
