@@ -12,8 +12,6 @@ categories:
     label: 'type: bug'
   - title: 'Maintenance'
     label: 'type: maintenance'
-  - title: 'Documentation'
-    label: 'type: docs'
   - title: 'Dependency Updates'
     label: 'type: dependencies'
 
@@ -28,7 +26,6 @@ version-resolver:
     labels:
       - 'type: bug'
       - 'type: maintenance'
-      - 'type: docs'
       - 'type: dependencies'
       - 'type: security'
 
