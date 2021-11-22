@@ -1,0 +1,76 @@
+name: Check for Release Updates
+
+on:
+  workflow_dispatch:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron: "30 22 * * *"
+
+concurrency: ci-${{ github.ref }}
+
+permissions:
+  contents: read
+  issues: write
+  packages: write
+
+jobs:
+  check_updates:
+    name: Check GVM Updates
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Check for updates
+        run: |
+          mkdir -p ./.checkupdates
+
+      - uses: actions/cache@v2
+        with:
+          path: .checkupdates
+          key: ${{ runner.os }}-gvm-version-check-v2-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-gvm-version-check-v2-
+
+      - name: Get Latest Versions
+        run: |
+          if [ ! -e ./.checkupdates/latest_version ]; then
+            touch ./.checkupdates/latest_version
+          fi
+          if [ ! -e ./.checkupdates/latest_version.sum ]; then
+            touch ./.checkupdates/latest_version.sum
+          fi
+          chmod +x ./get_releases.sh
+          echo 'NEWRELEASES<<EOF' >> $GITHUB_ENV
+          ./get_releases.sh >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
+
+      - name: Check for updates - Step 1
+        id: updates
+        continue-on-error: true
+        run: |
+          echo "${NEWRELEASES}" > ./.checkupdates/latest_version
+          sha1sum -c ./.checkupdates/latest_version.sum
+
+      - name: Check for updates - Step 2
+        id: updates_available
+        if: ${{ steps.updates.outcome == 'failure' }}
+        run: |
+          sha1sum ./.checkupdates/latest_version > ./.checkupdates/latest_version.sum
+          echo "::set-output name=UPDATES_AVAILABLE::true"
+
+      - name: Create Issue
+        uses: JasonEtco/create-an-issue@v2
+        if: ${{ steps.updates.outcome == 'failure' && steps.updates_available.outputs.UPDATES_AVAILABLE == 'true' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          update_existing: true
+          filename: .github/new_releases.md
+
+      - name: Cache permissions
+        if: always()
+        run: sudo chown -R $USER:$GROUP .checkupdates
