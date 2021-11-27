@@ -43,6 +43,8 @@ docker pull ghcr.io/secure-compliance-solutions-llc/gvm-docker:debian-master
 
 ### Docker Hub
 
+> **NOTE**: Please do not use `docker pull securecompliance/gvm:latest`
+
 ```
 docker pull securecompliance/gvm:debian-master-data-full
 docker pull securecompliance/gvm:debian-master-data
