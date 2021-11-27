@@ -4,9 +4,11 @@ on:
   push:
     branches: [master]
   pull_request:
-    branches: [master, dev]
+    branches: [master]
   create:
     tags:
+  release:
+    types: [published, edited]
 
 concurrency: ci-debian-${{ github.ref }}
 
@@ -37,26 +39,6 @@ jobs:
       - name: Set tag var
         id: vars
         run: echo ::set-output name=docker_tag::$(echo ${GITHUB_REF} | cut -d'/' -f3)-${GITHUB_SHA}
-
-      - name: Download artifact
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          # Optional, GitHub token, a Personal Access Token with `public_repo` scope if needed
-          # Required, if artifact is from a different repo
-          github_token: ${{secrets.GITHUB_TOKEN}}
-          # Required, workflow file name or ID
-          workflow: build-apk.yml
-          # Optional, will use the branch
-          branch: master
-          # Optional, uploaded artifact name,
-          # will download all artifacts if not specified
-          # and extract them in respective subdirectories
-          # https://github.com/actions/download-artifact#download-all-artifacts
-          name: apk-builds
-          # Optional, directory where to extract artifact. Defaults to the artifact name (see `name` input)
-          path: ${{ github.workspace }}/apk-build/
-          # Optional, defaults to current repo
-          repo: Secure-Compliance-Solutions-LLC/GVM-APK-build
 
       - name: Build the Docker image
         run: docker build . --file Dockerfile.debian --build-arg OPT_PDF=1 --tag ${{ env.IMAGE_REPOSITORY_GHCR }}:${{ github.sha }}
@@ -102,6 +84,8 @@ jobs:
 
   build_test_anchore:
     name: Build and Test - Anchore
+    # ...but only when a `release` is `published` (combined with `on`)
+    if: github.event_name == 'release'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -114,26 +98,6 @@ jobs:
       - name: Set tag var
         id: vars
         run: echo ::set-output name=docker_tag::$(echo ${GITHUB_REF} | cut -d'/' -f3)-${GITHUB_SHA}
-
-      - name: Download artifact
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          # Optional, GitHub token, a Personal Access Token with `public_repo` scope if needed
-          # Required, if artifact is from a different repo
-          github_token: ${{secrets.GITHUB_TOKEN}}
-          # Required, workflow file name or ID
-          workflow: build-apk.yml
-          # Optional, will use the branch
-          branch: master
-          # Optional, uploaded artifact name,
-          # will download all artifacts if not specified
-          # and extract them in respective subdirectories
-          # https://github.com/actions/download-artifact#download-all-artifacts
-          name: apk-builds
-          # Optional, directory where to extract artifact. Defaults to the artifact name (see `name` input)
-          path: ${{ github.workspace }}/apk-build/
-          # Optional, defaults to current repo
-          repo: Secure-Compliance-Solutions-LLC/GVM-APK-build
 
       - name: Build the Docker image
         run: docker build . --file Dockerfile.debian --build-arg OPT_PDF=1 --tag ${{ env.IMAGE_REPOSITORY_GHCR }}:${{ github.sha }}
@@ -217,26 +181,6 @@ jobs:
             echo -n ","
           fi
           echo -n "${IMAGE_NAME_GHCR}"
-
-      - name: Download artifact
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          # Optional, GitHub token, a Personal Access Token with `public_repo` scope if needed
-          # Required, if artifact is from a different repo
-          github_token: ${{secrets.GITHUB_TOKEN}}
-          # Required, workflow file name or ID
-          workflow: build-apk.yml
-          # Optional, will use the branch
-          branch: master
-          # Optional, uploaded artifact name,
-          # will download all artifacts if not specified
-          # and extract them in respective subdirectories
-          # https://github.com/actions/download-artifact#download-all-artifacts
-          name: apk-builds
-          # Optional, directory where to extract artifact. Defaults to the artifact name (see `name` input)
-          path: ${{ github.workspace }}/apk-build/
-          # Optional, defaults to current repo
-          repo: Secure-Compliance-Solutions-LLC/GVM-APK-build
 
       # Extract metadata (tags, labels) for Docker
       # https://github.com/docker/metadata-action
@@ -375,3 +319,8 @@ jobs:
           build-args: |
             SETUP=1
             OPT_PDF=1
+
+      - name: Update changelog
+        uses: thomaseizinger/keep-a-changelog-new-release@1.1.0
+        with:
+          version: ${{ github.event.inputs.version }}
