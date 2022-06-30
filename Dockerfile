@@ -82,7 +82,7 @@ RUN { \
     && cd .. && rm -r musl-locales \
     && apk del --no-cache .locale_build \
     && sleep 10 \
-    && apk add --no-cache --allow-untrusted logrotate curl wget su-exec tzdata postfix mailx bash openssh supervisor openssh-client-common libxslt xmlstarlet zip sshpass socat net-snmp-tools samba-client py3-lxml py3-gvm@custcom openvas@custcom openvas-smb@custcom openvas-config@custcom gvmd@custcom gvm-libs@custcom greenbone-security-assistant@custcom ospd-openvas@custcom \
+    && apk add --no-cache --allow-untrusted logrotate curl wget su-exec tzdata postfix mailx bash openssh supervisor openssh-client-common libxslt xmlstarlet zip sshpass socat net-snmp-tools samba-client py3-lxml squid py3-gvm@custcom openvas@custcom openvas-smb@custcom openvas-config@custcom gvmd@custcom gvm-libs@custcom greenbone-security-assistant@custcom ospd-openvas@custcom \
     && mkdir -p /var/log/supervisor/ \
     && su -c "mkdir -p /var/lib/gvm/.ssh/ && chmod 700 /var/lib/gvm/.ssh/ && touch /var/lib/gvm/.ssh/authorized_keys && chmod 644 /var/lib/gvm/.ssh/authorized_keys" gvm 
 
@@ -92,11 +92,12 @@ COPY report_formats/* /report_formats/
 #COPY config /opt/setup/
 #COPY scripts /opt/setup/scripts/
 #RUN chmod -R +x /opt/setup/scripts/*.sh
-#COPY scripts/* /
+COPY scripts/* /
 #COPY config/supervisord.conf /etc/supervisord.conf
 #COPY config/logrotate-gvm.conf /etc/logrotate.d/gvm
 #COPY config/redis-openvas.conf /etc/redis/redis-openvas.conf
 #COPY config/sshd_config /etc/ssh/sshd_config
+#COPY config/squid.conf /etc/squid/squid.conf
 #COPY config/* /opt/config/
 
 

@@ -15,6 +15,7 @@ export CERTIFICATE=${CERTIFICATE:-none}
 export CERTIFICATE_KEY=${CERTIFICATE_KEY:-none}
 export TZ=${TZ:-Etc/UTC}
 export SSHD=${SSHD:-false}
+export SQUID=${SQUID:-false}
 export SETUP=${SETUP:-0}
 export DB_PASSWORD=${DB_PASSWORD:-none}
 export DB_PASSWORD_FILE=${DB_PASSWORD_FILE:-none}
@@ -314,6 +315,14 @@ if [ "$SSHD" == "true" ]; then
 	${SUPVISD} start sshd
 	if [ "${DEBUG}" == "Y" ]; then
 		${SUPVISD} status sshd
+	fi
+fi
+	
+if [ "$SQUID" == "true" ]; then
+	echo "Starting Squid Proxy Server..."
+	${SUPVISD} start squid
+	if [ "${DEBUG}" == "Y" ]; then
+		${SUPVISD} status squid
 	fi
 fi
 

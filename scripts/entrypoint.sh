@@ -22,6 +22,7 @@ export CERTIFICATE_KEY=${CERTIFICATE_KEY:-none}
 export TZ=${TZ:-Etc/UTC}
 export DEBUG=${DEBUG:-N}
 export SSHD=${SSHD:-false}
+export SQUID=${SQUID:-false}
 export DB_PASSWORD=${DB_PASSWORD:-none}
 export DB_PASSWORD_FILE=${DB_PASSWORD_FILE:-none}
 
@@ -32,6 +33,8 @@ if [ "$1" == "/usr/bin/supervisord" ]; then
     mkdir -p /etc/redis/
     cp /opt/setup/redis-openvas.conf /etc/redis/redis-openvas.conf
     cp /opt/setup/sshd_config /etc/ssh/sshd_config
+    cp -f /opt/setup/squid.conf /etc/squid/squid.conf
+    mkdir -p /var/spool/squid
 
     echo "Starting Postfix for report delivery by email"
     #sed -i "s/^relayhost.*$/relayhost = ${RELAYHOST}:${SMTPPORT}/" /etc/postfix/main.cf

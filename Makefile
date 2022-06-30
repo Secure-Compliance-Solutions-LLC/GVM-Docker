@@ -81,6 +81,7 @@ run-full:
 	--env DB_PASSWORD="postgres DB password" \
 	--env PASSWORD="webUI password" \
 	--env SSHD="true" \
+	--env SQUID="true" \
 	--volume "${PWD}/storage/postgres-db:/opt/database" \
 	--volume "${PWD}/storage/openvas-plugins:/var/lib/openvas/plugins" \
 	--volume "${PWD}/storage/gvm:/var/lib/gvm" \
@@ -96,6 +97,7 @@ run-latest:
 	--env DB_PASSWORD="postgres DB password" \
 	--env PASSWORD="webUI password" \
 	--env SSHD="true" \
+	--env SQUID="true" \
 	--volume "${PWD}/storage/postgres-db:/opt/database" \
 	--volume "${PWD}/storage/openvas-plugins:/var/lib/openvas/plugins" \
 	--volume "${PWD}/storage/gvm:/var/lib/gvm" \
