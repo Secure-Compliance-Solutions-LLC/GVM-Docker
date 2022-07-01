@@ -22,6 +22,7 @@ ARG CERTIFICATE_KEY=none
 ARG HTTPS=true
 ARG TZ=Etc/UTC
 ARG SSHD=false
+ARG SQUID=false
 ARG DB_PASSWORD=none
 
 
@@ -49,6 +50,7 @@ ENV SUPVISD=${SUPVISD:-supervisorctl} \
     CERTIFICATE_KEY=${CERTIFICATE_KEY:-none} \
     TZ=${TZ:-Etc/UTC} \
     SSHD=${SSHD:-false} \
+    SQUID=${SSHD:-false} \
     DB_PASSWORD=${DB_PASSWORD:-none} \
     DB_PASSWORD_FILE=${DB_PASSWORD:-none} \
     LANG=en_US.UTF-8 \
