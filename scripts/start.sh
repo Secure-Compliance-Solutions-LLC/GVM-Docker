@@ -92,6 +92,11 @@ while [ "${X}" != "PONG" ]; do
 done
 echo "Redis ready."
 
+${SUPVISD} start mosquitto
+if [ "${DEBUG}" == "Y" ]; then
+	${SUPVISD} status mosquitto
+fi
+
 if [ ! -d "/opt/database/" ] || ([ -d "/opt/database/" ] && [ "$(find /opt/database/ -maxdepth 0 -empty)" ]); then
 	echo "Creating Database folder..."
 	mkdir -p /opt/database
@@ -142,6 +147,7 @@ if [ ! -f "/opt/database/.firstrun" ]; then
 	su -c "psql --dbname=gvmd --command='grant dba to gvm;'" postgres
 	su -c "psql --dbname=gvmd --command='create extension \"uuid-ossp\";'" postgres
 	su -c "psql --dbname=gvmd --command='create extension \"pgcrypto\";'" postgres
+	su -c "psql --dbname=gvmd --command='create extension \"pg-gvm\";'" postgres
 
 	{
 		echo "listen_addresses = '*'"

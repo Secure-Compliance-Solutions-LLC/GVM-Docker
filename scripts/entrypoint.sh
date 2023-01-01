@@ -32,6 +32,8 @@ if [ "$1" == "/usr/bin/supervisord" ]; then
     mkdir -p /etc/redis/
     cp /opt/setup/redis-openvas.conf /etc/redis/redis-openvas.conf
     cp /opt/setup/sshd_config /etc/ssh/sshd_config
+    cp /opt/setup/sshd_config /etc/ssh/sshd_config
+    cp /opt/setup/mosquitto.conf /etc/
 
     echo "Starting Postfix for report delivery by email"
     #sed -i "s/^relayhost.*$/relayhost = ${RELAYHOST}:${SMTPPORT}/" /etc/postfix/main.cf

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-set -Eeuo pipefail
+set -Eeuxo pipefail
 
-apt-get update
+apt-get -qq update
 apt-get -yq upgrade
 
 #export PATH=$PATH:/usr/local/sbin
@@ -28,7 +28,7 @@ sudo apt-get install --no-install-recommends --assume-yes \
     supervisor
 sudo python3 -m pip install --upgrade pip
 
-curl -O https://www.greenbone.net/GBCommunitySigningKey.asc
+curl -fsO https://www.greenbone.net/GBCommunitySigningKey.asc
 gpg --import <GBCommunitySigningKey.asc
 (
     echo 5
@@ -51,7 +51,10 @@ sudo apt-get install -y --no-install-recommends \
     libxml2-dev \
     libpcap-dev \
     libnet1-dev \
-    libnet1
+    libnet1 \
+    libpaho-mqtt-dev \
+    libpaho-mqtt1.3 \
+    libbsd-dev
 
 # Install optional dependencies for gvm-libs
 sudo apt-get install -y --no-install-recommends \
@@ -60,8 +63,8 @@ sudo apt-get install -y --no-install-recommends \
     libradcli4
 
 # Download and install gvm-libs
-curl -sSL "https://github.com/greenbone/gvm-libs/archive/refs/tags/v${gvm_libs_version}.tar.gz" -o "${SOURCE_DIR}/gvm-libs-${gvm_libs_version}.tar.gz"
-curl -sSL "https://github.com/greenbone/gvm-libs/releases/download/v${gvm_libs_version}/gvm-libs-${gvm_libs_version}.tar.gz.asc" -o "${SOURCE_DIR}/gvm-libs-${gvm_libs_version}.tar.gz.asc"
+curl -fsSL "https://github.com/greenbone/gvm-libs/archive/refs/tags/v${gvm_libs_version}.tar.gz" -o "${SOURCE_DIR}/gvm-libs-${gvm_libs_version}.tar.gz"
+curl -fsSL "https://github.com/greenbone/gvm-libs/releases/download/v${gvm_libs_version}/gvm-libs-${gvm_libs_version}.tar.gz.asc" -o "${SOURCE_DIR}/gvm-libs-${gvm_libs_version}.tar.gz.asc"
 
 ls -lahr "${SOURCE_DIR}"
 
@@ -121,8 +124,8 @@ sudo apt-get install -y --no-install-recommends \
     xml-twig-tools
 
 # Download and install gvmd
-curl -sSL https://github.com/greenbone/gvmd/archive/refs/tags/v${gvmd_version}.tar.gz -o ${SOURCE_DIR}/gvmd-${gvmd_version}.tar.gz
-curl -sSL https://github.com/greenbone/gvmd/releases/download/v${gvmd_version}/gvmd-${gvmd_version}.tar.gz.asc -o ${SOURCE_DIR}/gvmd-${gvmd_version}.tar.gz.asc
+curl -fsSL https://github.com/greenbone/gvmd/archive/refs/tags/v${gvmd_version}.tar.gz -o ${SOURCE_DIR}/gvmd-${gvmd_version}.tar.gz
+curl -fsSL https://github.com/greenbone/gvmd/releases/download/v${gvmd_version}/gvmd-${gvmd_version}.tar.gz.asc -o ${SOURCE_DIR}/gvmd-${gvmd_version}.tar.gz.asc
 
 gpg --verify ${SOURCE_DIR}/gvmd-${gvmd_version}.tar.gz.asc ${SOURCE_DIR}/gvmd-${gvmd_version}.tar.gz
 
@@ -150,6 +153,23 @@ make DESTDIR=${INSTALL_DIR} install
 sudo cp -rv ${INSTALL_DIR}/* /
 #rm -rf ${INSTALL_DIR}/*
 
+# pg-gvm
+curl -fsSL https://github.com/greenbone/pg-gvm/archive/refs/tags/v${pg_gvm_version}.tar.gz -o ${SOURCE_DIR}/pg-gvm-${pg_gvm_version}.tar.gz
+curl -fsSL https://github.com/greenbone/pg-gvm/releases/download/v${pg_gvm_version}/pg-gvm-${pg_gvm_version}.tar.gz.asc -o ${SOURCE_DIR}/pg-gvm-${pg_gvm_version}.tar.gz.asc
+
+gpg --verify ${SOURCE_DIR}/pg-gvm-${pg_gvm_version}.tar.gz.asc ${SOURCE_DIR}/pg-gvm-${pg_gvm_version}.tar.gz
+
+tar -C ${SOURCE_DIR} -xvzf ${SOURCE_DIR}/pg-gvm-${pg_gvm_version}.tar.gz
+
+mkdir -p ${BUILD_DIR}/pg-gvm && cd ${BUILD_DIR}/pg-gvm
+
+cmake ${SOURCE_DIR}/pg-gvm-${pg_gvm_version} \
+    -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
+    -DCMAKE_BUILD_TYPE=Release
+
+make DESTDIR=${INSTALL_DIR} install
+sudo cp -rv ${INSTALL_DIR}/* /
+
 # Install required dependencies for gsad & gsa
 sudo apt-get install -y --no-install-recommends \
     libmicrohttpd-dev \
@@ -158,46 +178,41 @@ sudo apt-get install -y --no-install-recommends \
     libglib2.0-dev \
     libgnutls28-dev
 
-sudo apt-get install -y --no-install-recommends \
-    nodejs \
-    yarnpkg
-
-# looks like need because of an issue with yarn
-yarnpkg install
-yarnpkg upgrade
-
-curl -sSL https://github.com/greenbone/gsa/archive/refs/tags/v${gsa_version}.tar.gz -o ${SOURCE_DIR}/gsa-${gsa_version}.tar.gz
-curl -sSL https://github.com/greenbone/gsa/releases/download/v${gsa_version}/gsa-${gsa_version}.tar.gz.asc -o ${SOURCE_DIR}/gsa-${gsa_version}.tar.gz.asc
+curl -fsSL https://github.com/greenbone/gsa/archive/refs/tags/v${gsa_version}.tar.gz -o ${SOURCE_DIR}/gsa-${gsa_version}.tar.gz
+curl -fsSL https://github.com/greenbone/gsa/releases/download/v${gsa_version}/gsa-${gsa_version}.tar.gz.asc -o ${SOURCE_DIR}/gsa-${gsa_version}.tar.gz.asc
 gpg --verify ${SOURCE_DIR}/gsa-${gsa_version}.tar.gz.asc ${SOURCE_DIR}/gsa-${gsa_version}.tar.gz
 tar -C ${SOURCE_DIR} -xvzf ${SOURCE_DIR}/gsa-${gsa_version}.tar.gz
 
-#curl -sSL https://github.com/greenbone/gsa/releases/download/v${gsa_version}/gsa-node-modules-${gsa_version}.tar.gz -o ${SOURCE_DIR}/gsa-node-modules-${gsa_version}.tar.gz
-#curl -sSL https://github.com/greenbone/gsa/releases/download/v${gsa_version}/gsa-node-modules-${gsa_version}.tar.gz.asc -o ${SOURCE_DIR}/gsa-node-modules-${gsa_version}.tar.gz.asc
-#gpg --verify ${SOURCE_DIR}/gsa-node-modules-${gsa_version}.tar.gz.asc ${SOURCE_DIR}/gsa-node-modules-${gsa_version}.tar.gz
-#tar -C ${SOURCE_DIR}/gsa-${gsa_version}/gsa -xvzf ${SOURCE_DIR}/gsa-node-modules-${gsa_version}.tar.gz
+curl -fsSL https://github.com/greenbone/gsad/archive/refs/tags/v${gsa_version}.tar.gz -o ${SOURCE_DIR}/gsad-${gsa_version}.tar.gz
+curl -fsSL https://github.com/greenbone/gsad/releases/download/v${gsa_version}/gsad-${gsa_version}.tar.gz.asc -o ${SOURCE_DIR}/gsad-${gsa_version}.tar.gz.asc
+gpg --verify ${SOURCE_DIR}/gsad-${gsa_version}.tar.gz.asc ${SOURCE_DIR}/gsad-${gsa_version}.tar.gz
+tar -C ${SOURCE_DIR} -xvzf ${SOURCE_DIR}/gsad-${gsa_version}.tar.gz
 
-mkdir -p ${BUILD_DIR}/gsa && cd ${BUILD_DIR}/gsa
+mkdir -p ${BUILD_DIR}/gsad && cd ${BUILD_DIR}/gsad
 
-yarnpkg install
-
-cmake ${SOURCE_DIR}/gsa-${gsa_version} \
+cmake ${SOURCE_DIR}/gsad-${gsa_version} \
     -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} \
     -DCMAKE_BUILD_TYPE=Release \
     -DSYSCONFDIR=/etc \
     -DLOCALSTATEDIR=/var \
-    -DGVM_RUN_DIR=/run/gvm \
-    -DGSAD_PID_DIR=/run/gvm \
+    -DGSAD_RUN_DIR=/run/gvm \
     -DLOGROTATE_DIR=/etc/logrotate.d
 
 make -j$(nproc)
 
 make DESTDIR=${INSTALL_DIR} install
 sudo cp -rv ${INSTALL_DIR}/* /
-#rm -rf ${INSTALL_DIR}/*
 
-sudo apt-get purge -y \
-    nodejs \
-    yarnpkg
+pushd ${SOURCE_DIR}/gsa-${gsa_version}
+rm -fr ./build
+
+yarn
+yarn build
+
+mkdir -p $INSTALL_PREFIX/share/gvm/gsad/web/
+mv build/* $INSTALL_PREFIX/share/gvm/gsad/web/
+
+popd
 
 # Install required dependencies for openvas-smb
 sudo apt-get install -y --no-install-recommends \
@@ -211,8 +226,8 @@ sudo apt-get install -y --no-install-recommends \
     libhdb9-heimdal \
     perl-base
 
-curl -sSL https://github.com/greenbone/openvas-smb/archive/refs/tags/v${openvas_smb_version}.tar.gz -o ${SOURCE_DIR}/openvas-smb-${openvas_smb_version}.tar.gz
-curl -sSL https://github.com/greenbone/openvas-smb/releases/download/v${openvas_smb_version}/openvas-smb-${openvas_smb_version}.tar.gz.asc -o ${SOURCE_DIR}/openvas-smb-${openvas_smb_version}.tar.gz.asc
+curl -fsSL https://github.com/greenbone/openvas-smb/archive/refs/tags/v${openvas_smb_version}.tar.gz -o ${SOURCE_DIR}/openvas-smb-${openvas_smb_version}.tar.gz
+curl -fsSL https://github.com/greenbone/openvas-smb/releases/download/v${openvas_smb_version}/openvas-smb-${openvas_smb_version}.tar.gz.asc -o ${SOURCE_DIR}/openvas-smb-${openvas_smb_version}.tar.gz.asc
 
 gpg --verify ${SOURCE_DIR}/openvas-smb-${openvas_smb_version}.tar.gz.asc ${SOURCE_DIR}/openvas-smb-${openvas_smb_version}.tar.gz
 
@@ -231,23 +246,27 @@ sudo cp -rv ${INSTALL_DIR}/* /
 
 # Install required dependencies for openvas-scanner
 sudo apt-get install -y --no-install-recommends \
-    bison \
-    libglib2.0-dev \
-    libgnutls28-dev \
-    libgcrypt20-dev \
-    libpcap-dev \
-    libgpgme-dev \
-    libksba-dev \
-    rsync \
-    nmap
+  bison \
+  libglib2.0-dev \
+  libgnutls28-dev \
+  libgcrypt20-dev \
+  libpcap-dev \
+  libgpgme-dev \
+  libksba-dev \
+  rsync \
+  nmap \
+  libjson-glib-1.0-0 \
+  libjson-glib-dev \
+  libglib2.0-bin \
+  libglib2.0-dev
 
 # Install optional dependencies for openvas-scanner
 sudo apt-get install -y \
-    python-impacket \
+    python3-impacket \
     libsnmp-dev
 
-curl -sSL https://github.com/greenbone/openvas-scanner/archive/refs/tags/v${openvas_scanner_version}.tar.gz -o ${SOURCE_DIR}/openvas-scanner-${openvas_scanner_version}.tar.gz
-curl -sSL https://github.com/greenbone/openvas-scanner/releases/download/v${openvas_scanner_version}/openvas-scanner-${openvas_scanner_version}.tar.gz.asc -o ${SOURCE_DIR}/openvas-scanner-${openvas_scanner_version}.tar.gz.asc
+curl -fsSL https://github.com/greenbone/openvas-scanner/archive/refs/tags/v${openvas_scanner_version}.tar.gz -o ${SOURCE_DIR}/openvas-scanner-${openvas_scanner_version}.tar.gz
+curl -fsSL https://github.com/greenbone/openvas-scanner/releases/download/v${openvas_scanner_version}/openvas-scanner-${openvas_scanner_version}.tar.gz.asc -o ${SOURCE_DIR}/openvas-scanner-${openvas_scanner_version}.tar.gz.asc
 gpg --verify ${SOURCE_DIR}/openvas-scanner-${openvas_scanner_version}.tar.gz.asc ${SOURCE_DIR}/openvas-scanner-${openvas_scanner_version}.tar.gz
 
 tar -C ${SOURCE_DIR} -xvzf ${SOURCE_DIR}/openvas-scanner-${openvas_scanner_version}.tar.gz
@@ -275,7 +294,7 @@ sudo apt-get install -y --no-install-recommends \
     python3-packaging \
     python3-wrapt \
     python3-cffi \
-    python3-psutil/buster-backports \
+    python3-psutil \
     python3-lxml \
     python3-defusedxml \
     python3-paramiko \
@@ -287,20 +306,11 @@ sudo python3 -m pip install --upgrade setuptools
 #sudo python3 -m pip install --no-warn-script-location psutil
 
 # Download and install ospd-openvas
-curl -sSL https://github.com/greenbone/ospd/archive/refs/tags/v${open_scanner_protocol_daemon}.tar.gz -o ${SOURCE_DIR}/ospd-${open_scanner_protocol_daemon}.tar.gz
-curl -sSL https://github.com/greenbone/ospd/releases/download/v${open_scanner_protocol_daemon}/ospd-${open_scanner_protocol_daemon}.tar.gz.asc -o ${SOURCE_DIR}/ospd-${open_scanner_protocol_daemon}.tar.gz.asc
-gpg --verify ${SOURCE_DIR}/ospd-${open_scanner_protocol_daemon}.tar.gz.asc ${SOURCE_DIR}/ospd-${open_scanner_protocol_daemon}.tar.gz
-
-curl -sSL https://github.com/greenbone/ospd-openvas/archive/refs/tags/v${ospd_openvas}.tar.gz -o ${SOURCE_DIR}/ospd-openvas-${ospd_openvas}.tar.gz
-curl -sSL https://github.com/greenbone/ospd-openvas/releases/download/v${ospd_openvas}/ospd-openvas-${ospd_openvas}.tar.gz.asc -o ${SOURCE_DIR}/ospd-openvas-${ospd_openvas}.tar.gz.asc
+curl -fsSL https://github.com/greenbone/ospd-openvas/archive/refs/tags/v${ospd_openvas}.tar.gz -o ${SOURCE_DIR}/ospd-openvas-${ospd_openvas}.tar.gz
+curl -fsSL https://github.com/greenbone/ospd-openvas/releases/download/v${ospd_openvas}/ospd-openvas-${ospd_openvas}.tar.gz.asc -o ${SOURCE_DIR}/ospd-openvas-${ospd_openvas}.tar.gz.asc
 gpg --verify ${SOURCE_DIR}/ospd-openvas-${ospd_openvas}.tar.gz.asc ${SOURCE_DIR}/ospd-openvas-${ospd_openvas}.tar.gz
 
-tar -C ${SOURCE_DIR} -xvzf ${SOURCE_DIR}/ospd-${open_scanner_protocol_daemon}.tar.gz
 tar -C ${SOURCE_DIR} -xvzf ${SOURCE_DIR}/ospd-openvas-${ospd_openvas}.tar.gz
-
-cd ${SOURCE_DIR}/ospd-${open_scanner_protocol_daemon}
-python3 -m pip install . --prefix=${INSTALL_PREFIX} --root=${INSTALL_DIR}
-python3 -m pip install .
 
 cd ${SOURCE_DIR}/ospd-openvas-${ospd_openvas}
 python3 -m pip install . --prefix=${INSTALL_PREFIX} --root=${INSTALL_DIR} --no-warn-script-location
@@ -328,7 +338,7 @@ sudo cp -rv ${INSTALL_DIR}/* /
 #rm -rf ${INSTALL_DIR}/*
 
 # Install redis-server
-sudo apt-get install -y --no-install-recommends redis-server/buster-backports
+sudo apt-get install -y --no-install-recommends redis-server
 sudo mkdir -p /etc/redis
 sudo cp ${SOURCE_DIR}/openvas-scanner-${openvas_scanner_version}/config/redis-openvas.conf /etc/redis/redis-openvas.conf
 sudo chown redis:redis /etc/redis/*.conf
@@ -383,8 +393,7 @@ sudo apt-get purge --auto-remove -y \
     python3-dev \
     build-essential \
     postgresql-server-dev-all \
-    nodejs \
-    yarnpkg \
+    yarn \
     graphviz-dev \
     cmake
 sudo apt-get purge --auto-remove -y *-dev
@@ -395,4 +404,4 @@ echo "/usr/local/lib" >/etc/ld.so.conf.d/openvas.conf && ldconfig
 
 rm -rf ${SOURCE_DIR} ${BUILD_DIR} ${INSTALL_DIR}
 rm -rf /var/lib/apt/lists/*
-rm /etc/apt/apt.conf.d/30proxy || true
+rm -f /etc/apt/apt.conf.d/30proxy
