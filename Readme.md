@@ -4,18 +4,21 @@
 [![Open Source Love](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://github.com/ellerbrock/open-source-badges/)
 
 
+# End of Life - Repository Deprecated
+**Important Notice:** This repository is no longer actively maintained or supported. No further issues or pull requests will be considered or approved. The content provided here is for historical reference only.
 
+## Greenbone Community Containers
+The Greenbone community has worked to release [Greenbone Community Containers](https://greenbone.github.io/docs/latest/22.4/container/index.html). v22.4 made several major changes including the introduction of the MQTT broker and Notus scanner. That project doesn't necessarily work the same way as this and it doesn't support remote scanners, but we strongly recommend using the most recent version of GVM instead of this project.
 
-Feature Requests Ideas [Click Here](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/discussions/categories/feature-request)
+## Thank You
+Thank you contributors and Greenbone community. Your dedication, feedback, and contributions have been invaluable.
 
-![](https://i.imgur.com/xNlUgCJ.png)
+\- SCS
 
-1. Please read these [DIRECTIONS](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/discussions/193) if you would like to be assign issues to work on
-2. Please read the [PULL REQUEST POLICY](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/blob/master/PULL-REQUEST-POLICY.md)
-3. Here is a list of [MILESTONES](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/milestones) to work on.
+---
+---
 
 ![Greenbone Vulnerability Management with OpenVAS](https://github.com/SCS-Labs/Images/raw/main/scs-gvm.png)
-
 
 This setup is based on Greenbone Vulnerability Management and OpenVAS. We have made improvements to help stability and functionality.
 
@@ -23,8 +26,6 @@ You want to send GVM/OpenVAS results to Elasticsearch, try our [GVM Logstash pro
 
 ## Documentation
 * [View our detailed instructions on gitbook](https://securecompliance.gitbook.io/projects/openvas-greenbone-deployment-full-guide)
-
-If you would like something added to the documentation please create a issue [GVM-Docker Gitbook Repo](https://github.com/Secure-Compliance-Solutions-LLC/gitbook/issues)
 
 ## Quick Start
 
@@ -70,16 +71,3 @@ The key points to take away from the diagram below, is the way our setup establi
 
 ![GVM Container Architecture](https://securecompliance.co/wp-content/uploads/2020/11/SCS-GVM-Docker.svg)
 
-
-## About
-
-We will do our best to conduct all development openly by documenting features and requirements, and managing the project using [issues](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/issues), [milestones](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/milestones), and [projects](https://github.com/Secure-Compliance-Solutions-LLC/GVM-Docker/projects).
-
-<!--
-## Dashboard - Sneak peak at our upcoming kibana dashboards
-
-Soon we will release instructions on connecting your OpenVAS vulnerability details to elastic to create dashboards that are interactive and actually work. 
-
-Below is a preview of what we're working on.
-![Sneak Peak](https://securecompliance.co/wp-content/uploads/2020/11/dashboard.png)
--->
