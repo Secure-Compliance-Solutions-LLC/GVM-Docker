@@ -74,3 +74,4 @@ $RECYCLE.BIN/
 # For github.com/nektos/act local workflow testing
 .env
 .secrets
+.idea

@@ -1,4 +1,4 @@
-FROM debian:11-slim
+FROM debian:12-slim
 
 ENTRYPOINT [ "/opt/setup/scripts/entrypoint.sh" ]
 CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisord.conf"]
@@ -9,28 +9,16 @@ ENV LANG=C.UTF-8
 COPY config /opt/setup/
 COPY scripts /opt/setup/scripts/
 RUN chmod -R +x /opt/setup/scripts/*.sh
-#RUN bash /opt/setup/debian/install-pkgs.sh
 
-# gvmd: v22.4.2
-# gsa: v22.4.0
-# gvm-libs: v22.4.1
-# gvm-tools: v22.9.0
-# ospd: v22.4.2
-# ospd-openvas: v22.4.2
-# openvas-scanner: v22.4.0
-# openvas-smb: v22.4.0
-# python-gvm: v22.9.1
 
-ARG gvm_libs_version="22.4.1"
-ARG openvas_scanner_version="22.4.0"
-ARG pggvm_version="da7bef426089e63da80fe85b723ce01714810871" 
-ARG gvmd_version="22.4.1"
-ARG gsa_version="22.4.0"
-ARG pg_gvm_version="22.4.0"
-ARG gvm_tools_version="22.9.0"
-ARG openvas_smb_version="22.4.0"
-ARG ospd_openvas="22.4.2"
-ARG python_gvm_version="22.9.1"
+ARG gvm_libs_version="22.7.3"
+ARG openvas_scanner_version="22.7.6"
+ARG gvmd_version="23.0.1"
+ARG gsa_version="22.8.0"
+ARG pg_gvm_version="22.6.1"
+ARG openvas_smb_version="22.5.3"
+ARG ospd_openvas="22.6.1"
+ARG NOTUS_VERSION="22.6.0"
 
 ARG SUPVISD=supervisorctl
 ARG GVMD_USER
@@ -79,7 +67,8 @@ ENV gvm_libs_version=${gvm_libs_version} \
     DB_PASSWORD_FILE=${DB_PASSWORD:-none} \
     LANG=en_US.UTF-8 \
     LANGUAGE=en_US.UTF-8 \
-    LC_ALL=en_US.UTF-8
+    LC_ALL=en_US.UTF-8 \
+    OPENVAS_GNUPG_HOME=/etc/openvas/gnupg
 
 RUN ls -lahR /opt/setup/ \
     && /opt/setup/scripts/debian/prepare.sh \
@@ -121,4 +110,4 @@ ENV SETUP=0
 
 
 
-VOLUME [ "/opt/database", "/var/lib/openvas/plugins", "/var/lib/gvm", "/etc/ssh" ]
+#VOLUME [ "/opt/database", "/var/lib/openvas/plugins", "/var/lib/gvm", "/etc/ssh" ]

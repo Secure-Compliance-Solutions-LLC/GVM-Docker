@@ -8,17 +8,17 @@ echo "APT::Install-Recommends \"0\" ; APT::Install-Suggests \"0\" ;" | tee /etc/
 
 apt-get -qq update
 apt-get install -yq --no-install-recommends gnupg curl wget sudo ca-certificates postfix supervisor cron openssh-server \
-  nano lsb-release apt-utils
+  nano lsb-release apt-utils xz-utils
 
 export VERSION=node_14.x
-export KEYRING=/usr/share/keyrings/nodesource.gpg
+export KEYRING=/etc/apt/keyrings/nodesource.gpg
 export DISTRIBUTION="$(lsb_release -s -c)"
 
-curl -fsSL https://deb.nodesource.com/gpgkey/nodesource.gpg.key | gpg --dearmor | sudo tee "$KEYRING" >/dev/null
+curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o $KEYRING
 gpg --no-default-keyring --keyring "$KEYRING" --list-keys
 
-echo "deb [signed-by=$KEYRING] https://deb.nodesource.com/$VERSION $DISTRIBUTION main" | sudo tee /etc/apt/sources.list.d/nodesource.list
-echo "deb-src [signed-by=$KEYRING] https://deb.nodesource.com/$VERSION $DISTRIBUTION main" | sudo tee -a /etc/apt/sources.list.d/nodesource.list
+NODE_MAJOR=20
+echo "deb [signed-by=$KEYRING] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list
 printf 'Package: *\nPin: origin deb.nodesource.com\nPin-Priority: 600' > /etc/apt/preferences.d/nodesource
 
 curl -fsS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
@@ -31,8 +31,8 @@ sudo apt-get -yq upgrade
 ## START Postgres
 sudo apt-get install -y postgresql postgresql-server-dev-all
 
-sudo update-alternatives --install /usr/bin/postgres postgres /usr/lib/postgresql/13/bin/postgres 30
-sudo update-alternatives --install /usr/bin/initdb initdb /usr/lib/postgresql/13/bin/initdb 40
+sudo update-alternatives --install /usr/bin/postgres postgres /usr/lib/postgresql/1*/bin/postgres 30
+sudo update-alternatives --install /usr/bin/initdb initdb /usr/lib/postgresql/1*/bin/initdb 40
 #ln -s /usr/lib/postgresql/13/bin/postgres /usr/bin/postgres
 #ln -s /usr/lib/postgresql/13/bin/initdb /usr/bin/initdb
 
