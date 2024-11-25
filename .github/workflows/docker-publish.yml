@@ -39,7 +39,7 @@ jobs:
         run: echo ::set-output name=docker_tag::$(echo ${GITHUB_REF} | cut -d'/' -f3)-${GITHUB_SHA}
 
       - name: Download artifact
-        uses: dawidd6/action-download-artifact@v2
+        uses: dawidd6/action-download-artifact@v6
         with:
           # Optional, GitHub token, a Personal Access Token with `public_repo` scope if needed
           # Required, if artifact is from a different repo
@@ -116,7 +116,7 @@ jobs:
         run: echo ::set-output name=docker_tag::$(echo ${GITHUB_REF} | cut -d'/' -f3)-${GITHUB_SHA}
 
       - name: Download artifact
-        uses: dawidd6/action-download-artifact@v2
+        uses: dawidd6/action-download-artifact@v6
         with:
           # Optional, GitHub token, a Personal Access Token with `public_repo` scope if needed
           # Required, if artifact is from a different repo
@@ -219,7 +219,7 @@ jobs:
           echo -n "${IMAGE_NAME_GHCR}"
 
       - name: Download artifact
-        uses: dawidd6/action-download-artifact@v2
+        uses: dawidd6/action-download-artifact@v6
         with:
           # Optional, GitHub token, a Personal Access Token with `public_repo` scope if needed
           # Required, if artifact is from a different repo
